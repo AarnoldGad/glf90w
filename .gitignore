@@ -1,0 +1,37 @@
+# Folders
+
+.git/
+.cache/
+
+# Projects
+
+.vs/
+*.xcworkspace
+*.xcodeproj/
+*.sln
+*.vcxproj*
+
+# Binaries
+
+lib/
+bin/
+obj/
+*.out
+*.o
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+*.dylib
+
+# Files
+
+*.DS_Store
+*.gch
+*.log
+*.swp
+*.vim
+
+compile_commands.json
+
