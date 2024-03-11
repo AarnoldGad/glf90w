@@ -24,14 +24,12 @@ ADD_SUBDIRECTORY(glfw)
 ADD_LIBRARY(glf90w INTERFACE)
 
 #TARGET_COMPILE_DEFINITIONS(glf90w INTERFACE)
-TARGET_SOURCES(glf90w INTERFACE glf90w.f90)
+TARGET_SOURCES(glf90w INTERFACE glf90w.f90 glf90w_c_interop.f90)
 
 TARGET_LINK_LIBRARIES(glf90w INTERFACE
     glfw
     OpenGL::GL
 
     $<$<PLATFORM_ID:Linux>:X11::X11>
-    "$<$<PLATFORM_ID:Darwin>:-framework Cocoa>"
-    "$<$<PLATFORM_ID:Darwin>:-framework IOKit>"
 )
 
