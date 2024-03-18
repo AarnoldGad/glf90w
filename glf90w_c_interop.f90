@@ -6,6 +6,9 @@
 ! -----------------
 module glf90w_c_interop
     implicit none
+    private
+
+    public :: f_to_c_str, c_to_f_str, c_ptr_to_f_str
 
     interface
         pure function c_strlen(cstr) result(length) bind(C, name="strlen")
@@ -18,23 +21,47 @@ module glf90w_c_interop
 
     contains
 
-        subroutine c_f_str(cstr, fstr)
-            use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_char, c_size_t
+        pure function f_to_c_str(fstr) result(cstr)
+            use, intrinsic :: iso_c_binding, only: c_char, c_null_char
 
             implicit none
-            type(c_ptr), intent(in) :: cstr
-            character(:, kind=c_char), allocatable, intent(out) :: fstr
-            integer(c_size_t) :: n
+            character(len=*), intent(in)                               :: fstr
+            character(len=1, kind=c_char), dimension(len(fstr)+1) :: cstr
 
-            n = c_strlen(cstr)
-            allocate(character(n, kind=c_char) :: fstr)
+            integer :: i
 
-            block
-                character(n, kind=c_char), pointer :: view
-                call c_f_pointer(cstr, view)
-                fstr = view
-            end block
-        end subroutine c_f_str
+            do i = 1,len(fstr)
+                cstr(i) = fstr(i:i)
+            end do
+            cstr(len(fstr) + 1) = c_null_char
+        end function f_to_c_str
+
+        pure function c_to_f_str(cstr) result(fstr)
+            use, intrinsic :: iso_c_binding, only: c_char
+
+            implicit none
+            character(len=1, kind=c_char), dimension(:), intent(in) :: cstr
+            character(len=size(cstr), kind=c_char)                  :: fstr
+
+            integer :: i
+
+            do i = 1,size(cstr)
+                fstr(i:i) = cstr(i)
+            end do
+        end function c_to_f_str
+
+        function c_ptr_to_f_str(cptr) result(fstr)
+            use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_char
+
+            implicit none
+            type(c_ptr), intent(in)                    :: cptr
+            character(len=:, kind=c_char), allocatable :: fstr
+
+            character(len=1, kind=c_char), dimension(:), pointer :: cstr
+
+            call c_f_pointer(cptr, cstr, (/c_strlen(cptr)/))
+            fstr = c_to_f_str(cstr)
+        end function c_ptr_to_f_str
 
 end module glf90w_c_interop
 ! -----------------
