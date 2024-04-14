@@ -24,7 +24,8 @@ module glf90w
         glfwGetVersion, &
         ! -- char glfwGetVersionString() result(str)
         glfwGetVersionString, &
-        !glfwGetError, &
+        ! -- void glfwGetError(int OUT error_code, char POINTER OPTIONAL OUT description)
+        glfwGetError, &
         !glfwSetErrorCallback, &
         ! -- int glfwGetPlatform() result(platform)
         glfwGetPlatform, &
@@ -125,6 +126,16 @@ module glf90w
             implicit none
             type(c_ptr) :: str
         end function c_glfwGetVersionString
+    end interface
+
+    interface
+        function c_glfwGetError(description) result(error_code) bind(C, name="glfwGetError")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr)         :: description
+            integer(kind=c_int) :: error_code
+        end function c_glfwGetError
     end interface
 
     interface
@@ -390,6 +401,26 @@ module glf90w
             cptr = c_glfwGetVersionString()
             str = c_ptr_to_f_str(cptr)
         end function glfwGetVersionString
+
+        subroutine glfwGetError(error_code, description)
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_int, c_char
+            use glf90w_c_interop, only: c_ptr_to_f_strptr
+
+            implicit none
+            integer(kind=c_int), intent(out)                         :: error_code
+            character(:,kind=c_char), pointer, optional, intent(out) :: description
+
+            type(c_ptr) :: desc_cptr
+
+            error_code = c_glfwGetError(desc_cptr)
+            if (present(description)) then
+                if (c_associated(desc_cptr)) then
+                    call c_ptr_to_f_strptr(desc_cptr, description)
+                else
+                    description => null()
+                end if
+            end if
+        end subroutine glfwGetError
 
         function glfwPlatformSupported(platform) result(supported)
             use, intrinsic :: iso_c_binding, only: c_int

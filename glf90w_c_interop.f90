@@ -8,7 +8,7 @@ module glf90w_c_interop
     implicit none
     private
 
-    public :: f_to_c_str, c_to_f_str, c_ptr_to_f_str
+    public :: f_to_c_str, c_to_f_str, c_ptr_to_f_str, c_ptr_to_f_strptr
 
     interface
         pure function c_strlen(cstr) result(length) bind(C, name="strlen")
@@ -25,7 +25,7 @@ module glf90w_c_interop
             use, intrinsic :: iso_c_binding, only: c_char, c_null_char
 
             implicit none
-            character(len=*), intent(in)                               :: fstr
+            character(len=*), intent(in)                          :: fstr
             character(len=1, kind=c_char), dimension(len(fstr)+1) :: cstr
 
             integer :: i
@@ -62,6 +62,20 @@ module glf90w_c_interop
             call c_f_pointer(cptr, cstr, (/c_strlen(cptr)/))
             fstr = c_to_f_str(cstr)
         end function c_ptr_to_f_str
+
+        subroutine c_ptr_to_f_strptr(cptr, fptr)
+            use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_char
+
+            implicit none
+            type(c_ptr), intent(in)                        :: cptr
+            character(:,kind=c_char), pointer, intent(out) :: fptr
+
+            character(len=c_strlen(cptr),kind=c_char), pointer :: temp
+
+            call c_f_pointer(cptr, temp)
+            fptr => temp
+            temp => null()
+        end subroutine c_ptr_to_f_strptr
 
 end module glf90w_c_interop
 ! -----------------
