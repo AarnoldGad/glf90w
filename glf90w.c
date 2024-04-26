@@ -1,5 +1,10 @@
 // -----------------
-// glf90w_constants.c
+//
+// GLF90W (for GLFW 3.4) - https://github.com/AarnoldGad/glf90w
+// Fortran 2003 bindings for GLFW (Yes, I know...)
+//
+// -----------------
+// glf90w.c
 // 17 Mar 2024
 // Gaétan J.A.M. Jalin
 // See end of file for complete licence description

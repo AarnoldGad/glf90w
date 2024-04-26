@@ -1,11 +1,11 @@
 // -----------------
-// glf90w_constants.h
+// glf90w.h
 // 17 Mar 2024
 // Gaétan J.A.M. Jalin
 // See end of file for complete licence description
 // -----------------
-#ifndef GLF90W_CONSTANTS_H
-#define GLF90W_CONSTANTS_H
+#ifndef GLF90W_H
+#define GLF90W_H
 
 extern "C" int const glf90w_version_major;
 extern "C" int const glf90w_version_minor;
@@ -364,7 +364,7 @@ extern "C" int const glf90w_platform_x11;
 extern "C" int const glf90w_platform_null;
 extern "C" int const glf90w_dont_care;
 
-#endif // GLF90W_CONSTANTS_H
+#endif // GLF90W_H
 // -----------------
 // Copyright (C) 2024 Gaétan Jalin
 //
