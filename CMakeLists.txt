@@ -4,7 +4,7 @@ PROJECT(GLF90W
     VERSION 0.0.1
     DESCRIPTION "Fortran bindings for GLFW."
     HOMEPAGE_URL https://github.com/aarnoldgad/glf90w.git
-    LANGUAGES C CXX Fortran
+    LANGUAGES C Fortran
 )
 
 SET_PROPERTY(GLOBAL PROPERTY USE_FOLDER ON)

@@ -9,6 +9,8 @@
 // Gaétan J.A.M. Jalin
 // See end of file for complete licence description
 // -----------------
+#include "glf90w.h"
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
