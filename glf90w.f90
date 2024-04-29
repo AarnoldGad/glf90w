@@ -384,19 +384,19 @@ module glf90w
     ! --------------------------------------------------------------------------
 
 
-    type, abstract :: c_opaque_ptr
+    type, abstract :: C_opaque_ptr
         private
         type(c_ptr) :: ptr = c_null_ptr
     end type c_opaque_ptr
 
-    type, extends(c_opaque_ptr), public :: GLFWmonitor
-    end type GLFWmonitor
+    type, extends(C_opaque_ptr), public :: GLFWmonitor_ptr
+    end type GLFWmonitor_ptr
 
-    type, extends(c_opaque_ptr), public :: GLFWwindow
-    end type GLFWwindow
+    type, extends(C_opaque_ptr), public :: GLFWwindow_ptr
+    end type GLFWwindow_ptr
 
-    type, extends(c_opaque_ptr), public :: GLFWcursor
-    end type GLFWcursor
+    type, extends(C_opaque_ptr), public :: GLFWcursor_ptr
+    end type GLFWcursor_ptr
 
     type, bind(C), public :: GLFWvidmode
         integer(kind=c_int) :: width
@@ -427,6 +427,12 @@ module glf90w
         ! -- void (*GLFWjoystickfun)(int IN jid, int IN event)
         GLFWjoystickfun
 
+    public :: associated
+
+    interface associated
+        module procedure :: associated_opaque
+    end interface associated
+
 
     ! --------------------------------------------------------------------------
     ! GLF90W API callback interfaces
@@ -446,10 +452,10 @@ module glf90w
     abstract interface
         subroutine GLFWmonitorfun(monitor, event)
             use, intrinsic :: iso_fortran_env, only: int32
-            import :: GLFWmonitor
+            import :: GLFWmonitor_ptr
 
             implicit none
-            type(GLFWmonitor),   intent(in) :: monitor
+            type(GLFWmonitor_ptr),   intent(in) :: monitor
             integer(kind=int32), intent(in) :: event
         end subroutine GLFWmonitorfun
     end interface
@@ -501,10 +507,25 @@ module glf90w
         glfwGetPlatform, &
         ! -- logical glfwPlatformSupported(int IN platform) result(supported)
         glfwPlatformSupported, &
-        ! -- GLFWmonitor ARRAY glfwGetMonitors() result(monitors)
+        ! -- GLFWmonitor_ptr ARRAY glfwGetMonitors() result(monitors)
         glfwGetMonitors, &
-        ! -- char glfwGetMonitorName(GLFWmonitor IN monitor) result(name)
+        ! -- GLFWmonitor_ptr glfwGetPrimaryMonitor() result(monitor)
+        glfwGetPrimaryMonitor, &
+        ! -- void glfwGetMonitorPos(GLFWmonitor_ptr IN monitor, int OUT x, int OUT y)
+        glfwGetMonitorPos, &
+        ! -- void glfwGetMonitorWorkarea(GLFWmonitor_ptr IN monitor, int OUT x, int OUT y, int OUT w, int OUT h)
+        glfwGetMonitorWorkarea, &
+        ! -- void glfwGetMonitorPhysicalSize(GLFWmonitor_ptr IN monitor, int OUT widthMM, int OUT heightMM)
+        glfwGetMonitorPhysicalSize, &
+        ! -- void glfwGetMonitorContentScale(GLFWmonitor_ptr IN monitor, float OUT xscale, float OUT yscale)
+        glfwGetMonitorContentScale, &
+        ! -- char glfwGetMonitorName(GLFWmonitor_ptr IN monitor) result(name)
         glfwGetMonitorName, &
+        ! TODO express user_pointer as real fortran pointer instead of c_ptr?
+        ! -- void glfwSetMonitorUserPointer(GLFWmonitor_ptr IN monitor, type(c_ptr) IN user_pointer)
+        glfwSetMonitorUserPointer, &
+        ! -- type(c_ptr) glfwGetMonitorUserPointer(GLFWmonitor_ptr IN monitor) result(user_pointer)
+        glfwGetMonitorUserPointer, &
         ! -- procedure(GLFWmonitorfun) POINTER glfwSetMonitorCallback(procedure(GLFWmonitorfun) POINTER IN callback) result(prev_callback)
         glfwSetMonitorCallback, &
         ! -- void glfwDefaultWindowHints()
@@ -662,6 +683,55 @@ module glf90w
     end interface
 
     interface
+        function c_glfwGetPrimaryMonitor() result(monitor) bind(C, name="glfwGetPrimaryMonitor")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr) :: monitor
+        end function c_glfwGetPrimaryMonitor
+    end interface
+
+    interface
+        subroutine c_glfwGetMonitorPos(monitor, x, y) bind(C, name="glfwGetMonitorPos")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            integer(kind=c_int), intent(out) :: x, y
+        end subroutine c_glfwGetMonitorPos
+    end interface
+
+    interface
+        subroutine c_glfwGetMonitorWorkarea(monitor, x, y, w, h) bind(C, name="glfwGetMonitorWorkarea")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            integer(kind=c_int), intent(out) :: x, y, w, h
+        end subroutine c_glfwGetMonitorWorkarea
+    end interface
+
+    interface
+        subroutine c_glfwGetMonitorPhysicalSize(monitor, widthMM, heightMM) bind(C, name="glfwGetMonitorPhysicalSize")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            integer(kind=c_int), intent(out) :: widthMM, heightMM
+        end subroutine c_glfwGetMonitorPhysicalSize
+    end interface
+
+    interface
+        subroutine c_glfwGetMonitorContentScale(monitor, xscale, yscale) bind(C, name="glfwGetMonitorContentScale")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_float
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            real(kind=c_float), intent(out) :: xscale, yscale
+        end subroutine c_glfwGetMonitorContentScale
+    end interface
+
+    interface
         function c_glfwGetMonitorName(monitor) result(name) bind(C, name="glfwGetMonitorName")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -669,6 +739,26 @@ module glf90w
             type(c_ptr), value, intent(in) :: monitor
             type(c_ptr)                    :: name
         end function c_glfwGetMonitorName
+    end interface
+
+    interface
+        subroutine c_glfwSetMonitorUserPointer(monitor, ptr) bind(C, name="glfwSetMonitorUserPointer")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr), value, intent(in) :: ptr
+        end subroutine c_glfwSetMonitorUserPointer
+    end interface
+
+    interface
+        function c_glfwGetMonitorUserPointer(monitor) result(ptr) bind(C, name="glfwGetMonitorUserPointer")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr)                    :: ptr
+        end function c_glfwGetMonitorUserPointer
     end interface
 
     interface
@@ -1010,10 +1100,10 @@ module glf90w
         end function glfwPlatformSupported
 
         function glfwGetMonitors() result(monitors)
-            use, intrinsic :: iso_c_binding, only: c_associated, c_f_pointer, c_ptr, c_int
+            use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_int
 
             implicit none
-            type(GLFWmonitor), dimension(:), allocatable :: monitors
+            type(GLFWmonitor_ptr), dimension(:), allocatable :: monitors
 
             type(c_ptr) :: c_monitors
             integer(kind=c_int) :: count
@@ -1021,21 +1111,88 @@ module glf90w
             count = 0
 
             c_monitors = c_glfwGetMonitors(count)
-            if (c_associated(c_monitors) .AND. count > 0) then
+            allocate(monitors(count))
+            if (count > 0) then
                 call c_f_pointer(c_monitors, c_array, [count])
-                allocate(monitors(count))
                 monitors(:)%ptr = c_array
-            else
-                ! Allocate 0-size array if nullptr
-                allocate(monitors(0))
             end if
         end function glfwGetMonitors
+
+        function glfwGetPrimaryMonitor() result(monitor)
+            implicit none
+            type(GLFWmonitor_ptr) :: monitor
+
+            monitor = GLFWmonitor_ptr(ptr = c_glfwGetPrimaryMonitor())
+        end function glfwGetPrimaryMonitor
+
+        subroutine glfwGetMonitorPos(monitor, x, y)
+            use, intrinsic :: iso_c_binding, only: c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            integer(kind=int32), optional, intent(out) :: x, y
+
+            integer(kind=c_int) :: c_x, c_y
+
+            call c_glfwGetMonitorPos(monitor%ptr, c_x, c_y)
+            if (present(x)) x = int(c_x, kind=int32)
+            if (present(y)) y = int(c_y, kind=int32)
+        end subroutine glfwGetMonitorPos
+
+        subroutine glfwGetMonitorWorkarea(monitor, x, y, width, height)
+            use, intrinsic :: iso_c_binding, only: c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            integer(kind=int32), optional, intent(out) :: x, y, width, height
+
+            integer(kind=c_int) :: c_x, c_y, c_w, c_h
+
+            call c_glfwGetMonitorWorkarea(monitor%ptr, c_x, c_y, c_w, c_h)
+            if (present(x))      x      = int(c_x, kind=int32)
+            if (present(y))      y      = int(c_y, kind=int32)
+            if (present(width))  width  = int(c_w, kind=int32)
+            if (present(height)) height = int(c_h, kind=int32)
+        end subroutine glfwGetMonitorWorkarea
+
+        subroutine glfwGetMonitorPhysicalSize(monitor, widthMM, heightMM)
+            use, intrinsic :: iso_c_binding, only: c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            integer(kind=int32), optional, intent(out) :: widthMM, heightMM
+
+            integer(kind=c_int) :: c_w
+            integer(kind=c_int) :: c_h
+
+            call c_glfwGetMonitorPhysicalSize(monitor%ptr, c_w, c_h)
+            if (present(widthMM))  widthMM  = int(c_w, kind=int32)
+            if (present(heightMM)) heightMM = int(c_h, kind=int32)
+        end subroutine glfwGetMonitorPhysicalSize
+
+        subroutine glfwGetMonitorContentScale(monitor, xscale, yscale)
+            use, intrinsic :: iso_c_binding, only: c_float
+            use, intrinsic :: iso_fortran_env, only: real32
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            real(kind=real32), optional, intent(out) :: xscale, yscale
+
+            real(kind=c_float) :: c_xscale, c_yscale
+
+            call c_glfwGetMonitorContentScale(monitor%ptr, c_xscale, c_yscale)
+            if (present(xscale)) xscale = real(c_xscale, kind=real32)
+            if (present(yscale)) yscale = real(c_yscale, kind=real32)
+        end subroutine glfwGetMonitorContentScale
 
         function glfwGetMonitorName(monitor) result(name)
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
-            type(GLFWmonitor), intent(in) :: monitor
+            type(GLFWmonitor_ptr), intent(in) :: monitor
             character(len=:), allocatable :: name
 
             type(c_ptr) :: c_name
@@ -1043,6 +1200,26 @@ module glf90w
             c_name = c_glfwGetMonitorName(monitor%ptr)
             name = c_ptr_to_f_str(c_name)
         end function glfwGetMonitorName
+
+        subroutine glfwSetMonitorUserPointer(monitor, ptr)
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            type(c_ptr), intent(in)           :: ptr
+
+            call c_glfwSetMonitorUserPointer(monitor%ptr, ptr)
+        end subroutine glfwSetMonitorUserPointer
+
+        function glfwGetMonitorUserPointer(monitor) result(ptr)
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            type(c_ptr)                       :: ptr
+
+            ptr = c_glfwGetMonitorUserPointer(monitor%ptr)
+        end function glfwGetMonitorUserPointer
 
         function glfwSetMonitorCallback(callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr
@@ -1141,7 +1318,7 @@ module glf90w
         end function glfwGetJoystickAxes
 
         function glfwGetJoystickName(jid) result(name)
-            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_char, c_int
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
 
             implicit none
             integer(kind=c_int), intent(in) :: jid
@@ -1150,16 +1327,11 @@ module glf90w
             type(c_ptr) :: cptr
 
             cptr = c_glfwGetJoystickName(jid)
-            if (c_associated(cptr)) then
-                name = c_ptr_to_f_str(cptr)
-            else
-                ! Allocate 0-len char if nullptr
-                allocate(character(0) :: name)
-            end if
+            name = c_ptr_to_f_str(cptr)
         end function glfwGetJoystickName
 
         function glfwGetJoystickGUID(jid) result(GUID)
-            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_char, c_int
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
 
             implicit none
             integer(kind=c_int), intent(in) :: jid
@@ -1168,12 +1340,7 @@ module glf90w
             type(c_ptr) :: cptr
 
             cptr = c_glfwGetJoystickGUID(jid)
-            if (c_associated(cptr)) then
-                GUID = c_ptr_to_f_str(cptr)
-            else
-                ! Allocate 0-len char if nullptr
-                allocate(character(0) :: GUID)
-            end if
+            GUID = c_ptr_to_f_str(cptr)
         end function glfwGetJoystickGUID
 
         function glfwJoystickIsGamepad(jid) result(is_gamepad)
@@ -1279,16 +1446,20 @@ module glf90w
         ! ----------------------------------------------------------------------
 
 
-        subroutine glf90wErrorCallbackWrapper(error_code, description) bind(C)
-            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+        subroutine glf90wErrorCallbackWrapper(error_code, desc_ptr) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_int
             use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             integer(kind=c_int), value, intent(in) :: error_code
-            type(c_ptr), value, intent(in)         :: description
+            type(c_ptr), value, intent(in)         :: desc_ptr
+
+            character(len=:), pointer :: f_desc
+            f_desc => null()
 
             if (associated(glf90wErrorCallback)) then
-                call glf90wErrorCallback(int(error_code, kind=int32), c_ptr_to_f_str(description))
+                if (c_associated(desc_ptr)) call c_ptr_to_f_strptr(desc_ptr, f_desc)
+                call glf90wErrorCallback(int(error_code, kind=int32), f_desc)
             end if
         end subroutine glf90wErrorCallbackWrapper
 
@@ -1301,7 +1472,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: event
 
             if (associated(glf90wMonitorCallback)) then
-                call glf90wMonitorCallback(GLFWmonitor(ptr = monitor), int(event, kind=int32))
+                call glf90wMonitorCallback(GLFWmonitor_ptr(ptr = monitor), int(event, kind=int32))
             end if
         end subroutine glf90wMonitorCallbackWrapper
 
@@ -1318,6 +1489,27 @@ module glf90w
                 call glf90wJoystickCallback(int(jid, kind=int32), int(event, kind=int32))
             end if
         end subroutine glf90wJoystickCallbackWrapper
+
+
+        ! ----------------------------------------------------------------------
+        ! GLF90W Fake fortran pointer semantic for GLFW opaque pointer types
+        ! ----------------------------------------------------------------------
+
+
+        pure function associated_opaque(ptr, target) result(is_associated)
+            use, intrinsic :: iso_c_binding, only: c_associated
+
+            implicit none
+            class(C_opaque_ptr), intent(in)           :: ptr
+            class(C_opaque_ptr), optional, intent(in) :: target
+            logical                                   :: is_associated
+
+            if (present(target)) then
+                is_associated = c_associated(ptr%ptr, target%ptr)
+            else
+                is_associated = c_associated(ptr%ptr)
+            end if
+        end function associated_opaque
 
 
         ! ----------------------------------------------------------------------
@@ -1358,7 +1550,7 @@ module glf90w
 
         ! Convert a C string (char*) to a Fortran character string
         function c_ptr_to_f_str(cptr) result(fstr)
-            use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_char
+            use, intrinsic :: iso_c_binding, only: c_associated, c_f_pointer, c_ptr, c_char
 
             implicit none
             type(c_ptr), intent(in)       :: cptr
@@ -1366,8 +1558,13 @@ module glf90w
 
             character(len=1, kind=c_char), dimension(:), pointer :: cstr
 
-            call c_f_pointer(cptr, cstr, [c_strlen(cptr)])
-            fstr = c_to_f_str(cstr)
+            if (c_associated(cptr)) then
+                call c_f_pointer(cptr, cstr, [c_strlen(cptr)])
+                fstr = c_to_f_str(cstr)
+            else
+                ! 0-size string if nullptr
+                allocate(character(len=0) :: fstr)
+            end if
         end function c_ptr_to_f_str
 
         ! TODO test zero-length strings are not a problem ?
