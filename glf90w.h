@@ -371,7 +371,9 @@ extern int const glf90w_dont_care;
 
 #endif // GLF90W_H
 // -----------------
-// Copyright (C) 2024 Gaétan Jalin
+// GLF90W is provided under the zlib licence
+//
+// Copyright (C) 2024 Gaétan J.A.M. Jalin
 //
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages

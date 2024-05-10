@@ -372,7 +372,9 @@ int const glf90w_platform_null                = GLFW_PLATFORM_NULL;
 int const glf90w_dont_care                    = GLFW_DONT_CARE;
 
 // -----------------
-// Copyright (C) 2024 Gaétan Jalin
+// GLF90W is provided under the zlib licence
+//
+// Copyright (C) 2024 Gaétan J.A.M. Jalin
 //
 // This software is provided 'as-is', without any express or implied
 // warranty.  In no event will the authors be held liable for any damages

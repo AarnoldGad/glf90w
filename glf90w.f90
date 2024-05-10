@@ -1010,6 +1010,10 @@ module glf90w
         end function c_strlen
     end interface
 
+    interface c_f_string
+        module procedure :: c_str_f_string, c_ptr_f_string
+    end interface c_f_string
+
     contains
 
 
@@ -1038,12 +1042,12 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_ptr, c_char
 
             implicit none
-            character(len=:), allocatable :: str
+            character(len=:), pointer :: str
 
-            type(c_ptr) :: cptr
+            type(c_ptr) :: c_str
 
-            cptr = c_glfwGetVersionString()
-            str = c_ptr_to_f_str(cptr)
+            c_str = c_glfwGetVersionString()
+            call c_f_strptr(c_str, str)
         end function glfwGetVersionString
 
         function glfwGetError(description) result(error_code)
@@ -1058,7 +1062,7 @@ module glf90w
             error_code = c_glfwGetError(desc_cptr)
             if (present(description)) then
                 if (c_associated(desc_cptr)) then
-                    call c_ptr_to_f_strptr(desc_cptr, description)
+                    call c_f_strptr(desc_cptr, description)
                 else
                     description => null()
                 end if
@@ -1189,16 +1193,20 @@ module glf90w
         end subroutine glfwGetMonitorContentScale
 
         function glfwGetMonitorName(monitor) result(name)
-            use, intrinsic :: iso_c_binding, only: c_ptr
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr
 
             implicit none
             type(GLFWmonitor_ptr), intent(in) :: monitor
-            character(len=:), allocatable :: name
+            character(len=:), pointer :: name
 
             type(c_ptr) :: c_name
 
             c_name = c_glfwGetMonitorName(monitor%ptr)
-            name = c_ptr_to_f_str(c_name)
+            if (c_associated(c_name)) then
+                call c_f_strptr(c_name, name)
+            else
+                name => null()
+            end if
         end function glfwGetMonitorName
 
         subroutine glfwSetMonitorUserPointer(monitor, ptr)
@@ -1245,7 +1253,7 @@ module glf90w
             integer(kind=c_int), intent(in) :: hint
             character(len=*), intent(in)    :: value
 
-            call c_glfwWindowHintString(hint, f_to_c_str(value))
+            call c_glfwWindowHintString(hint, f_c_string(value))
         end subroutine glfwWindowHintString
 
         function glfwRawMouseMotionSupported() result(supported)
@@ -1265,17 +1273,21 @@ module glf90w
         end function glfwRawMouseMotionSupported
 
         function glfwGetKeyName(key, scancode) result(name)
-            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_char, c_int
 
             implicit none
             integer(kind=c_int), intent(in) :: key
             integer(kind=c_int), intent(in) :: scancode
-            character(len=:), allocatable   :: name
+            character(len=:), pointer       :: name
 
             type(c_ptr) :: c_name
 
             c_name = c_glfwGetKeyName(key, scancode)
-            name = c_ptr_to_f_str(c_name)
+            if (c_associated(c_name)) then
+                call c_f_strptr(c_name, name)
+            else
+                name => null()
+            end if
         end function glfwGetKeyName
 
         function glfwJoystickPresent(jid) result(jpresent)
@@ -1318,29 +1330,37 @@ module glf90w
         end function glfwGetJoystickAxes
 
         function glfwGetJoystickName(jid) result(name)
-            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_char, c_int
 
             implicit none
             integer(kind=c_int), intent(in) :: jid
-            character(len=:), allocatable   :: name
+            character(len=:), pointer       :: name
 
-            type(c_ptr) :: cptr
+            type(c_ptr) :: c_name
 
-            cptr = c_glfwGetJoystickName(jid)
-            name = c_ptr_to_f_str(cptr)
+            c_name = c_glfwGetJoystickName(jid)
+            if (c_associated(c_name)) then
+                call c_f_strptr(c_name, name)
+            else
+                name => null()
+            end if
         end function glfwGetJoystickName
 
         function glfwGetJoystickGUID(jid) result(GUID)
-            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_char, c_int
 
             implicit none
             integer(kind=c_int), intent(in) :: jid
-            character(len=:), allocatable   :: GUID
+            character(len=:), pointer       :: GUID
 
-            type(c_ptr) :: cptr
+            type(c_ptr) :: c_name
 
-            cptr = c_glfwGetJoystickGUID(jid)
-            GUID = c_ptr_to_f_str(cptr)
+            c_name = c_glfwGetJoystickGUID(jid)
+            if (c_associated(c_name)) then
+                call c_f_strptr(c_name, GUID)
+            else
+                GUID => null()
+            end if
         end function glfwGetJoystickGUID
 
         function glfwJoystickIsGamepad(jid) result(is_gamepad)
@@ -1386,7 +1406,7 @@ module glf90w
 
             integer(kind=c_int) :: res
 
-            res = c_glfwUpdateGamepadMappings(f_to_c_str(mappings))
+            res = c_glfwUpdateGamepadMappings(f_c_string(mappings))
             if (res == GLFW_TRUE) then
                 success = .true.
             else
@@ -1395,16 +1415,20 @@ module glf90w
         end function glfwUpdateGamepadMappings
 
         function glfwGetGamepadName(jid) result(name)
-            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_char, c_int
 
             implicit none
             integer(kind=c_int), intent(in) :: jid
-            character(len=:), allocatable   :: name
+            character(len=:), pointer       :: name
 
-            type(c_ptr) :: cptr
+            type(c_ptr) :: c_name
 
-            cptr = c_glfwGetGamepadName(jid)
-            name = c_ptr_to_f_str(cptr)
+            c_name = c_glfwGetGamepadName(jid)
+            if (c_associated(c_name)) then
+                call c_f_strptr(c_name, name)
+            else
+                name => null()
+            end if
         end function glfwGetGamepadName
 
         function glfwExtensionSupported(extension) result(supported)
@@ -1416,7 +1440,7 @@ module glf90w
 
             integer(kind=c_int) :: res
 
-            res = c_glfwExtensionSupported(f_to_c_str(extension))
+            res = c_glfwExtensionSupported(f_c_string(extension))
             if (res == GLFW_TRUE) then
                 supported = .true.
             else
@@ -1458,7 +1482,7 @@ module glf90w
             f_desc => null()
 
             if (associated(glf90wErrorCallback)) then
-                if (c_associated(desc_ptr)) call c_ptr_to_f_strptr(desc_ptr, f_desc)
+                if (c_associated(desc_ptr)) call c_f_strptr(desc_ptr, f_desc)
                 call glf90wErrorCallback(int(error_code, kind=int32), f_desc)
             end if
         end subroutine glf90wErrorCallbackWrapper
@@ -1518,38 +1542,51 @@ module glf90w
 
 
         ! Converts a Fortran character string to a C interoperable string (character array)
-        pure function f_to_c_str(fstr) result(cstr)
+        pure function f_c_string(fstr, asis) result(cstr)
             use, intrinsic :: iso_c_binding, only: c_char, c_null_char
 
             implicit none
-            character(len=*), intent(in)                          :: fstr
-            character(len=1, kind=c_char), dimension(len(fstr)+1) :: cstr
+            character(len=*), intent(in)                             :: fstr
+            logical, optional, intent(in)                            :: asis
+            character(len=1, kind=c_char), dimension(:), allocatable :: cstr
+
+            integer :: length
+            integer :: i
+
+            if (present(asis)) then
+                if (asis) then
+                    length = len(fstr) + 1
+                else
+                    length = len_trim(fstr) + 1
+                end if
+            else
+                length = len_trim(fstr) + 1
+            end if
+
+            allocate(character(len=1, kind=c_char) :: cstr(length))
+            do i = 1,length
+                cstr(i) = fstr(i:i)
+            end do
+            cstr(length + 1) = c_null_char
+        end function f_c_string
+
+        ! Converts a C interoperable string (character array) to a Fortran character string
+        pure function c_str_f_string(cstr) result(fstr)
+            use, intrinsic :: iso_c_binding, only: c_loc, c_char
+
+            implicit none
+            character(len=1, kind=c_char), dimension(:), target, intent(in) :: cstr
+            character(len=c_strlen(c_loc(cstr)))                            :: fstr
 
             integer :: i
 
             do i = 1,len(fstr)
-                cstr(i) = fstr(i:i)
-            end do
-            cstr(len(fstr) + 1) = c_null_char
-        end function f_to_c_str
-
-        ! Converts a C interoperable string (character array) to a Fortran character string
-        pure function c_to_f_str(cstr) result(fstr)
-            use, intrinsic :: iso_c_binding, only: c_char
-
-            implicit none
-            character(len=1, kind=c_char), dimension(:), intent(in) :: cstr
-            character(len=size(cstr))                               :: fstr
-
-            integer :: i
-
-            do i = 1,size(cstr)
                 fstr(i:i) = cstr(i)
             end do
-        end function c_to_f_str
+        end function c_str_f_string
 
         ! Convert a C string (char*) to a Fortran character string
-        function c_ptr_to_f_str(cptr) result(fstr)
+        function c_ptr_f_string(cptr) result(fstr)
             use, intrinsic :: iso_c_binding, only: c_associated, c_f_pointer, c_ptr, c_char
 
             implicit none
@@ -1557,35 +1594,36 @@ module glf90w
             character(len=:), allocatable :: fstr
 
             character(len=1, kind=c_char), dimension(:), pointer :: cstr
+            integer :: i
 
-            if (c_associated(cptr)) then
-                call c_f_pointer(cptr, cstr, [c_strlen(cptr)])
-                fstr = c_to_f_str(cstr)
-            else
-                ! 0-size string if nullptr
-                allocate(character(len=0) :: fstr)
-            end if
-        end function c_ptr_to_f_str
+            call c_f_pointer(cptr, cstr, [c_strlen(cptr)])
+            allocate(character(len=len(cstr)) :: fstr)
+            do i = 1,len(cstr)
+                fstr(i:i) = cstr(i)
+            end do
+        end function c_ptr_f_string
 
         ! TODO test zero-length strings are not a problem ?
         ! Obtain a Fortran pointer to a C string (char*)
-        subroutine c_ptr_to_f_strptr(cptr, fptr)
+        subroutine c_f_strptr(cptr, fptr)
             use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_char
 
             implicit none
             type(c_ptr), intent(in)                :: cptr
             character(len=:), pointer, intent(out) :: fptr
 
-            character(len=c_strlen(cptr),kind=c_char), pointer :: temp
+            character(len=c_strlen(cptr), kind=c_char), pointer :: temp
 
             call c_f_pointer(cptr, temp)
             fptr => temp
             temp => null()
-        end subroutine c_ptr_to_f_strptr
+        end subroutine c_f_strptr
 
 end module glf90w
 ! -----------------
-! Copyright (C) 2024 Gaétan Jalin
+! GLF90W is provided under the zlib licence
+!
+! Copyright (C) 2024 Gaétan J.A.M. Jalin
 !
 ! This software is provided 'as-is', without any express or implied
 ! warranty.  In no event will the authors be held liable for any damages
