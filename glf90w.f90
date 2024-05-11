@@ -10,7 +10,7 @@
 ! See end of file for complete licence description
 ! ------------------
 module glf90w
-    use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_null_ptr
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr, c_int, c_null_ptr
 
     implicit none
     save
@@ -407,6 +407,20 @@ module glf90w
         integer(kind=c_int) :: refreshRate
     end type GLFWvidmode
 
+!    type, public :: GLFWallocator
+!        procedure(GLFWallocatefun), pointer :: allocate_fn
+!        procedure(GLFWallocatefun), pointer :: reallocate_fn
+!        procedure(GLFWallocatefun), pointer :: deallocate_fn
+!        type(c_ptr)                         :: user
+!    end type GLFWallocator
+
+    type, bind(C), public :: GLFWallocator
+        type(c_funptr) :: allocate_fn
+        type(c_funptr) :: reallocate_fn
+        type(c_funptr) :: deallocate_fn
+        type(c_ptr)    :: user
+    end type GLFWallocator
+
     ! TODO
     !type, bind(C), public :: GLFWgammaramp
     !type, bind(C), public :: GLFWimage
@@ -426,6 +440,12 @@ module glf90w
         GLFWmonitorfun, &
         ! -- void (*GLFWjoystickfun)(int IN jid, int IN event)
         GLFWjoystickfun
+        ! -- void* (*GLFWallocatefun)(size_t size, void* user)
+        ! GLFWallocatefun
+        ! -- void* (*GLFWreallocatefun)(void* block, size_t size, void* user)
+        ! GLFWreallocatefun
+        ! -- void (*GLFWdeallocatefun)(void* block, void* user)
+        ! GLFWdeallocatefun
 
     public :: associated
 
@@ -435,9 +455,43 @@ module glf90w
 
 
     ! --------------------------------------------------------------------------
-    ! GLF90W API callback interfaces
+    ! GLF90W API abstract interfaces
     ! --------------------------------------------------------------------------
 
+
+! NOTE Leave this here but probably useless as it would require C interfaces
+!    abstract interface
+!        function GLFWallocatefun(blckSize, user) result(blck)
+!            use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+!
+!            implicit none
+!            integer(kind=c_size_t), intent(in) :: blckSize
+!            type(c_ptr)                        :: user
+!            type(c_ptr)                        :: blck
+!        end function GLFWallocatefun
+!    end interface
+!
+!    abstract interface
+!        function GLFWreallocatefun(blck, blckSize, user) result(reblck)
+!            use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+!
+!            implicit none
+!            type(c_ptr)                        :: blck
+!            integer(kind=c_size_t), intent(in) :: blckSize
+!            type(c_ptr)                        :: user
+!            type(c_ptr)                        :: reblck
+!        end function GLFWreallocatefun
+!    end interface
+!
+!    abstract interface
+!        subroutine GLFWdeallocatefun(blck, user)
+!            use, intrinsic :: iso_c_binding, only: c_ptr
+!
+!            implicit none
+!            type(c_ptr) :: blck
+!            type(c_ptr) :: user
+!        end function GLFWallocatefun
+!    end interface
 
     abstract interface
         subroutine GLFWerrorfun(error_code, description)
@@ -448,7 +502,186 @@ module glf90w
             character(len=*),    intent(in) :: description
         end subroutine GLFWerrorfun
     end interface
-    
+
+    abstract interface
+        subroutine GLFWwindowposfun(window, x, y)
+            use, intrinsic :: iso_fortran_env, only: int32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=int32),  intent(in) :: x, y
+        end subroutine GLFWwindowposfun
+    end interface
+
+    abstract interface
+        subroutine GLFWwindowsizefun(window, width, height)
+            use, intrinsic :: iso_fortran_env, only: int32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=int32),  intent(in) :: width, height
+        end subroutine GLFWwindowsizefun
+    end interface
+
+    abstract interface
+        subroutine GLFWwindowclosefun(window)
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+        end subroutine GLFWwindowclosefun
+    end interface
+
+    abstract interface
+        subroutine GLFWwindowrefreshfun(window)
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+        end subroutine GLFWwindowrefreshfun
+    end interface
+
+    abstract interface
+        subroutine GLFWwindowfocusfun(window, focused)
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            logical,              intent(in) :: focused
+        end subroutine GLFWwindowfocusfun
+    end interface
+
+    abstract interface
+        subroutine GLFWwindowiconifyfun(window, iconified)
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            logical,              intent(in) :: iconified
+        end subroutine GLFWwindowiconifyfun
+    end interface
+
+    abstract interface
+        subroutine GLFWwindowmaximizefun(window, maximized)
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            logical,              intent(in) :: maximized
+        end subroutine GLFWwindowmaximizefun
+    end interface
+
+    abstract interface
+        subroutine GLFWframebuffersizefun(window, width, height)
+            use, intrinsic :: iso_fortran_env, only: int32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=int32),  intent(in) :: width, height
+        end subroutine GLFWframebuffersizefun
+    end interface
+
+    abstract interface
+        subroutine GLFWwindowcontentscalefun(window, xscale, yscale)
+            use, intrinsic :: iso_fortran_env, only: real32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            real(kind=real32),    intent(in) :: xscale, yscale
+        end subroutine GLFWwindowcontentscalefun
+    end interface
+
+    abstract interface
+        subroutine GLFWmousebuttonfun(window, button, action, mods)
+            use, intrinsic :: iso_fortran_env, only: int32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=int32),  intent(in) :: button, action, mods
+        end subroutine GLFWmousebuttonfun
+    end interface
+
+    abstract interface
+        subroutine GLFWcursorposfun(window, x, y)
+            use, intrinsic :: iso_fortran_env, only: real64
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            real(kind=real64),    intent(in) :: x, y
+        end subroutine GLFWcursorposfun
+    end interface
+
+    abstract interface
+        subroutine GLFWcursorenterfun(window, entered)
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            logical,              intent(in) :: entered
+        end subroutine GLFWcursorenterfun
+    end interface
+
+    abstract interface
+        subroutine GLFWscrollfun(window, xoffset, yoffset)
+            use, intrinsic :: iso_fortran_env, only: real64
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            real(kind=real64),    intent(in) :: xoffset, yoffset
+        end subroutine GLFWscrollfun
+    end interface
+
+    abstract interface
+        subroutine GLFWkeyfun(window, key, scancode, action, mods)
+            use, intrinsic :: iso_fortran_env, only: int32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=int32),  intent(in) :: key, scancode, action, mods
+        end subroutine GLFWkeyfun
+    end interface
+
+    abstract interface
+        subroutine GLFWcharfun(window, codepoint)
+            use, intrinsic :: iso_fortran_env, only: int32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=int32),  intent(in) :: codepoint ! TODO This is supposed to be unsigned int
+        end subroutine GLFWcharfun
+    end interface
+
+    abstract interface
+        subroutine GLFWcharmodsfun(window, codepoint, mods)
+            use, intrinsic :: iso_fortran_env, only: int32
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=int32),  intent(in) :: codepoint ! TODO This is supposed to be unsigned int
+            integer(kind=int32),  intent(in) :: mods
+        end subroutine GLFWcharmodsfun
+    end interface
+
+    abstract interface
+        subroutine GLFWdropfun(window, paths)
+            import :: GLFWwindow_ptr
+
+            implicit none
+            type(GLFWwindow_ptr),                    intent(in) :: window
+            character(len=:), dimension(:), pointer, intent(in) :: paths ! TODO Does this work?
+        end subroutine GLFWdropfun
+    end interface
+
     abstract interface
         subroutine GLFWmonitorfun(monitor, event)
             use, intrinsic :: iso_fortran_env, only: int32
@@ -476,9 +709,26 @@ module glf90w
     ! --------------------------------------------------------------------------
 
 
-    procedure(GLFWerrorfun),    pointer, save :: glf90wErrorCallback    => null()
-    procedure(GLFWmonitorfun),  pointer, save :: glf90wMonitorCallback  => null()
-    procedure(GLFWjoystickfun), pointer, save :: glf90wJoystickCallback => null()
+    procedure(GLFWerrorfun),              pointer, save :: glf90wErrorCallback              => null()
+    procedure(GLFWwindowposfun),          pointer, save :: glf90wWindowPosCallback          => null()
+    procedure(GLFWwindowsizefun),         pointer, save :: glf90wWindowSizeCallback         => null()
+    procedure(GLFWwindowclosefun),        pointer, save :: glf90wWindowCloseCallback        => null()
+    procedure(GLFWwindowrefreshfun),      pointer, save :: glf90wWindowRefreshCallback      => null()
+    procedure(GLFWwindowfocusfun),        pointer, save :: glf90wWindowFocusCallback        => null()
+    procedure(GLFWwindowiconifyfun),      pointer, save :: glf90wWindowIconifyCallback      => null()
+    procedure(GLFWwindowmaximizefun),     pointer, save :: glf90wWindowMaximizeCallback     => null()
+    procedure(GLFWframebuffersizefun),    pointer, save :: glf90wFramebufferSizeCallback    => null()
+    procedure(GLFWwindowcontentscalefun), pointer, save :: glf90wWindowContentScaleCallback => null()
+    procedure(GLFWmousebuttonfun),        pointer, save :: glf90wMouseButtonCallback        => null()
+    procedure(GLFWcursorposfun),          pointer, save :: glf90wCursorPosCallback          => null()
+    procedure(GLFWcursorenterfun),        pointer, save :: glf90wCursorEnterCallback        => null()
+    procedure(GLFWscrollfun),             pointer, save :: glf90wScrollCallback             => null()
+    procedure(GLFWkeyfun),                pointer, save :: glf90wKeyCallback                => null()
+    procedure(GLFWcharfun),               pointer, save :: glf90wCharCallback               => null()
+    procedure(GLFWcharmodsfun),           pointer, save :: glf90wCharModsCallback           => null()
+    procedure(GLFWdropfun),               pointer, save :: glf90wDropCallback               => null()
+    procedure(GLFWmonitorfun),            pointer, save :: glf90wMonitorCallback            => null()
+    procedure(GLFWjoystickfun),           pointer, save :: glf90wJoystickCallback           => null()
 
 
     ! --------------------------------------------------------------------------
@@ -519,9 +769,8 @@ module glf90w
         glfwGetMonitorPhysicalSize, &
         ! -- void glfwGetMonitorContentScale(GLFWmonitor_ptr IN monitor, float OUT xscale, float OUT yscale)
         glfwGetMonitorContentScale, &
-        ! -- char glfwGetMonitorName(GLFWmonitor_ptr IN monitor) result(name)
+        ! -- char POINTER glfwGetMonitorName(GLFWmonitor_ptr IN monitor) result(name)
         glfwGetMonitorName, &
-        ! TODO express user_pointer as real fortran pointer instead of c_ptr?
         ! -- void glfwSetMonitorUserPointer(GLFWmonitor_ptr IN monitor, type(c_ptr) IN user_pointer)
         glfwSetMonitorUserPointer, &
         ! -- type(c_ptr) glfwGetMonitorUserPointer(GLFWmonitor_ptr IN monitor) result(user_pointer)
@@ -544,7 +793,7 @@ module glf90w
         glfwPostEmptyEvent, &
         ! -- logical glfwRawMouseMotionSupported() result(supported)
         glfwRawMouseMotionSupported, &
-        ! -- char glfwGetKeyName(int IN key, int IN scancode) result(name)
+        ! -- char POINTER glfwGetKeyName(int IN key, int IN scancode) result(name)
         glfwGetKeyName, &
         ! -- int glfwGetKeyScancode(int IN key) result(scancode)
         glfwGetKeyScancode, &
@@ -554,11 +803,9 @@ module glf90w
         ! Note: The "count" parameter from the original function can be obtained from size(axes) instead
         !       size(axes) = 0 if joystick is not present (axes == NULL from C side)
         glfwGetJoystickAxes, &
-        ! -- char glfwGetJoystickName(int IN jid) result(name)
-        ! Note: len(name) == 0 if joystick is not present
+        ! -- char POINTER glfwGetJoystickName(int IN jid) result(name)
         glfwGetJoystickName, &
-        ! -- char glfwGetJoystickGUID(int IN jid) result(GUID)
-        ! Note: len(name) == 0 if joystick is not present
+        ! -- char POINTER glfwGetJoystickGUID(int IN jid) result(GUID)
         glfwGetJoystickGUID, &
         ! -- logical glfwJoystickIsGamepad(int IN jid) result(is_gamepad)
         glfwJoystickIsGamepad, &
@@ -566,7 +813,7 @@ module glf90w
         glfwSetJoystickCallback, &
         ! -- logical glfwJoystickIsGamepad(char IN mappings) result(success)
         glfwUpdateGamepadMappings, &
-        ! -- char glfwGetGamepadName(int IN jid) result(name)
+        ! -- char POINTER glfwGetGamepadName(int IN jid) result(name)
         glfwGetGamepadName, &
         ! -- double glfwGetTime() result(time)
         glfwGetTime, &
@@ -599,8 +846,8 @@ module glf90w
     end interface
 
     interface
-        subroutine glfwTerminate() bind(C, name="glfwTerminate")
-        end subroutine glfwTerminate
+        subroutine c_glfwTerminate() bind(C, name="glfwTerminate")
+        end subroutine c_glfwTerminate
     end interface
 
     interface
@@ -1038,6 +1285,33 @@ module glf90w
             end if
         end function glfwInit
 
+        subroutine glfwTerminate()
+            implicit none
+
+            call c_glfwTerminate()
+
+            glf90wErrorCallback              => null()
+            glf90wWindowPosCallback          => null()
+            glf90wWindowSizeCallback         => null()
+            glf90wWindowCloseCallback        => null()
+            glf90wWindowRefreshCallback      => null()
+            glf90wWindowFocusCallback        => null()
+            glf90wWindowIconifyCallback      => null()
+            glf90wWindowMaximizeCallback     => null()
+            glf90wFramebufferSizeCallback    => null()
+            glf90wWindowContentScaleCallback => null()
+            glf90wMouseButtonCallback        => null()
+            glf90wCursorPosCallback          => null()
+            glf90wCursorEnterCallback        => null()
+            glf90wScrollCallback             => null()
+            glf90wKeyCallback                => null()
+            glf90wCharCallback               => null()
+            glf90wCharModsCallback           => null()
+            glf90wDropCallback               => null()
+            glf90wMonitorCallback            => null()
+            glf90wJoystickCallback           => null()
+        end subroutine glfwTerminate
+
         function glfwGetVersionString() result(str)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_char
 
@@ -1077,7 +1351,7 @@ module glf90w
             procedure(GLFWerrorfun), pointer  :: prev_callback
             type(c_funptr) :: ret
 
-            ret = c_glfwSetErrorCallback(c_funloc(glf90wErrorCallbackWrapper))
+            ret = c_glfwSetErrorCallback(c_funloc(glf90wErrorWrapper))
             prev_callback => glf90wErrorCallback
             if (present(callback)) then
                 glf90wErrorCallback => callback
@@ -1237,7 +1511,7 @@ module glf90w
             procedure(GLFWmonitorfun), pointer  :: prev_callback
             type(c_funptr) :: ret
 
-            ret = c_glfwSetMonitorCallback(c_funloc(glf90wMonitorCallbackWrapper))
+            ret = c_glfwSetMonitorCallback(c_funloc(glf90wMonitorWrapper))
             prev_callback => glf90wMonitorCallback
             if (present(callback)) then
                 glf90wMonitorCallback => callback
@@ -1388,7 +1662,7 @@ module glf90w
             procedure(GLFWjoystickfun), pointer  :: prev_callback
             type(c_funptr) :: ret
 
-            ret = c_glfwSetJoystickCallback(c_funloc(glf90wJoystickCallbackWrapper))
+            ret = c_glfwSetJoystickCallback(c_funloc(glf90wJoystickWrapper))
             prev_callback => glf90wJoystickCallback
             if (present(callback)) then
                 glf90wJoystickCallback => callback
@@ -1470,38 +1744,259 @@ module glf90w
         ! ----------------------------------------------------------------------
 
 
-        subroutine glf90wErrorCallbackWrapper(error_code, desc_ptr) bind(C)
+        ! NOTE In principle, the wrappers are not associated to GLFW if the callbacks are NULL()
+        ! Therefore there shouldn't be a need to check "associated(glf90wSomeCallback)"
+        ! But remember to check here if something goes wrong (?)
+
+        subroutine glf90wErrorWrapper(error_code, desc_ptr) bind(C)
             use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_int
             use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             integer(kind=c_int), value, intent(in) :: error_code
-            type(c_ptr), value, intent(in)         :: desc_ptr
+            type(c_ptr),         value, intent(in) :: desc_ptr
 
             character(len=:), pointer :: f_desc
             f_desc => null()
 
-            if (associated(glf90wErrorCallback)) then
-                if (c_associated(desc_ptr)) call c_f_strptr(desc_ptr, f_desc)
-                call glf90wErrorCallback(int(error_code, kind=int32), f_desc)
-            end if
-        end subroutine glf90wErrorCallbackWrapper
+            if (c_associated(desc_ptr)) call c_f_strptr(desc_ptr, f_desc)
+            call glf90wErrorCallback(int(error_code, kind=int32), f_desc)
+        end subroutine glf90wErrorWrapper
 
-        subroutine glf90wMonitorCallbackWrapper(monitor, event) bind(C)
+        subroutine glf90wWindowPosWrapper(window, x, y) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
             use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
-            type(c_ptr), value, intent(in)         :: monitor
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: x, y
+
+            call glf90wWindowPosCallback(GLFWwindow_ptr(ptr = window), &
+                                         int(x, kind=int32), &
+                                         int(y, kind=int32))
+        end subroutine glf90wWindowPosWrapper
+
+        subroutine glf90wWindowSizeWrapper(window, width, height) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: width, height
+
+            call glf90wWindowSizeCallback(GLFWwindow_ptr(ptr = window), &
+                                          int(width, kind=int32), &
+                                          int(height, kind=int32))
+        end subroutine glf90wWindowSizeWrapper
+
+        subroutine glf90wWindowCloseWrapper(window) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+
+            call glf90wWindowCloseCallback(GLFWwindow_ptr(ptr = window))
+        end subroutine glf90wWindowCloseWrapper
+
+        subroutine glf90wWindowRefreshWrapper(window) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+
+            call glf90wWindowRefreshCallback(GLFWwindow_ptr(ptr = window))
+        end subroutine glf90wWindowRefreshWrapper
+
+        subroutine glf90wWindowFocusWrapper(window, focused) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: focused
+
+            call glf90wWindowFocusCallback(GLFWwindow_ptr(ptr = window), &
+                                           merge(.true., .false., focused == GLFW_TRUE))
+        end subroutine glf90wWindowFocusWrapper
+
+        subroutine glf90wWindowIconifyWrapper(window, iconified) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: iconified
+
+            call glf90wWindowIconifyCallback(GLFWwindow_ptr(ptr = window), &
+                                             merge(.true., .false., iconified == GLFW_TRUE))
+        end subroutine glf90wWindowIconifyWrapper
+
+        subroutine glf90wWindowMaximizeWrapper(window, maximized) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: maximized
+
+            call glf90wWindowMaximizeCallback(GLFWwindow_ptr(ptr = window), &
+                                              merge(.true., .false., maximized == GLFW_TRUE))
+        end subroutine glf90wWindowMaximizeWrapper
+
+        subroutine glf90wFramebufferSizeWrapper(window, width, height) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: width, height
+
+            call glf90wFramebufferSizeCallback(GLFWwindow_ptr(ptr = window), &
+                                               int(width, kind=int32), &
+                                               int(height, kind=int32))
+        end subroutine glf90wFramebufferSizeWrapper
+
+        subroutine glf90wWindowContentScaleWrapper(window, xscale, yscale) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_float
+            use, intrinsic :: iso_fortran_env, only: real32
+
+            implicit none
+            type(c_ptr),        value, intent(in) :: window
+            real(kind=c_float), value, intent(in) :: xscale, yscale
+
+            call glf90wWindowContentScaleCallback(GLFWwindow_ptr(ptr = window), &
+                                                  real(xscale, kind=real32), &
+                                                  real(yscale, kind=real32))
+        end subroutine glf90wWindowContentScaleWrapper
+
+        subroutine glf90wMouseButtonWrapper(window, button, action, mods) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: button, action, mods
+
+            call glf90wMouseButtonCallback(GLFWwindow_ptr(ptr = window), &
+                                           int(button, kind=int32), &
+                                           int(action, kind=int32), &
+                                           int(mods, kind=int32))
+        end subroutine glf90wMouseButtonWrapper
+
+        subroutine glf90wCursorPosWrapper(window, x, y)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+            use, intrinsic :: iso_fortran_env, only: real64
+
+            implicit none
+            type(c_ptr),       value, intent(in) :: window
+            real(kind=c_double), value, intent(in) :: x, y
+
+            call glf90wCursorPosCallback(GLFWwindow_ptr(ptr = window), &
+                                         real(x, kind=real64), &
+                                         real(y, kind=real64))
+        end subroutine glf90wCursorPosWrapper
+
+        subroutine glf90wCursorEnterWrapper(window, entered) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: entered
+
+            call glf90wCursorEnterCallback(GLFWwindow_ptr(ptr = window), &
+                                           merge(.true., .false., entered == GLFW_TRUE))
+        end subroutine glf90wCursorEnterWrapper 
+
+        subroutine glf90wScrollWrapper(window, xoffset, yoffset)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_double
+            use, intrinsic :: iso_fortran_env, only: real64
+
+            implicit none
+            type(c_ptr),       value, intent(in) :: window
+            real(kind=c_double), value, intent(in) :: xoffset, yoffset
+
+            call glf90wScrollCallback(GLFWwindow_ptr(ptr = window), &
+                                      real(xoffset, kind=real64), &
+                                      real(yoffset, kind=real64))
+        end subroutine glf90wScrollWrapper
+
+        subroutine glf90wKeyWrapper(window, key, scancode, action, mods) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: key, scancode, action, mods
+
+            call glf90wKeyCallback(GLFWwindow_ptr(ptr = window), &
+                                   int(key, kind=int32), &
+                                   int(scancode, kind=int32), &
+                                   int(action, kind=int32), &
+                                   int(mods, kind=int32))
+        end subroutine glf90wKeyWrapper
+
+        subroutine glf90wCharWrapper(window, codepoint) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: codepoint
+
+            call glf90wCharCallback(GLFWwindow_ptr(ptr = window), &
+                                    int(codepoint, kind=int32))
+        end subroutine glf90wCharWrapper
+
+        subroutine glf90wCharModsWrapper(window, codepoint, mods) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: codepoint, mods
+
+            call glf90wCharModsCallback(GLFWwindow_ptr(ptr = window), &
+                                        int(codepoint, kind=int32), &
+                                        int(mods, kind=int32))
+        end subroutine glf90wCharModsWrapper
+
+        subroutine glf90wDropWrapper(window, path_count, paths) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int
+
+            implicit none
+            type(c_ptr), value,                 intent(in) :: window
+            integer(kind=c_int), value,         intent(in) :: path_count
+            type(c_ptr), dimension(path_count), intent(in) :: paths
+
+            character(len=:, kind=c_char), dimension(:), target, allocatable :: path_array
+            integer :: max_length
+            integer :: i
+
+            max_length = 0
+            do i = 1,path_count
+                max_length = max(max_length, c_strlen(paths(i)))
+            end do
+
+            allocate(character(len=max_length, kind=c_char) :: path_array(path_count)) ! This is supposed to be valid, right?
+
+            do i = 1,path_count
+                path_array(i) = c_f_string(paths(i))
+            end do
+
+            call glf90wDropCallback(GLFWwindow_ptr(ptr = window), path_array)
+        end subroutine glf90wDropWrapper
+
+        subroutine glf90wMonitorWrapper(monitor, event) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+            use, intrinsic :: iso_fortran_env, only: int32
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: monitor
             integer(kind=c_int), value, intent(in) :: event
 
-            if (associated(glf90wMonitorCallback)) then
-                call glf90wMonitorCallback(GLFWmonitor_ptr(ptr = monitor), int(event, kind=int32))
-            end if
-        end subroutine glf90wMonitorCallbackWrapper
+            call glf90wMonitorCallback(GLFWmonitor_ptr(ptr = monitor), &
+                                       int(event, kind=int32))
+        end subroutine glf90wMonitorWrapper
 
 
-        subroutine glf90wJoystickCallbackWrapper(jid, event) bind(C)
+        subroutine glf90wJoystickWrapper(jid, event) bind(C)
             use, intrinsic :: iso_c_binding, only: c_int
             use, intrinsic :: iso_fortran_env, only: int32
 
@@ -1509,29 +2004,27 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             integer(kind=c_int), value, intent(in) :: event
 
-            if (associated(glf90wJoystickCallback)) then
-                call glf90wJoystickCallback(int(jid, kind=int32), int(event, kind=int32))
-            end if
-        end subroutine glf90wJoystickCallbackWrapper
+            call glf90wJoystickCallback(int(jid, kind=int32), int(event, kind=int32))
+        end subroutine glf90wJoystickWrapper
 
 
         ! ----------------------------------------------------------------------
-        ! GLF90W Fake fortran pointer semantic for GLFW opaque pointer types
+        ! GLF90W Pointer semantic for GLFW opaque pointer types
         ! ----------------------------------------------------------------------
 
 
-        pure function associated_opaque(ptr, target) result(is_associated)
+        pure function associated_opaque(pointer, target) result(is_associated)
             use, intrinsic :: iso_c_binding, only: c_associated
 
             implicit none
-            class(C_opaque_ptr), intent(in)           :: ptr
+            class(C_opaque_ptr), intent(in)           :: pointer
             class(C_opaque_ptr), optional, intent(in) :: target
             logical                                   :: is_associated
 
             if (present(target)) then
-                is_associated = c_associated(ptr%ptr, target%ptr)
+                is_associated = c_associated(pointer%ptr, target%ptr)
             else
-                is_associated = c_associated(ptr%ptr)
+                is_associated = c_associated(pointer%ptr)
             end if
         end function associated_opaque
 
