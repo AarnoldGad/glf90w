@@ -13,8 +13,8 @@ module glf90w
     use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr, c_int, c_null_ptr
 
     implicit none
-    save
     private
+    save
 
 
     ! --------------------------------------------------------------------------
@@ -22,410 +22,361 @@ module glf90w
     ! --------------------------------------------------------------------------
 
 
-    integer(c_int), bind(C, name="glf90w_version_major"),                public :: GLFW_VERSION_MAJOR
-    integer(c_int), bind(C, name="glf90w_version_minor"),                public :: GLFW_VERSION_MINOR
-    integer(c_int), bind(C, name="glf90w_version_revision"),             public :: GLFW_VERSION_REVISION
-    integer(c_int), bind(C, name="glf90w_true"),                         public :: GLFW_TRUE
-    integer(c_int), bind(C, name="glf90w_false"),                        public :: GLFW_FALSE
+    integer(kind=c_int), bind(C, name="glf90w_version_major"),                public :: GLFW_VERSION_MAJOR
+    integer(kind=c_int), bind(C, name="glf90w_version_minor"),                public :: GLFW_VERSION_MINOR
+    integer(kind=c_int), bind(C, name="glf90w_version_revision"),             public :: GLFW_VERSION_REVISION
+    integer(kind=c_int), bind(C, name="glf90w_true"),                         public :: GLFW_TRUE
+    integer(kind=c_int), bind(C, name="glf90w_false"),                        public :: GLFW_FALSE
 
-    integer(c_int), bind(C, name="glf90w_release"),                      public :: GLFW_RELEASE
-    integer(c_int), bind(C, name="glf90w_press"),                        public :: GLFW_PRESS
-    integer(c_int), bind(C, name="glf90w_repeat"),                       public :: GLFW_REPEAT
-    integer(c_int), bind(C, name="glf90w_hat_centered"),                 public :: GLFW_HAT_CENTERED
-    integer(c_int), bind(C, name="glf90w_hat_up"),                       public :: GLFW_HAT_UP
-    integer(c_int), bind(C, name="glf90w_hat_right"),                    public :: GLFW_HAT_RIGHT
-    integer(c_int), bind(C, name="glf90w_hat_down"),                     public :: GLFW_HAT_DOWN
-    integer(c_int), bind(C, name="glf90w_hat_left"),                     public :: GLFW_HAT_LEFT
-    integer(c_int), bind(C, name="glf90w_hat_right_up"),                 public :: GLFW_HAT_RIGHT_UP
-    integer(c_int), bind(C, name="glf90w_hat_right_down"),               public :: GLFW_HAT_RIGHT_DOWN
-    integer(c_int), bind(C, name="glf90w_hat_left_up"),                  public :: GLFW_HAT_LEFT_UP
-    integer(c_int), bind(C, name="glf90w_hat_left_down"),                public :: GLFW_HAT_LEFT_DOWN
+    integer(kind=c_int), bind(C, name="glf90w_release"),                      public :: GLFW_RELEASE
+    integer(kind=c_int), bind(C, name="glf90w_press"),                        public :: GLFW_PRESS
+    integer(kind=c_int), bind(C, name="glf90w_repeat"),                       public :: GLFW_REPEAT
+    integer(kind=c_int), bind(C, name="glf90w_hat_centered"),                 public :: GLFW_HAT_CENTERED
+    integer(kind=c_int), bind(C, name="glf90w_hat_up"),                       public :: GLFW_HAT_UP
+    integer(kind=c_int), bind(C, name="glf90w_hat_right"),                    public :: GLFW_HAT_RIGHT
+    integer(kind=c_int), bind(C, name="glf90w_hat_down"),                     public :: GLFW_HAT_DOWN
+    integer(kind=c_int), bind(C, name="glf90w_hat_left"),                     public :: GLFW_HAT_LEFT
+    integer(kind=c_int), bind(C, name="glf90w_hat_right_up"),                 public :: GLFW_HAT_RIGHT_UP
+    integer(kind=c_int), bind(C, name="glf90w_hat_right_down"),               public :: GLFW_HAT_RIGHT_DOWN
+    integer(kind=c_int), bind(C, name="glf90w_hat_left_up"),                  public :: GLFW_HAT_LEFT_UP
+    integer(kind=c_int), bind(C, name="glf90w_hat_left_down"),                public :: GLFW_HAT_LEFT_DOWN
 
-    integer(c_int), bind(C, name="glf90w_key_unknown"),                  public :: GLFW_KEY_UNKNOWN
+    integer(kind=c_int), bind(C, name="glf90w_key_unknown"),                  public :: GLFW_KEY_UNKNOWN
 
-    integer(c_int), bind(C, name="glf90w_key_space"),                    public :: GLFW_KEY_SPACE
-    integer(c_int), bind(C, name="glf90w_key_apostrophe"),               public :: GLFW_KEY_APOSTROPHE
-    integer(c_int), bind(C, name="glf90w_key_comma"),                    public :: GLFW_KEY_COMMA
-    integer(c_int), bind(C, name="glf90w_key_minus"),                    public :: GLFW_KEY_MINUS
-    integer(c_int), bind(C, name="glf90w_key_period"),                   public :: GLFW_KEY_PERIOD
-    integer(c_int), bind(C, name="glf90w_key_slash"),                    public :: GLFW_KEY_SLASH
-    integer(c_int), bind(C, name="glf90w_key_0"),                        public :: GLFW_KEY_0
-    integer(c_int), bind(C, name="glf90w_key_1"),                        public :: GLFW_KEY_1
-    integer(c_int), bind(C, name="glf90w_key_2"),                        public :: GLFW_KEY_2
-    integer(c_int), bind(C, name="glf90w_key_3"),                        public :: GLFW_KEY_3
-    integer(c_int), bind(C, name="glf90w_key_4"),                        public :: GLFW_KEY_4
-    integer(c_int), bind(C, name="glf90w_key_5"),                        public :: GLFW_KEY_5
-    integer(c_int), bind(C, name="glf90w_key_6"),                        public :: GLFW_KEY_6
-    integer(c_int), bind(C, name="glf90w_key_7"),                        public :: GLFW_KEY_7
-    integer(c_int), bind(C, name="glf90w_key_8"),                        public :: GLFW_KEY_8
-    integer(c_int), bind(C, name="glf90w_key_9"),                        public :: GLFW_KEY_9
-    integer(c_int), bind(C, name="glf90w_key_semicolon"),                public :: GLFW_KEY_SEMICOLON
-    integer(c_int), bind(C, name="glf90w_key_equal"),                    public :: GLFW_KEY_EQUAL
-    integer(c_int), bind(C, name="glf90w_key_a"),                        public :: GLFW_KEY_A
-    integer(c_int), bind(C, name="glf90w_key_b"),                        public :: GLFW_KEY_B
-    integer(c_int), bind(C, name="glf90w_key_c"),                        public :: GLFW_KEY_C
-    integer(c_int), bind(C, name="glf90w_key_d"),                        public :: GLFW_KEY_D
-    integer(c_int), bind(C, name="glf90w_key_e"),                        public :: GLFW_KEY_E
-    integer(c_int), bind(C, name="glf90w_key_f"),                        public :: GLFW_KEY_F
-    integer(c_int), bind(C, name="glf90w_key_g"),                        public :: GLFW_KEY_G
-    integer(c_int), bind(C, name="glf90w_key_h"),                        public :: GLFW_KEY_H
-    integer(c_int), bind(C, name="glf90w_key_i"),                        public :: GLFW_KEY_I
-    integer(c_int), bind(C, name="glf90w_key_j"),                        public :: GLFW_KEY_J
-    integer(c_int), bind(C, name="glf90w_key_k"),                        public :: GLFW_KEY_K
-    integer(c_int), bind(C, name="glf90w_key_l"),                        public :: GLFW_KEY_L
-    integer(c_int), bind(C, name="glf90w_key_m"),                        public :: GLFW_KEY_M
-    integer(c_int), bind(C, name="glf90w_key_n"),                        public :: GLFW_KEY_N
-    integer(c_int), bind(C, name="glf90w_key_o"),                        public :: GLFW_KEY_O
-    integer(c_int), bind(C, name="glf90w_key_p"),                        public :: GLFW_KEY_P
-    integer(c_int), bind(C, name="glf90w_key_q"),                        public :: GLFW_KEY_Q
-    integer(c_int), bind(C, name="glf90w_key_r"),                        public :: GLFW_KEY_R
-    integer(c_int), bind(C, name="glf90w_key_s"),                        public :: GLFW_KEY_S
-    integer(c_int), bind(C, name="glf90w_key_t"),                        public :: GLFW_KEY_T
-    integer(c_int), bind(C, name="glf90w_key_u"),                        public :: GLFW_KEY_U
-    integer(c_int), bind(C, name="glf90w_key_v"),                        public :: GLFW_KEY_V
-    integer(c_int), bind(C, name="glf90w_key_w"),                        public :: GLFW_KEY_W
-    integer(c_int), bind(C, name="glf90w_key_x"),                        public :: GLFW_KEY_X
-    integer(c_int), bind(C, name="glf90w_key_y"),                        public :: GLFW_KEY_Y
-    integer(c_int), bind(C, name="glf90w_key_z"),                        public :: GLFW_KEY_Z
-    integer(c_int), bind(C, name="glf90w_key_left_bracket"),             public :: GLFW_KEY_LEFT_BRACKET
-    integer(c_int), bind(C, name="glf90w_key_backslash"),                public :: GLFW_KEY_BACKSLASH
-    integer(c_int), bind(C, name="glf90w_key_right_bracket"),            public :: GLFW_KEY_RIGHT_BRACKET
-    integer(c_int), bind(C, name="glf90w_key_grave_accent"),             public :: GLFW_KEY_GRAVE_ACCENT
-    integer(c_int), bind(C, name="glf90w_key_world_1"),                  public :: GLFW_KEY_WORLD_1
-    integer(c_int), bind(C, name="glf90w_key_world_2"),                  public :: GLFW_KEY_WORLD_2
+    integer(kind=c_int), bind(C, name="glf90w_key_space"),                    public :: GLFW_KEY_SPACE
+    integer(kind=c_int), bind(C, name="glf90w_key_apostrophe"),               public :: GLFW_KEY_APOSTROPHE
+    integer(kind=c_int), bind(C, name="glf90w_key_comma"),                    public :: GLFW_KEY_COMMA
+    integer(kind=c_int), bind(C, name="glf90w_key_minus"),                    public :: GLFW_KEY_MINUS
+    integer(kind=c_int), bind(C, name="glf90w_key_period"),                   public :: GLFW_KEY_PERIOD
+    integer(kind=c_int), bind(C, name="glf90w_key_slash"),                    public :: GLFW_KEY_SLASH
+    integer(kind=c_int), bind(C, name="glf90w_key_0"),                        public :: GLFW_KEY_0
+    integer(kind=c_int), bind(C, name="glf90w_key_1"),                        public :: GLFW_KEY_1
+    integer(kind=c_int), bind(C, name="glf90w_key_2"),                        public :: GLFW_KEY_2
+    integer(kind=c_int), bind(C, name="glf90w_key_3"),                        public :: GLFW_KEY_3
+    integer(kind=c_int), bind(C, name="glf90w_key_4"),                        public :: GLFW_KEY_4
+    integer(kind=c_int), bind(C, name="glf90w_key_5"),                        public :: GLFW_KEY_5
+    integer(kind=c_int), bind(C, name="glf90w_key_6"),                        public :: GLFW_KEY_6
+    integer(kind=c_int), bind(C, name="glf90w_key_7"),                        public :: GLFW_KEY_7
+    integer(kind=c_int), bind(C, name="glf90w_key_8"),                        public :: GLFW_KEY_8
+    integer(kind=c_int), bind(C, name="glf90w_key_9"),                        public :: GLFW_KEY_9
+    integer(kind=c_int), bind(C, name="glf90w_key_semicolon"),                public :: GLFW_KEY_SEMICOLON
+    integer(kind=c_int), bind(C, name="glf90w_key_equal"),                    public :: GLFW_KEY_EQUAL
+    integer(kind=c_int), bind(C, name="glf90w_key_a"),                        public :: GLFW_KEY_A
+    integer(kind=c_int), bind(C, name="glf90w_key_b"),                        public :: GLFW_KEY_B
+    integer(kind=c_int), bind(C, name="glf90w_key_c"),                        public :: GLFW_KEY_C
+    integer(kind=c_int), bind(C, name="glf90w_key_d"),                        public :: GLFW_KEY_D
+    integer(kind=c_int), bind(C, name="glf90w_key_e"),                        public :: GLFW_KEY_E
+    integer(kind=c_int), bind(C, name="glf90w_key_f"),                        public :: GLFW_KEY_F
+    integer(kind=c_int), bind(C, name="glf90w_key_g"),                        public :: GLFW_KEY_G
+    integer(kind=c_int), bind(C, name="glf90w_key_h"),                        public :: GLFW_KEY_H
+    integer(kind=c_int), bind(C, name="glf90w_key_i"),                        public :: GLFW_KEY_I
+    integer(kind=c_int), bind(C, name="glf90w_key_j"),                        public :: GLFW_KEY_J
+    integer(kind=c_int), bind(C, name="glf90w_key_k"),                        public :: GLFW_KEY_K
+    integer(kind=c_int), bind(C, name="glf90w_key_l"),                        public :: GLFW_KEY_L
+    integer(kind=c_int), bind(C, name="glf90w_key_m"),                        public :: GLFW_KEY_M
+    integer(kind=c_int), bind(C, name="glf90w_key_n"),                        public :: GLFW_KEY_N
+    integer(kind=c_int), bind(C, name="glf90w_key_o"),                        public :: GLFW_KEY_O
+    integer(kind=c_int), bind(C, name="glf90w_key_p"),                        public :: GLFW_KEY_P
+    integer(kind=c_int), bind(C, name="glf90w_key_q"),                        public :: GLFW_KEY_Q
+    integer(kind=c_int), bind(C, name="glf90w_key_r"),                        public :: GLFW_KEY_R
+    integer(kind=c_int), bind(C, name="glf90w_key_s"),                        public :: GLFW_KEY_S
+    integer(kind=c_int), bind(C, name="glf90w_key_t"),                        public :: GLFW_KEY_T
+    integer(kind=c_int), bind(C, name="glf90w_key_u"),                        public :: GLFW_KEY_U
+    integer(kind=c_int), bind(C, name="glf90w_key_v"),                        public :: GLFW_KEY_V
+    integer(kind=c_int), bind(C, name="glf90w_key_w"),                        public :: GLFW_KEY_W
+    integer(kind=c_int), bind(C, name="glf90w_key_x"),                        public :: GLFW_KEY_X
+    integer(kind=c_int), bind(C, name="glf90w_key_y"),                        public :: GLFW_KEY_Y
+    integer(kind=c_int), bind(C, name="glf90w_key_z"),                        public :: GLFW_KEY_Z
+    integer(kind=c_int), bind(C, name="glf90w_key_left_bracket"),             public :: GLFW_KEY_LEFT_BRACKET
+    integer(kind=c_int), bind(C, name="glf90w_key_backslash"),                public :: GLFW_KEY_BACKSLASH
+    integer(kind=c_int), bind(C, name="glf90w_key_right_bracket"),            public :: GLFW_KEY_RIGHT_BRACKET
+    integer(kind=c_int), bind(C, name="glf90w_key_grave_accent"),             public :: GLFW_KEY_GRAVE_ACCENT
+    integer(kind=c_int), bind(C, name="glf90w_key_world_1"),                  public :: GLFW_KEY_WORLD_1
+    integer(kind=c_int), bind(C, name="glf90w_key_world_2"),                  public :: GLFW_KEY_WORLD_2
 
-    integer(c_int), bind(C, name="glf90w_key_escape"),                   public :: GLFW_KEY_ESCAPE
-    integer(c_int), bind(C, name="glf90w_key_enter"),                    public :: GLFW_KEY_ENTER
-    integer(c_int), bind(C, name="glf90w_key_tab"),                      public :: GLFW_KEY_TAB
-    integer(c_int), bind(C, name="glf90w_key_backspace"),                public :: GLFW_KEY_BACKSPACE
-    integer(c_int), bind(C, name="glf90w_key_insert"),                   public :: GLFW_KEY_INSERT
-    integer(c_int), bind(C, name="glf90w_key_delete"),                   public :: GLFW_KEY_DELETE
-    integer(c_int), bind(C, name="glf90w_key_right"),                    public :: GLFW_KEY_RIGHT
-    integer(c_int), bind(C, name="glf90w_key_left"),                     public :: GLFW_KEY_LEFT
-    integer(c_int), bind(C, name="glf90w_key_down"),                     public :: GLFW_KEY_DOWN
-    integer(c_int), bind(C, name="glf90w_key_up"),                       public :: GLFW_KEY_UP
-    integer(c_int), bind(C, name="glf90w_key_page_up"),                  public :: GLFW_KEY_PAGE_UP
-    integer(c_int), bind(C, name="glf90w_key_page_down"),                public :: GLFW_KEY_PAGE_DOWN
-    integer(c_int), bind(C, name="glf90w_key_home"),                     public :: GLFW_KEY_HOME
-    integer(c_int), bind(C, name="glf90w_key_end"),                      public :: GLFW_KEY_END
-    integer(c_int), bind(C, name="glf90w_key_caps_lock"),                public :: GLFW_KEY_CAPS_LOCK
-    integer(c_int), bind(C, name="glf90w_key_scroll_lock"),              public :: GLFW_KEY_SCROLL_LOCK
-    integer(c_int), bind(C, name="glf90w_key_num_lock"),                 public :: GLFW_KEY_NUM_LOCK
-    integer(c_int), bind(C, name="glf90w_key_print_screen"),             public :: GLFW_KEY_PRINT_SCREEN
-    integer(c_int), bind(C, name="glf90w_key_pause"),                    public :: GLFW_KEY_PAUSE
-    integer(c_int), bind(C, name="glf90w_key_f1"),                       public :: GLFW_KEY_F1
-    integer(c_int), bind(C, name="glf90w_key_f2"),                       public :: GLFW_KEY_F2
-    integer(c_int), bind(C, name="glf90w_key_f3"),                       public :: GLFW_KEY_F3
-    integer(c_int), bind(C, name="glf90w_key_f4"),                       public :: GLFW_KEY_F4
-    integer(c_int), bind(C, name="glf90w_key_f5"),                       public :: GLFW_KEY_F5
-    integer(c_int), bind(C, name="glf90w_key_f6"),                       public :: GLFW_KEY_F6
-    integer(c_int), bind(C, name="glf90w_key_f7"),                       public :: GLFW_KEY_F7
-    integer(c_int), bind(C, name="glf90w_key_f8"),                       public :: GLFW_KEY_F8
-    integer(c_int), bind(C, name="glf90w_key_f9"),                       public :: GLFW_KEY_F9
-    integer(c_int), bind(C, name="glf90w_key_f10"),                      public :: GLFW_KEY_F10
-    integer(c_int), bind(C, name="glf90w_key_f11"),                      public :: GLFW_KEY_F11
-    integer(c_int), bind(C, name="glf90w_key_f12"),                      public :: GLFW_KEY_F12
-    integer(c_int), bind(C, name="glf90w_key_f13"),                      public :: GLFW_KEY_F13
-    integer(c_int), bind(C, name="glf90w_key_f14"),                      public :: GLFW_KEY_F14
-    integer(c_int), bind(C, name="glf90w_key_f15"),                      public :: GLFW_KEY_F15
-    integer(c_int), bind(C, name="glf90w_key_f16"),                      public :: GLFW_KEY_F16
-    integer(c_int), bind(C, name="glf90w_key_f17"),                      public :: GLFW_KEY_F17
-    integer(c_int), bind(C, name="glf90w_key_f18"),                      public :: GLFW_KEY_F18
-    integer(c_int), bind(C, name="glf90w_key_f19"),                      public :: GLFW_KEY_F19
-    integer(c_int), bind(C, name="glf90w_key_f20"),                      public :: GLFW_KEY_F20
-    integer(c_int), bind(C, name="glf90w_key_f21"),                      public :: GLFW_KEY_F21
-    integer(c_int), bind(C, name="glf90w_key_f22"),                      public :: GLFW_KEY_F22
-    integer(c_int), bind(C, name="glf90w_key_f23"),                      public :: GLFW_KEY_F23
-    integer(c_int), bind(C, name="glf90w_key_f24"),                      public :: GLFW_KEY_F24
-    integer(c_int), bind(C, name="glf90w_key_f25"),                      public :: GLFW_KEY_F25
-    integer(c_int), bind(C, name="glf90w_key_kp_0"),                     public :: GLFW_KEY_KP_0
-    integer(c_int), bind(C, name="glf90w_key_kp_1"),                     public :: GLFW_KEY_KP_1
-    integer(c_int), bind(C, name="glf90w_key_kp_2"),                     public :: GLFW_KEY_KP_2
-    integer(c_int), bind(C, name="glf90w_key_kp_3"),                     public :: GLFW_KEY_KP_3
-    integer(c_int), bind(C, name="glf90w_key_kp_4"),                     public :: GLFW_KEY_KP_4
-    integer(c_int), bind(C, name="glf90w_key_kp_5"),                     public :: GLFW_KEY_KP_5
-    integer(c_int), bind(C, name="glf90w_key_kp_6"),                     public :: GLFW_KEY_KP_6
-    integer(c_int), bind(C, name="glf90w_key_kp_7"),                     public :: GLFW_KEY_KP_7
-    integer(c_int), bind(C, name="glf90w_key_kp_8"),                     public :: GLFW_KEY_KP_8
-    integer(c_int), bind(C, name="glf90w_key_kp_9"),                     public :: GLFW_KEY_KP_9
-    integer(c_int), bind(C, name="glf90w_key_kp_decimal"),               public :: GLFW_KEY_KP_DECIMAL
-    integer(c_int), bind(C, name="glf90w_key_kp_divide"),                public :: GLFW_KEY_KP_DIVIDE
-    integer(c_int), bind(C, name="glf90w_key_kp_multiply"),              public :: GLFW_KEY_KP_MULTIPLY
-    integer(c_int), bind(C, name="glf90w_key_kp_subtract"),              public :: GLFW_KEY_KP_SUBTRACT
-    integer(c_int), bind(C, name="glf90w_key_kp_add"),                   public :: GLFW_KEY_KP_ADD
-    integer(c_int), bind(C, name="glf90w_key_kp_enter"),                 public :: GLFW_KEY_KP_ENTER
-    integer(c_int), bind(C, name="glf90w_key_kp_equal"),                 public :: GLFW_KEY_KP_EQUAL
-    integer(c_int), bind(C, name="glf90w_key_left_shift"),               public :: GLFW_KEY_LEFT_SHIFT
-    integer(c_int), bind(C, name="glf90w_key_left_control"),             public :: GLFW_KEY_LEFT_CONTROL
-    integer(c_int), bind(C, name="glf90w_key_left_alt"),                 public :: GLFW_KEY_LEFT_ALT
-    integer(c_int), bind(C, name="glf90w_key_left_super"),               public :: GLFW_KEY_LEFT_SUPER
-    integer(c_int), bind(C, name="glf90w_key_right_shift"),              public :: GLFW_KEY_RIGHT_SHIFT
-    integer(c_int), bind(C, name="glf90w_key_right_control"),            public :: GLFW_KEY_RIGHT_CONTROL
-    integer(c_int), bind(C, name="glf90w_key_right_alt"),                public :: GLFW_KEY_RIGHT_ALT
-    integer(c_int), bind(C, name="glf90w_key_right_super"),              public :: GLFW_KEY_RIGHT_SUPER
-    integer(c_int), bind(C, name="glf90w_key_menu"),                     public :: GLFW_KEY_MENU
+    integer(kind=c_int), bind(C, name="glf90w_key_escape"),                   public :: GLFW_KEY_ESCAPE
+    integer(kind=c_int), bind(C, name="glf90w_key_enter"),                    public :: GLFW_KEY_ENTER
+    integer(kind=c_int), bind(C, name="glf90w_key_tab"),                      public :: GLFW_KEY_TAB
+    integer(kind=c_int), bind(C, name="glf90w_key_backspace"),                public :: GLFW_KEY_BACKSPACE
+    integer(kind=c_int), bind(C, name="glf90w_key_insert"),                   public :: GLFW_KEY_INSERT
+    integer(kind=c_int), bind(C, name="glf90w_key_delete"),                   public :: GLFW_KEY_DELETE
+    integer(kind=c_int), bind(C, name="glf90w_key_right"),                    public :: GLFW_KEY_RIGHT
+    integer(kind=c_int), bind(C, name="glf90w_key_left"),                     public :: GLFW_KEY_LEFT
+    integer(kind=c_int), bind(C, name="glf90w_key_down"),                     public :: GLFW_KEY_DOWN
+    integer(kind=c_int), bind(C, name="glf90w_key_up"),                       public :: GLFW_KEY_UP
+    integer(kind=c_int), bind(C, name="glf90w_key_page_up"),                  public :: GLFW_KEY_PAGE_UP
+    integer(kind=c_int), bind(C, name="glf90w_key_page_down"),                public :: GLFW_KEY_PAGE_DOWN
+    integer(kind=c_int), bind(C, name="glf90w_key_home"),                     public :: GLFW_KEY_HOME
+    integer(kind=c_int), bind(C, name="glf90w_key_end"),                      public :: GLFW_KEY_END
+    integer(kind=c_int), bind(C, name="glf90w_key_caps_lock"),                public :: GLFW_KEY_CAPS_LOCK
+    integer(kind=c_int), bind(C, name="glf90w_key_scroll_lock"),              public :: GLFW_KEY_SCROLL_LOCK
+    integer(kind=c_int), bind(C, name="glf90w_key_num_lock"),                 public :: GLFW_KEY_NUM_LOCK
+    integer(kind=c_int), bind(C, name="glf90w_key_print_screen"),             public :: GLFW_KEY_PRINT_SCREEN
+    integer(kind=c_int), bind(C, name="glf90w_key_pause"),                    public :: GLFW_KEY_PAUSE
+    integer(kind=c_int), bind(C, name="glf90w_key_f1"),                       public :: GLFW_KEY_F1
+    integer(kind=c_int), bind(C, name="glf90w_key_f2"),                       public :: GLFW_KEY_F2
+    integer(kind=c_int), bind(C, name="glf90w_key_f3"),                       public :: GLFW_KEY_F3
+    integer(kind=c_int), bind(C, name="glf90w_key_f4"),                       public :: GLFW_KEY_F4
+    integer(kind=c_int), bind(C, name="glf90w_key_f5"),                       public :: GLFW_KEY_F5
+    integer(kind=c_int), bind(C, name="glf90w_key_f6"),                       public :: GLFW_KEY_F6
+    integer(kind=c_int), bind(C, name="glf90w_key_f7"),                       public :: GLFW_KEY_F7
+    integer(kind=c_int), bind(C, name="glf90w_key_f8"),                       public :: GLFW_KEY_F8
+    integer(kind=c_int), bind(C, name="glf90w_key_f9"),                       public :: GLFW_KEY_F9
+    integer(kind=c_int), bind(C, name="glf90w_key_f10"),                      public :: GLFW_KEY_F10
+    integer(kind=c_int), bind(C, name="glf90w_key_f11"),                      public :: GLFW_KEY_F11
+    integer(kind=c_int), bind(C, name="glf90w_key_f12"),                      public :: GLFW_KEY_F12
+    integer(kind=c_int), bind(C, name="glf90w_key_f13"),                      public :: GLFW_KEY_F13
+    integer(kind=c_int), bind(C, name="glf90w_key_f14"),                      public :: GLFW_KEY_F14
+    integer(kind=c_int), bind(C, name="glf90w_key_f15"),                      public :: GLFW_KEY_F15
+    integer(kind=c_int), bind(C, name="glf90w_key_f16"),                      public :: GLFW_KEY_F16
+    integer(kind=c_int), bind(C, name="glf90w_key_f17"),                      public :: GLFW_KEY_F17
+    integer(kind=c_int), bind(C, name="glf90w_key_f18"),                      public :: GLFW_KEY_F18
+    integer(kind=c_int), bind(C, name="glf90w_key_f19"),                      public :: GLFW_KEY_F19
+    integer(kind=c_int), bind(C, name="glf90w_key_f20"),                      public :: GLFW_KEY_F20
+    integer(kind=c_int), bind(C, name="glf90w_key_f21"),                      public :: GLFW_KEY_F21
+    integer(kind=c_int), bind(C, name="glf90w_key_f22"),                      public :: GLFW_KEY_F22
+    integer(kind=c_int), bind(C, name="glf90w_key_f23"),                      public :: GLFW_KEY_F23
+    integer(kind=c_int), bind(C, name="glf90w_key_f24"),                      public :: GLFW_KEY_F24
+    integer(kind=c_int), bind(C, name="glf90w_key_f25"),                      public :: GLFW_KEY_F25
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_0"),                     public :: GLFW_KEY_KP_0
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_1"),                     public :: GLFW_KEY_KP_1
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_2"),                     public :: GLFW_KEY_KP_2
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_3"),                     public :: GLFW_KEY_KP_3
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_4"),                     public :: GLFW_KEY_KP_4
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_5"),                     public :: GLFW_KEY_KP_5
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_6"),                     public :: GLFW_KEY_KP_6
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_7"),                     public :: GLFW_KEY_KP_7
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_8"),                     public :: GLFW_KEY_KP_8
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_9"),                     public :: GLFW_KEY_KP_9
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_decimal"),               public :: GLFW_KEY_KP_DECIMAL
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_divide"),                public :: GLFW_KEY_KP_DIVIDE
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_multiply"),              public :: GLFW_KEY_KP_MULTIPLY
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_subtract"),              public :: GLFW_KEY_KP_SUBTRACT
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_add"),                   public :: GLFW_KEY_KP_ADD
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_enter"),                 public :: GLFW_KEY_KP_ENTER
+    integer(kind=c_int), bind(C, name="glf90w_key_kp_equal"),                 public :: GLFW_KEY_KP_EQUAL
+    integer(kind=c_int), bind(C, name="glf90w_key_left_shift"),               public :: GLFW_KEY_LEFT_SHIFT
+    integer(kind=c_int), bind(C, name="glf90w_key_left_control"),             public :: GLFW_KEY_LEFT_CONTROL
+    integer(kind=c_int), bind(C, name="glf90w_key_left_alt"),                 public :: GLFW_KEY_LEFT_ALT
+    integer(kind=c_int), bind(C, name="glf90w_key_left_super"),               public :: GLFW_KEY_LEFT_SUPER
+    integer(kind=c_int), bind(C, name="glf90w_key_right_shift"),              public :: GLFW_KEY_RIGHT_SHIFT
+    integer(kind=c_int), bind(C, name="glf90w_key_right_control"),            public :: GLFW_KEY_RIGHT_CONTROL
+    integer(kind=c_int), bind(C, name="glf90w_key_right_alt"),                public :: GLFW_KEY_RIGHT_ALT
+    integer(kind=c_int), bind(C, name="glf90w_key_right_super"),              public :: GLFW_KEY_RIGHT_SUPER
+    integer(kind=c_int), bind(C, name="glf90w_key_menu"),                     public :: GLFW_KEY_MENU
 
-    integer(c_int), bind(C, name="glf90w_key_last"),                     public :: GLFW_KEY_LAST
+    integer(kind=c_int), bind(C, name="glf90w_key_last"),                     public :: GLFW_KEY_LAST
 
-    integer(c_int), bind(C, name="glf90w_mod_shift"),                    public :: GLFW_MOD_SHIFT
-    integer(c_int), bind(C, name="glf90w_mod_control"),                  public :: GLFW_MOD_CONTROL
-    integer(c_int), bind(C, name="glf90w_mod_alt"),                      public :: GLFW_MOD_ALT
-    integer(c_int), bind(C, name="glf90w_mod_super"),                    public :: GLFW_MOD_SUPER
-    integer(c_int), bind(C, name="glf90w_mod_caps_lock"),                public :: GLFW_MOD_CAPS_LOCK
-    integer(c_int), bind(C, name="glf90w_mod_num_lock"),                 public :: GLFW_MOD_NUM_LOCK
+    integer(kind=c_int), bind(C, name="glf90w_mod_shift"),                    public :: GLFW_MOD_SHIFT
+    integer(kind=c_int), bind(C, name="glf90w_mod_control"),                  public :: GLFW_MOD_CONTROL
+    integer(kind=c_int), bind(C, name="glf90w_mod_alt"),                      public :: GLFW_MOD_ALT
+    integer(kind=c_int), bind(C, name="glf90w_mod_super"),                    public :: GLFW_MOD_SUPER
+    integer(kind=c_int), bind(C, name="glf90w_mod_caps_lock"),                public :: GLFW_MOD_CAPS_LOCK
+    integer(kind=c_int), bind(C, name="glf90w_mod_num_lock"),                 public :: GLFW_MOD_NUM_LOCK
 
-    integer(c_int), bind(C, name="glf90w_mouse_button_1"),               public :: GLFW_MOUSE_BUTTON_1
-    integer(c_int), bind(C, name="glf90w_mouse_button_2"),               public :: GLFW_MOUSE_BUTTON_2
-    integer(c_int), bind(C, name="glf90w_mouse_button_3"),               public :: GLFW_MOUSE_BUTTON_3
-    integer(c_int), bind(C, name="glf90w_mouse_button_4"),               public :: GLFW_MOUSE_BUTTON_4
-    integer(c_int), bind(C, name="glf90w_mouse_button_5"),               public :: GLFW_MOUSE_BUTTON_5
-    integer(c_int), bind(C, name="glf90w_mouse_button_6"),               public :: GLFW_MOUSE_BUTTON_6
-    integer(c_int), bind(C, name="glf90w_mouse_button_7"),               public :: GLFW_MOUSE_BUTTON_7
-    integer(c_int), bind(C, name="glf90w_mouse_button_8"),               public :: GLFW_MOUSE_BUTTON_8
-    integer(c_int), bind(C, name="glf90w_mouse_button_last"),            public :: GLFW_MOUSE_BUTTON_LAST
-    integer(c_int), bind(C, name="glf90w_mouse_button_left"),            public :: GLFW_MOUSE_BUTTON_LEFT
-    integer(c_int), bind(C, name="glf90w_mouse_button_right"),           public :: GLFW_MOUSE_BUTTON_RIGHT
-    integer(c_int), bind(C, name="glf90w_mouse_button_middle"),          public :: GLFW_MOUSE_BUTTON_MIDDLE
-    integer(c_int), bind(C, name="glf90w_joystick_1"),                   public :: GLFW_JOYSTICK_1
-    integer(c_int), bind(C, name="glf90w_joystick_2"),                   public :: GLFW_JOYSTICK_2
-    integer(c_int), bind(C, name="glf90w_joystick_3"),                   public :: GLFW_JOYSTICK_3
-    integer(c_int), bind(C, name="glf90w_joystick_4"),                   public :: GLFW_JOYSTICK_4
-    integer(c_int), bind(C, name="glf90w_joystick_5"),                   public :: GLFW_JOYSTICK_5
-    integer(c_int), bind(C, name="glf90w_joystick_6"),                   public :: GLFW_JOYSTICK_6
-    integer(c_int), bind(C, name="glf90w_joystick_7"),                   public :: GLFW_JOYSTICK_7
-    integer(c_int), bind(C, name="glf90w_joystick_8"),                   public :: GLFW_JOYSTICK_8
-    integer(c_int), bind(C, name="glf90w_joystick_9"),                   public :: GLFW_JOYSTICK_9
-    integer(c_int), bind(C, name="glf90w_joystick_10"),                  public :: GLFW_JOYSTICK_10
-    integer(c_int), bind(C, name="glf90w_joystick_11"),                  public :: GLFW_JOYSTICK_11
-    integer(c_int), bind(C, name="glf90w_joystick_12"),                  public :: GLFW_JOYSTICK_12
-    integer(c_int), bind(C, name="glf90w_joystick_13"),                  public :: GLFW_JOYSTICK_13
-    integer(c_int), bind(C, name="glf90w_joystick_14"),                  public :: GLFW_JOYSTICK_14
-    integer(c_int), bind(C, name="glf90w_joystick_15"),                  public :: GLFW_JOYSTICK_15
-    integer(c_int), bind(C, name="glf90w_joystick_16"),                  public :: GLFW_JOYSTICK_16
-    integer(c_int), bind(C, name="glf90w_joystick_last"),                public :: GLFW_JOYSTICK_LAST
-    integer(c_int), bind(C, name="glf90w_gamepad_button_a"),             public :: GLFW_GAMEPAD_BUTTON_A
-    integer(c_int), bind(C, name="glf90w_gamepad_button_b"),             public :: GLFW_GAMEPAD_BUTTON_B
-    integer(c_int), bind(C, name="glf90w_gamepad_button_x"),             public :: GLFW_GAMEPAD_BUTTON_X
-    integer(c_int), bind(C, name="glf90w_gamepad_button_y"),             public :: GLFW_GAMEPAD_BUTTON_Y
-    integer(c_int), bind(C, name="glf90w_gamepad_button_left_bumper"),   public :: GLFW_GAMEPAD_BUTTON_LEFT_BUMPER
-    integer(c_int), bind(C, name="glf90w_gamepad_button_right_bumper"),  public :: GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER
-    integer(c_int), bind(C, name="glf90w_gamepad_button_back"),          public :: GLFW_GAMEPAD_BUTTON_BACK
-    integer(c_int), bind(C, name="glf90w_gamepad_button_start"),         public :: GLFW_GAMEPAD_BUTTON_START
-    integer(c_int), bind(C, name="glf90w_gamepad_button_guide"),         public :: GLFW_GAMEPAD_BUTTON_GUIDE
-    integer(c_int), bind(C, name="glf90w_gamepad_button_left_thumb"),    public :: GLFW_GAMEPAD_BUTTON_LEFT_THUMB
-    integer(c_int), bind(C, name="glf90w_gamepad_button_right_thumb"),   public :: GLFW_GAMEPAD_BUTTON_RIGHT_THUMB
-    integer(c_int), bind(C, name="glf90w_gamepad_button_dpad_up"),       public :: GLFW_GAMEPAD_BUTTON_DPAD_UP
-    integer(c_int), bind(C, name="glf90w_gamepad_button_dpad_right"),    public :: GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
-    integer(c_int), bind(C, name="glf90w_gamepad_button_dpad_down"),     public :: GLFW_GAMEPAD_BUTTON_DPAD_DOWN
-    integer(c_int), bind(C, name="glf90w_gamepad_button_dpad_left"),     public :: GLFW_GAMEPAD_BUTTON_DPAD_LEFT
-    integer(c_int), bind(C, name="glf90w_gamepad_button_last"),          public :: GLFW_GAMEPAD_BUTTON_LAST
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_1"),               public :: GLFW_MOUSE_BUTTON_1
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_2"),               public :: GLFW_MOUSE_BUTTON_2
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_3"),               public :: GLFW_MOUSE_BUTTON_3
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_4"),               public :: GLFW_MOUSE_BUTTON_4
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_5"),               public :: GLFW_MOUSE_BUTTON_5
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_6"),               public :: GLFW_MOUSE_BUTTON_6
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_7"),               public :: GLFW_MOUSE_BUTTON_7
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_8"),               public :: GLFW_MOUSE_BUTTON_8
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_last"),            public :: GLFW_MOUSE_BUTTON_LAST
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_left"),            public :: GLFW_MOUSE_BUTTON_LEFT
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_right"),           public :: GLFW_MOUSE_BUTTON_RIGHT
+    integer(kind=c_int), bind(C, name="glf90w_mouse_button_middle"),          public :: GLFW_MOUSE_BUTTON_MIDDLE
+    integer(kind=c_int), bind(C, name="glf90w_joystick_1"),                   public :: GLFW_JOYSTICK_1
+    integer(kind=c_int), bind(C, name="glf90w_joystick_2"),                   public :: GLFW_JOYSTICK_2
+    integer(kind=c_int), bind(C, name="glf90w_joystick_3"),                   public :: GLFW_JOYSTICK_3
+    integer(kind=c_int), bind(C, name="glf90w_joystick_4"),                   public :: GLFW_JOYSTICK_4
+    integer(kind=c_int), bind(C, name="glf90w_joystick_5"),                   public :: GLFW_JOYSTICK_5
+    integer(kind=c_int), bind(C, name="glf90w_joystick_6"),                   public :: GLFW_JOYSTICK_6
+    integer(kind=c_int), bind(C, name="glf90w_joystick_7"),                   public :: GLFW_JOYSTICK_7
+    integer(kind=c_int), bind(C, name="glf90w_joystick_8"),                   public :: GLFW_JOYSTICK_8
+    integer(kind=c_int), bind(C, name="glf90w_joystick_9"),                   public :: GLFW_JOYSTICK_9
+    integer(kind=c_int), bind(C, name="glf90w_joystick_10"),                  public :: GLFW_JOYSTICK_10
+    integer(kind=c_int), bind(C, name="glf90w_joystick_11"),                  public :: GLFW_JOYSTICK_11
+    integer(kind=c_int), bind(C, name="glf90w_joystick_12"),                  public :: GLFW_JOYSTICK_12
+    integer(kind=c_int), bind(C, name="glf90w_joystick_13"),                  public :: GLFW_JOYSTICK_13
+    integer(kind=c_int), bind(C, name="glf90w_joystick_14"),                  public :: GLFW_JOYSTICK_14
+    integer(kind=c_int), bind(C, name="glf90w_joystick_15"),                  public :: GLFW_JOYSTICK_15
+    integer(kind=c_int), bind(C, name="glf90w_joystick_16"),                  public :: GLFW_JOYSTICK_16
+    integer(kind=c_int), bind(C, name="glf90w_joystick_last"),                public :: GLFW_JOYSTICK_LAST
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_a"),             public :: GLFW_GAMEPAD_BUTTON_A
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_b"),             public :: GLFW_GAMEPAD_BUTTON_B
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_x"),             public :: GLFW_GAMEPAD_BUTTON_X
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_y"),             public :: GLFW_GAMEPAD_BUTTON_Y
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_left_bumper"),   public :: GLFW_GAMEPAD_BUTTON_LEFT_BUMPER
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_right_bumper"),  public :: GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_back"),          public :: GLFW_GAMEPAD_BUTTON_BACK
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_start"),         public :: GLFW_GAMEPAD_BUTTON_START
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_guide"),         public :: GLFW_GAMEPAD_BUTTON_GUIDE
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_left_thumb"),    public :: GLFW_GAMEPAD_BUTTON_LEFT_THUMB
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_right_thumb"),   public :: GLFW_GAMEPAD_BUTTON_RIGHT_THUMB
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_dpad_up"),       public :: GLFW_GAMEPAD_BUTTON_DPAD_UP
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_dpad_right"),    public :: GLFW_GAMEPAD_BUTTON_DPAD_RIGHT
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_dpad_down"),     public :: GLFW_GAMEPAD_BUTTON_DPAD_DOWN
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_dpad_left"),     public :: GLFW_GAMEPAD_BUTTON_DPAD_LEFT
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_last"),          public :: GLFW_GAMEPAD_BUTTON_LAST
 
-    integer(c_int), bind(C, name="glf90w_gamepad_button_cross"),         public :: GLFW_GAMEPAD_BUTTON_CROSS
-    integer(c_int), bind(C, name="glf90w_gamepad_button_circle"),        public :: GLFW_GAMEPAD_BUTTON_CIRCLE
-    integer(c_int), bind(C, name="glf90w_gamepad_button_square"),        public :: GLFW_GAMEPAD_BUTTON_SQUARE
-    integer(c_int), bind(C, name="glf90w_gamepad_button_triangle"),      public :: GLFW_GAMEPAD_BUTTON_TRIANGLE
-    integer(c_int), bind(C, name="glf90w_gamepad_axis_left_x"),          public :: GLFW_GAMEPAD_AXIS_LEFT_X
-    integer(c_int), bind(C, name="glf90w_gamepad_axis_left_y"),          public :: GLFW_GAMEPAD_AXIS_LEFT_Y
-    integer(c_int), bind(C, name="glf90w_gamepad_axis_right_x"),         public :: GLFW_GAMEPAD_AXIS_RIGHT_X
-    integer(c_int), bind(C, name="glf90w_gamepad_axis_right_y"),         public :: GLFW_GAMEPAD_AXIS_RIGHT_Y
-    integer(c_int), bind(C, name="glf90w_gamepad_axis_left_trigger"),    public :: GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
-    integer(c_int), bind(C, name="glf90w_gamepad_axis_right_trigger"),   public :: GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER
-    integer(c_int), bind(C, name="glf90w_gamepad_axis_last"),            public :: GLFW_GAMEPAD_AXIS_LAST
-    integer(c_int), bind(C, name="glf90w_no_error"),                     public :: GLFW_NO_ERROR
-    integer(c_int), bind(C, name="glf90w_not_initialized"),              public :: GLFW_NOT_INITIALIZED
-    integer(c_int), bind(C, name="glf90w_no_current_context"),           public :: GLFW_NO_CURRENT_CONTEXT
-    integer(c_int), bind(C, name="glf90w_invalid_enum"),                 public :: GLFW_INVALID_ENUM
-    integer(c_int), bind(C, name="glf90w_invalid_value"),                public :: GLFW_INVALID_VALUE
-    integer(c_int), bind(C, name="glf90w_out_of_memory"),                public :: GLFW_OUT_OF_MEMORY
-    integer(c_int), bind(C, name="glf90w_api_unavailable"),              public :: GLFW_API_UNAVAILABLE
-    integer(c_int), bind(C, name="glf90w_version_unavailable"),          public :: GLFW_VERSION_UNAVAILABLE
-    integer(c_int), bind(C, name="glf90w_platform_error"),               public :: GLFW_PLATFORM_ERROR
-    integer(c_int), bind(C, name="glf90w_format_unavailable"),           public :: GLFW_FORMAT_UNAVAILABLE
-    integer(c_int), bind(C, name="glf90w_no_window_context"),            public :: GLFW_NO_WINDOW_CONTEXT
-    integer(c_int), bind(C, name="glf90w_cursor_unavailable"),           public :: GLFW_CURSOR_UNAVAILABLE
-    integer(c_int), bind(C, name="glf90w_feature_unavailable"),          public :: GLFW_FEATURE_UNAVAILABLE
-    integer(c_int), bind(C, name="glf90w_feature_unimplemented"),        public :: GLFW_FEATURE_UNIMPLEMENTED
-    integer(c_int), bind(C, name="glf90w_platform_unavailable"),         public :: GLFW_PLATFORM_UNAVAILABLE
-    integer(c_int), bind(C, name="glf90w_focused"),                      public :: GLFW_FOCUSED
-    integer(c_int), bind(C, name="glf90w_iconified"),                    public :: GLFW_ICONIFIED
-    integer(c_int), bind(C, name="glf90w_resizable"),                    public :: GLFW_RESIZABLE
-    integer(c_int), bind(C, name="glf90w_visible"),                      public :: GLFW_VISIBLE
-    integer(c_int), bind(C, name="glf90w_decorated"),                    public :: GLFW_DECORATED
-    integer(c_int), bind(C, name="glf90w_auto_iconify"),                 public :: GLFW_AUTO_ICONIFY
-    integer(c_int), bind(C, name="glf90w_floating"),                     public :: GLFW_FLOATING
-    integer(c_int), bind(C, name="glf90w_maximized"),                    public :: GLFW_MAXIMIZED
-    integer(c_int), bind(C, name="glf90w_center_cursor"),                public :: GLFW_CENTER_CURSOR
-    integer(c_int), bind(C, name="glf90w_transparent_framebuffer"),      public :: GLFW_TRANSPARENT_FRAMEBUFFER
-    integer(c_int), bind(C, name="glf90w_hovered"),                      public :: GLFW_HOVERED
-    integer(c_int), bind(C, name="glf90w_focus_on_show"),                public :: GLFW_FOCUS_ON_SHOW
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_cross"),         public :: GLFW_GAMEPAD_BUTTON_CROSS
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_circle"),        public :: GLFW_GAMEPAD_BUTTON_CIRCLE
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_square"),        public :: GLFW_GAMEPAD_BUTTON_SQUARE
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_button_triangle"),      public :: GLFW_GAMEPAD_BUTTON_TRIANGLE
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_axis_left_x"),          public :: GLFW_GAMEPAD_AXIS_LEFT_X
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_axis_left_y"),          public :: GLFW_GAMEPAD_AXIS_LEFT_Y
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_axis_right_x"),         public :: GLFW_GAMEPAD_AXIS_RIGHT_X
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_axis_right_y"),         public :: GLFW_GAMEPAD_AXIS_RIGHT_Y
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_axis_left_trigger"),    public :: GLFW_GAMEPAD_AXIS_LEFT_TRIGGER
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_axis_right_trigger"),   public :: GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER
+    integer(kind=c_int), bind(C, name="glf90w_gamepad_axis_last"),            public :: GLFW_GAMEPAD_AXIS_LAST
+    integer(kind=c_int), bind(C, name="glf90w_no_error"),                     public :: GLFW_NO_ERROR
+    integer(kind=c_int), bind(C, name="glf90w_not_initialized"),              public :: GLFW_NOT_INITIALIZED
+    integer(kind=c_int), bind(C, name="glf90w_no_current_context"),           public :: GLFW_NO_CURRENT_CONTEXT
+    integer(kind=c_int), bind(C, name="glf90w_invalid_enum"),                 public :: GLFW_INVALID_ENUM
+    integer(kind=c_int), bind(C, name="glf90w_invalid_value"),                public :: GLFW_INVALID_VALUE
+    integer(kind=c_int), bind(C, name="glf90w_out_of_memory"),                public :: GLFW_OUT_OF_MEMORY
+    integer(kind=c_int), bind(C, name="glf90w_api_unavailable"),              public :: GLFW_API_UNAVAILABLE
+    integer(kind=c_int), bind(C, name="glf90w_version_unavailable"),          public :: GLFW_VERSION_UNAVAILABLE
+    integer(kind=c_int), bind(C, name="glf90w_platform_error"),               public :: GLFW_PLATFORM_ERROR
+    integer(kind=c_int), bind(C, name="glf90w_format_unavailable"),           public :: GLFW_FORMAT_UNAVAILABLE
+    integer(kind=c_int), bind(C, name="glf90w_no_window_context"),            public :: GLFW_NO_WINDOW_CONTEXT
+    integer(kind=c_int), bind(C, name="glf90w_cursor_unavailable"),           public :: GLFW_CURSOR_UNAVAILABLE
+    integer(kind=c_int), bind(C, name="glf90w_feature_unavailable"),          public :: GLFW_FEATURE_UNAVAILABLE
+    integer(kind=c_int), bind(C, name="glf90w_feature_unimplemented"),        public :: GLFW_FEATURE_UNIMPLEMENTED
+    integer(kind=c_int), bind(C, name="glf90w_platform_unavailable"),         public :: GLFW_PLATFORM_UNAVAILABLE
+    integer(kind=c_int), bind(C, name="glf90w_focused"),                      public :: GLFW_FOCUSED
+    integer(kind=c_int), bind(C, name="glf90w_iconified"),                    public :: GLFW_ICONIFIED
+    integer(kind=c_int), bind(C, name="glf90w_resizable"),                    public :: GLFW_RESIZABLE
+    integer(kind=c_int), bind(C, name="glf90w_visible"),                      public :: GLFW_VISIBLE
+    integer(kind=c_int), bind(C, name="glf90w_decorated"),                    public :: GLFW_DECORATED
+    integer(kind=c_int), bind(C, name="glf90w_auto_iconify"),                 public :: GLFW_AUTO_ICONIFY
+    integer(kind=c_int), bind(C, name="glf90w_floating"),                     public :: GLFW_FLOATING
+    integer(kind=c_int), bind(C, name="glf90w_maximized"),                    public :: GLFW_MAXIMIZED
+    integer(kind=c_int), bind(C, name="glf90w_center_cursor"),                public :: GLFW_CENTER_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_transparent_framebuffer"),      public :: GLFW_TRANSPARENT_FRAMEBUFFER
+    integer(kind=c_int), bind(C, name="glf90w_hovered"),                      public :: GLFW_HOVERED
+    integer(kind=c_int), bind(C, name="glf90w_focus_on_show"),                public :: GLFW_FOCUS_ON_SHOW
 
-    integer(c_int), bind(C, name="glf90w_mouse_passthrough"),            public :: GLFW_MOUSE_PASSTHROUGH
+    integer(kind=c_int), bind(C, name="glf90w_mouse_passthrough"),            public :: GLFW_MOUSE_PASSTHROUGH
 
-    integer(c_int), bind(C, name="glf90w_position_x"),                   public :: GLFW_POSITION_X
-    integer(c_int), bind(C, name="glf90w_position_y"),                   public :: GLFW_POSITION_Y
+    integer(kind=c_int), bind(C, name="glf90w_position_x"),                   public :: GLFW_POSITION_X
+    integer(kind=c_int), bind(C, name="glf90w_position_y"),                   public :: GLFW_POSITION_Y
 
-    integer(c_int), bind(C, name="glf90w_red_bits"),                     public :: GLFW_RED_BITS
-    integer(c_int), bind(C, name="glf90w_green_bits"),                   public :: GLFW_GREEN_BITS
-    integer(c_int), bind(C, name="glf90w_blue_bits"),                    public :: GLFW_BLUE_BITS
-    integer(c_int), bind(C, name="glf90w_alpha_bits"),                   public :: GLFW_ALPHA_BITS
-    integer(c_int), bind(C, name="glf90w_depth_bits"),                   public :: GLFW_DEPTH_BITS
-    integer(c_int), bind(C, name="glf90w_stencil_bits"),                 public :: GLFW_STENCIL_BITS
-    integer(c_int), bind(C, name="glf90w_accum_red_bits"),               public :: GLFW_ACCUM_RED_BITS
-    integer(c_int), bind(C, name="glf90w_accum_green_bits"),             public :: GLFW_ACCUM_GREEN_BITS
-    integer(c_int), bind(C, name="glf90w_accum_blue_bits"),              public :: GLFW_ACCUM_BLUE_BITS
-    integer(c_int), bind(C, name="glf90w_accum_alpha_bits"),             public :: GLFW_ACCUM_ALPHA_BITS
-    integer(c_int), bind(C, name="glf90w_aux_buffers"),                  public :: GLFW_AUX_BUFFERS
-    integer(c_int), bind(C, name="glf90w_stereo"),                       public :: GLFW_STEREO
-    integer(c_int), bind(C, name="glf90w_samples"),                      public :: GLFW_SAMPLES
-    integer(c_int), bind(C, name="glf90w_srgb_capable"),                 public :: GLFW_SRGB_CAPABLE
-    integer(c_int), bind(C, name="glf90w_refresh_rate"),                 public :: GLFW_REFRESH_RATE
-    integer(c_int), bind(C, name="glf90w_doublebuffer"),                 public :: GLFW_DOUBLEBUFFER
+    integer(kind=c_int), bind(C, name="glf90w_red_bits"),                     public :: GLFW_RED_BITS
+    integer(kind=c_int), bind(C, name="glf90w_green_bits"),                   public :: GLFW_GREEN_BITS
+    integer(kind=c_int), bind(C, name="glf90w_blue_bits"),                    public :: GLFW_BLUE_BITS
+    integer(kind=c_int), bind(C, name="glf90w_alpha_bits"),                   public :: GLFW_ALPHA_BITS
+    integer(kind=c_int), bind(C, name="glf90w_depth_bits"),                   public :: GLFW_DEPTH_BITS
+    integer(kind=c_int), bind(C, name="glf90w_stencil_bits"),                 public :: GLFW_STENCIL_BITS
+    integer(kind=c_int), bind(C, name="glf90w_accum_red_bits"),               public :: GLFW_ACCUM_RED_BITS
+    integer(kind=c_int), bind(C, name="glf90w_accum_green_bits"),             public :: GLFW_ACCUM_GREEN_BITS
+    integer(kind=c_int), bind(C, name="glf90w_accum_blue_bits"),              public :: GLFW_ACCUM_BLUE_BITS
+    integer(kind=c_int), bind(C, name="glf90w_accum_alpha_bits"),             public :: GLFW_ACCUM_ALPHA_BITS
+    integer(kind=c_int), bind(C, name="glf90w_aux_buffers"),                  public :: GLFW_AUX_BUFFERS
+    integer(kind=c_int), bind(C, name="glf90w_stereo"),                       public :: GLFW_STEREO
+    integer(kind=c_int), bind(C, name="glf90w_samples"),                      public :: GLFW_SAMPLES
+    integer(kind=c_int), bind(C, name="glf90w_srgb_capable"),                 public :: GLFW_SRGB_CAPABLE
+    integer(kind=c_int), bind(C, name="glf90w_refresh_rate"),                 public :: GLFW_REFRESH_RATE
+    integer(kind=c_int), bind(C, name="glf90w_doublebuffer"),                 public :: GLFW_DOUBLEBUFFER
 
-    integer(c_int), bind(C, name="glf90w_client_api"),                   public :: GLFW_CLIENT_API
-    integer(c_int), bind(C, name="glf90w_context_version_major"),        public :: GLFW_CONTEXT_VERSION_MAJOR
-    integer(c_int), bind(C, name="glf90w_context_version_minor"),        public :: GLFW_CONTEXT_VERSION_MINOR
-    integer(c_int), bind(C, name="glf90w_context_revision"),             public :: GLFW_CONTEXT_REVISION
-    integer(c_int), bind(C, name="glf90w_context_robustness"),           public :: GLFW_CONTEXT_ROBUSTNESS
-    integer(c_int), bind(C, name="glf90w_opengl_forward_compat"),        public :: GLFW_OPENGL_FORWARD_COMPAT
-    integer(c_int), bind(C, name="glf90w_context_debug"),                public :: GLFW_CONTEXT_DEBUG
-    integer(c_int), bind(C, name="glf90w_opengl_debug_context"),         public :: GLFW_OPENGL_DEBUG_CONTEXT
-    integer(c_int), bind(C, name="glf90w_opengl_profile"),               public :: GLFW_OPENGL_PROFILE
-    integer(c_int), bind(C, name="glf90w_context_release_behavior"),     public :: GLFW_CONTEXT_RELEASE_BEHAVIOR
-    integer(c_int), bind(C, name="glf90w_context_no_error"),             public :: GLFW_CONTEXT_NO_ERROR
-    integer(c_int), bind(C, name="glf90w_context_creation_api"),         public :: GLFW_CONTEXT_CREATION_API
-    integer(c_int), bind(C, name="glf90w_scale_to_monitor"),             public :: GLFW_SCALE_TO_MONITOR
-    integer(c_int), bind(C, name="glf90w_scale_framebuffer"),            public :: GLFW_SCALE_FRAMEBUFFER
-    integer(c_int), bind(C, name="glf90w_cocoa_retina_framebuffer"),     public :: GLFW_COCOA_RETINA_FRAMEBUFFER
-    integer(c_int), bind(C, name="glf90w_cocoa_frame_name"),             public :: GLFW_COCOA_FRAME_NAME
-    integer(c_int), bind(C, name="glf90w_cocoa_graphics_switching"),     public :: GLFW_COCOA_GRAPHICS_SWITCHING
-    integer(c_int), bind(C, name="glf90w_x11_class_name"),               public :: GLFW_X11_CLASS_NAME
-    integer(c_int), bind(C, name="glf90w_x11_instance_name"),            public :: GLFW_X11_INSTANCE_NAME
-    integer(c_int), bind(C, name="glf90w_win32_keyboard_menu"),          public :: GLFW_WIN32_KEYBOARD_MENU
-    integer(c_int), bind(C, name="glf90w_win32_showdefault"),            public :: GLFW_WIN32_SHOWDEFAULT
-    integer(c_int), bind(C, name="glf90w_wayland_app_id"),               public :: GLFW_WAYLAND_APP_ID
-    integer(c_int), bind(C, name="glf90w_no_api"),                       public :: GLFW_NO_API
-    integer(c_int), bind(C, name="glf90w_opengl_api"),                   public :: GLFW_OPENGL_API
-    integer(c_int), bind(C, name="glf90w_opengl_es_api"),                public :: GLFW_OPENGL_ES_API
+    integer(kind=c_int), bind(C, name="glf90w_client_api"),                   public :: GLFW_CLIENT_API
+    integer(kind=c_int), bind(C, name="glf90w_context_version_major"),        public :: GLFW_CONTEXT_VERSION_MAJOR
+    integer(kind=c_int), bind(C, name="glf90w_context_version_minor"),        public :: GLFW_CONTEXT_VERSION_MINOR
+    integer(kind=c_int), bind(C, name="glf90w_context_revision"),             public :: GLFW_CONTEXT_REVISION
+    integer(kind=c_int), bind(C, name="glf90w_context_robustness"),           public :: GLFW_CONTEXT_ROBUSTNESS
+    integer(kind=c_int), bind(C, name="glf90w_opengl_forward_compat"),        public :: GLFW_OPENGL_FORWARD_COMPAT
+    integer(kind=c_int), bind(C, name="glf90w_context_debug"),                public :: GLFW_CONTEXT_DEBUG
+    integer(kind=c_int), bind(C, name="glf90w_opengl_debug_context"),         public :: GLFW_OPENGL_DEBUG_CONTEXT
+    integer(kind=c_int), bind(C, name="glf90w_opengl_profile"),               public :: GLFW_OPENGL_PROFILE
+    integer(kind=c_int), bind(C, name="glf90w_context_release_behavior"),     public :: GLFW_CONTEXT_RELEASE_BEHAVIOR
+    integer(kind=c_int), bind(C, name="glf90w_context_no_error"),             public :: GLFW_CONTEXT_NO_ERROR
+    integer(kind=c_int), bind(C, name="glf90w_context_creation_api"),         public :: GLFW_CONTEXT_CREATION_API
+    integer(kind=c_int), bind(C, name="glf90w_scale_to_monitor"),             public :: GLFW_SCALE_TO_MONITOR
+    integer(kind=c_int), bind(C, name="glf90w_scale_framebuffer"),            public :: GLFW_SCALE_FRAMEBUFFER
+    integer(kind=c_int), bind(C, name="glf90w_cocoa_retina_framebuffer"),     public :: GLFW_COCOA_RETINA_FRAMEBUFFER
+    integer(kind=c_int), bind(C, name="glf90w_cocoa_frame_name"),             public :: GLFW_COCOA_FRAME_NAME
+    integer(kind=c_int), bind(C, name="glf90w_cocoa_graphics_switching"),     public :: GLFW_COCOA_GRAPHICS_SWITCHING
+    integer(kind=c_int), bind(C, name="glf90w_x11_class_name"),               public :: GLFW_X11_CLASS_NAME
+    integer(kind=c_int), bind(C, name="glf90w_x11_instance_name"),            public :: GLFW_X11_INSTANCE_NAME
+    integer(kind=c_int), bind(C, name="glf90w_win32_keyboard_menu"),          public :: GLFW_WIN32_KEYBOARD_MENU
+    integer(kind=c_int), bind(C, name="glf90w_win32_showdefault"),            public :: GLFW_WIN32_SHOWDEFAULT
+    integer(kind=c_int), bind(C, name="glf90w_wayland_app_id"),               public :: GLFW_WAYLAND_APP_ID
+    integer(kind=c_int), bind(C, name="glf90w_no_api"),                       public :: GLFW_NO_API
+    integer(kind=c_int), bind(C, name="glf90w_opengl_api"),                   public :: GLFW_OPENGL_API
+    integer(kind=c_int), bind(C, name="glf90w_opengl_es_api"),                public :: GLFW_OPENGL_ES_API
 
-    integer(c_int), bind(C, name="glf90w_no_robustness"),                public :: GLFW_NO_ROBUSTNESS
-    integer(c_int), bind(C, name="glf90w_no_reset_notification"),        public :: GLFW_NO_RESET_NOTIFICATION
-    integer(c_int), bind(C, name="glf90w_lose_context_on_reset"),        public :: GLFW_LOSE_CONTEXT_ON_RESET
+    integer(kind=c_int), bind(C, name="glf90w_no_robustness"),                public :: GLFW_NO_ROBUSTNESS
+    integer(kind=c_int), bind(C, name="glf90w_no_reset_notification"),        public :: GLFW_NO_RESET_NOTIFICATION
+    integer(kind=c_int), bind(C, name="glf90w_lose_context_on_reset"),        public :: GLFW_LOSE_CONTEXT_ON_RESET
 
-    integer(c_int), bind(C, name="glf90w_opengl_any_profile"),           public :: GLFW_OPENGL_ANY_PROFILE
-    integer(c_int), bind(C, name="glf90w_opengl_core_profile"),          public :: GLFW_OPENGL_CORE_PROFILE
-    integer(c_int), bind(C, name="glf90w_opengl_compat_profile"),        public :: GLFW_OPENGL_COMPAT_PROFILE
+    integer(kind=c_int), bind(C, name="glf90w_opengl_any_profile"),           public :: GLFW_OPENGL_ANY_PROFILE
+    integer(kind=c_int), bind(C, name="glf90w_opengl_core_profile"),          public :: GLFW_OPENGL_CORE_PROFILE
+    integer(kind=c_int), bind(C, name="glf90w_opengl_compat_profile"),        public :: GLFW_OPENGL_COMPAT_PROFILE
 
-    integer(c_int), bind(C, name="glf90w_cursor"),                       public :: GLFW_CURSOR
-    integer(c_int), bind(C, name="glf90w_sticky_keys"),                  public :: GLFW_STICKY_KEYS
-    integer(c_int), bind(C, name="glf90w_sticky_mouse_buttons"),         public :: GLFW_STICKY_MOUSE_BUTTONS
-    integer(c_int), bind(C, name="glf90w_lock_key_mods"),                public :: GLFW_LOCK_KEY_MODS
-    integer(c_int), bind(C, name="glf90w_raw_mouse_motion"),             public :: GLFW_RAW_MOUSE_MOTION
+    integer(kind=c_int), bind(C, name="glf90w_cursor"),                       public :: GLFW_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_sticky_keys"),                  public :: GLFW_STICKY_KEYS
+    integer(kind=c_int), bind(C, name="glf90w_sticky_mouse_buttons"),         public :: GLFW_STICKY_MOUSE_BUTTONS
+    integer(kind=c_int), bind(C, name="glf90w_lock_key_mods"),                public :: GLFW_LOCK_KEY_MODS
+    integer(kind=c_int), bind(C, name="glf90w_raw_mouse_motion"),             public :: GLFW_RAW_MOUSE_MOTION
 
-    integer(c_int), bind(C, name="glf90w_cursor_normal"),                public :: GLFW_CURSOR_NORMAL
-    integer(c_int), bind(C, name="glf90w_cursor_hidden"),                public :: GLFW_CURSOR_HIDDEN
-    integer(c_int), bind(C, name="glf90w_cursor_disabled"),              public :: GLFW_CURSOR_DISABLED
-    integer(c_int), bind(C, name="glf90w_cursor_captured"),              public :: GLFW_CURSOR_CAPTURED
+    integer(kind=c_int), bind(C, name="glf90w_cursor_normal"),                public :: GLFW_CURSOR_NORMAL
+    integer(kind=c_int), bind(C, name="glf90w_cursor_hidden"),                public :: GLFW_CURSOR_HIDDEN
+    integer(kind=c_int), bind(C, name="glf90w_cursor_disabled"),              public :: GLFW_CURSOR_DISABLED
+    integer(kind=c_int), bind(C, name="glf90w_cursor_captured"),              public :: GLFW_CURSOR_CAPTURED
 
-    integer(c_int), bind(C, name="glf90w_any_release_behavior"),         public :: GLFW_ANY_RELEASE_BEHAVIOR
-    integer(c_int), bind(C, name="glf90w_release_behavior_flush"),       public :: GLFW_RELEASE_BEHAVIOR_FLUSH
-    integer(c_int), bind(C, name="glf90w_release_behavior_none"),        public :: GLFW_RELEASE_BEHAVIOR_NONE
+    integer(kind=c_int), bind(C, name="glf90w_any_release_behavior"),         public :: GLFW_ANY_RELEASE_BEHAVIOR
+    integer(kind=c_int), bind(C, name="glf90w_release_behavior_flush"),       public :: GLFW_RELEASE_BEHAVIOR_FLUSH
+    integer(kind=c_int), bind(C, name="glf90w_release_behavior_none"),        public :: GLFW_RELEASE_BEHAVIOR_NONE
 
-    integer(c_int), bind(C, name="glf90w_native_context_api"),           public :: GLFW_NATIVE_CONTEXT_API
-    integer(c_int), bind(C, name="glf90w_egl_context_api"),              public :: GLFW_EGL_CONTEXT_API
-    integer(c_int), bind(C, name="glf90w_osmesa_context_api"),           public :: GLFW_OSMESA_CONTEXT_API
+    integer(kind=c_int), bind(C, name="glf90w_native_context_api"),           public :: GLFW_NATIVE_CONTEXT_API
+    integer(kind=c_int), bind(C, name="glf90w_egl_context_api"),              public :: GLFW_EGL_CONTEXT_API
+    integer(kind=c_int), bind(C, name="glf90w_osmesa_context_api"),           public :: GLFW_OSMESA_CONTEXT_API
 
-    integer(c_int), bind(C, name="glf90w_angle_platform_type_none"),     public :: GLFW_ANGLE_PLATFORM_TYPE_NONE
-    integer(c_int), bind(C, name="glf90w_angle_platform_type_opengl"),   public :: GLFW_ANGLE_PLATFORM_TYPE_OPENGL
-    integer(c_int), bind(C, name="glf90w_angle_platform_type_opengles"), public :: GLFW_ANGLE_PLATFORM_TYPE_OPENGLES
-    integer(c_int), bind(C, name="glf90w_angle_platform_type_d3d9"),     public :: GLFW_ANGLE_PLATFORM_TYPE_D3D9
-    integer(c_int), bind(C, name="glf90w_angle_platform_type_d3d11"),    public :: GLFW_ANGLE_PLATFORM_TYPE_D3D11
-    integer(c_int), bind(C, name="glf90w_angle_platform_type_vulkan"),   public :: GLFW_ANGLE_PLATFORM_TYPE_VULKAN
-    integer(c_int), bind(C, name="glf90w_angle_platform_type_metal"),    public :: GLFW_ANGLE_PLATFORM_TYPE_METAL
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type_none"),     public :: GLFW_ANGLE_PLATFORM_TYPE_NONE
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type_opengl"),   public :: GLFW_ANGLE_PLATFORM_TYPE_OPENGL
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type_opengles"), public :: GLFW_ANGLE_PLATFORM_TYPE_OPENGLES
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type_d3d9"),     public :: GLFW_ANGLE_PLATFORM_TYPE_D3D9
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type_d3d11"),    public :: GLFW_ANGLE_PLATFORM_TYPE_D3D11
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type_vulkan"),   public :: GLFW_ANGLE_PLATFORM_TYPE_VULKAN
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type_metal"),    public :: GLFW_ANGLE_PLATFORM_TYPE_METAL
 
-    integer(c_int), bind(C, name="glf90w_wayland_prefer_libdecor"),      public :: GLFW_WAYLAND_PREFER_LIBDECOR
-    integer(c_int), bind(C, name="glf90w_wayland_disable_libdecor"),     public :: GLFW_WAYLAND_DISABLE_LIBDECOR
+    integer(kind=c_int), bind(C, name="glf90w_wayland_prefer_libdecor"),      public :: GLFW_WAYLAND_PREFER_LIBDECOR
+    integer(kind=c_int), bind(C, name="glf90w_wayland_disable_libdecor"),     public :: GLFW_WAYLAND_DISABLE_LIBDECOR
 
-    integer(c_int), bind(C, name="glf90w_any_position"),                 public :: GLFW_ANY_POSITION
+    integer(kind=c_int), bind(C, name="glf90w_any_position"),                 public :: GLFW_ANY_POSITION
 
-    integer(c_int), bind(C, name="glf90w_arrow_cursor"),                 public :: GLFW_ARROW_CURSOR
-    integer(c_int), bind(C, name="glf90w_ibeam_cursor"),                 public :: GLFW_IBEAM_CURSOR
-    integer(c_int), bind(C, name="glf90w_crosshair_cursor"),             public :: GLFW_CROSSHAIR_CURSOR
-    integer(c_int), bind(C, name="glf90w_pointing_hand_cursor"),         public :: GLFW_POINTING_HAND_CURSOR
-    integer(c_int), bind(C, name="glf90w_resize_ew_cursor"),             public :: GLFW_RESIZE_EW_CURSOR
-    integer(c_int), bind(C, name="glf90w_resize_ns_cursor"),             public :: GLFW_RESIZE_NS_CURSOR
-    integer(c_int), bind(C, name="glf90w_resize_nwse_cursor"),           public :: GLFW_RESIZE_NWSE_CURSOR
-    integer(c_int), bind(C, name="glf90w_resize_nesw_cursor"),           public :: GLFW_RESIZE_NESW_CURSOR
-    integer(c_int), bind(C, name="glf90w_resize_all_cursor"),            public :: GLFW_RESIZE_ALL_CURSOR
-    integer(c_int), bind(C, name="glf90w_not_allowed_cursor"),           public :: GLFW_NOT_ALLOWED_CURSOR
-    integer(c_int), bind(C, name="glf90w_hresize_cursor"),               public :: GLFW_HRESIZE_CURSOR
-    integer(c_int), bind(C, name="glf90w_vresize_cursor"),               public :: GLFW_VRESIZE_CURSOR
-    integer(c_int), bind(C, name="glf90w_hand_cursor"),                  public :: GLFW_HAND_CURSOR
-    integer(c_int), bind(C, name="glf90w_connected"),                    public :: GLFW_CONNECTED
-    integer(c_int), bind(C, name="glf90w_disconnected"),                 public :: GLFW_DISCONNECTED
+    integer(kind=c_int), bind(C, name="glf90w_arrow_cursor"),                 public :: GLFW_ARROW_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_ibeam_cursor"),                 public :: GLFW_IBEAM_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_crosshair_cursor"),             public :: GLFW_CROSSHAIR_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_pointing_hand_cursor"),         public :: GLFW_POINTING_HAND_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_resize_ew_cursor"),             public :: GLFW_RESIZE_EW_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_resize_ns_cursor"),             public :: GLFW_RESIZE_NS_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_resize_nwse_cursor"),           public :: GLFW_RESIZE_NWSE_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_resize_nesw_cursor"),           public :: GLFW_RESIZE_NESW_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_resize_all_cursor"),            public :: GLFW_RESIZE_ALL_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_not_allowed_cursor"),           public :: GLFW_NOT_ALLOWED_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_hresize_cursor"),               public :: GLFW_HRESIZE_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_vresize_cursor"),               public :: GLFW_VRESIZE_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_hand_cursor"),                  public :: GLFW_HAND_CURSOR
+    integer(kind=c_int), bind(C, name="glf90w_connected"),                    public :: GLFW_CONNECTED
+    integer(kind=c_int), bind(C, name="glf90w_disconnected"),                 public :: GLFW_DISCONNECTED
 
-    integer(c_int), bind(C, name="glf90w_joystick_hat_buttons"),         public :: GLFW_JOYSTICK_HAT_BUTTONS
-    integer(c_int), bind(C, name="glf90w_angle_platform_type"),          public :: GLFW_ANGLE_PLATFORM_TYPE
-    integer(c_int), bind(C, name="glf90w_platform"),                     public :: GLFW_PLATFORM
-    integer(c_int), bind(C, name="glf90w_cocoa_chdir_resources"),        public :: GLFW_COCOA_CHDIR_RESOURCES
-    integer(c_int), bind(C, name="glf90w_cocoa_menubar"),                public :: GLFW_COCOA_MENUBAR
-    integer(c_int), bind(C, name="glf90w_x11_xcb_vulkan_surface"),       public :: GLFW_X11_XCB_VULKAN_SURFACE
-    integer(c_int), bind(C, name="glf90w_wayland_libdecor"),             public :: GLFW_WAYLAND_LIBDECOR
-    integer(c_int), bind(C, name="glf90w_any_platform"),                 public :: GLFW_ANY_PLATFORM
-    integer(c_int), bind(C, name="glf90w_platform_win32"),               public :: GLFW_PLATFORM_WIN32
-    integer(c_int), bind(C, name="glf90w_platform_cocoa"),               public :: GLFW_PLATFORM_COCOA
-    integer(c_int), bind(C, name="glf90w_platform_wayland"),             public :: GLFW_PLATFORM_WAYLAND
-    integer(c_int), bind(C, name="glf90w_platform_x11"),                 public :: GLFW_PLATFORM_X11
-    integer(c_int), bind(C, name="glf90w_platform_null"),                public :: GLFW_PLATFORM_NULL
-    integer(c_int), bind(C, name="glf90w_dont_care"),                    public :: GLFW_DONT_CARE
-
-
-    ! --------------------------------------------------------------------------
-    ! GLFW API types
-    ! --------------------------------------------------------------------------
-
-
-    type, abstract :: C_opaque_ptr
-        private
-        type(c_ptr) :: ptr = c_null_ptr
-    end type c_opaque_ptr
-
-    type, extends(C_opaque_ptr), public :: GLFWmonitor_ptr
-    end type GLFWmonitor_ptr
-
-    type, extends(C_opaque_ptr), public :: GLFWwindow_ptr
-    end type GLFWwindow_ptr
-
-    type, extends(C_opaque_ptr), public :: GLFWcursor_ptr
-    end type GLFWcursor_ptr
-
-    type, bind(C), public :: GLFWvidmode
-        integer(kind=c_int) :: width
-        integer(kind=c_int) :: height
-        integer(kind=c_int) :: redBits
-        integer(kind=c_int) :: greenBits
-        integer(kind=c_int) :: blueBits
-        integer(kind=c_int) :: refreshRate
-    end type GLFWvidmode
-
-!    type, public :: GLFWallocator
-!        procedure(GLFWallocatefun), pointer :: allocate_fn
-!        procedure(GLFWallocatefun), pointer :: reallocate_fn
-!        procedure(GLFWallocatefun), pointer :: deallocate_fn
-!        type(c_ptr)                         :: user
-!    end type GLFWallocator
-
-    type, bind(C), public :: GLFWallocator
-        type(c_funptr) :: allocate_fn
-        type(c_funptr) :: reallocate_fn
-        type(c_funptr) :: deallocate_fn
-        type(c_ptr)    :: user
-    end type GLFWallocator
-
-    ! TODO
-    !type, bind(C), public :: GLFWgammaramp
-    !type, bind(C), public :: GLFWimage
-    !type, bind(C), public :: GLFWgamepadstate
-    !type, bind(C), public :: GLFWallocator
+    integer(kind=c_int), bind(C, name="glf90w_joystick_hat_buttons"),         public :: GLFW_JOYSTICK_HAT_BUTTONS
+    integer(kind=c_int), bind(C, name="glf90w_angle_platform_type"),          public :: GLFW_ANGLE_PLATFORM_TYPE
+    integer(kind=c_int), bind(C, name="glf90w_platform"),                     public :: GLFW_PLATFORM
+    integer(kind=c_int), bind(C, name="glf90w_cocoa_chdir_resources"),        public :: GLFW_COCOA_CHDIR_RESOURCES
+    integer(kind=c_int), bind(C, name="glf90w_cocoa_menubar"),                public :: GLFW_COCOA_MENUBAR
+    integer(kind=c_int), bind(C, name="glf90w_x11_xcb_vulkan_surface"),       public :: GLFW_X11_XCB_VULKAN_SURFACE
+    integer(kind=c_int), bind(C, name="glf90w_wayland_libdecor"),             public :: GLFW_WAYLAND_LIBDECOR
+    integer(kind=c_int), bind(C, name="glf90w_any_platform"),                 public :: GLFW_ANY_PLATFORM
+    integer(kind=c_int), bind(C, name="glf90w_platform_win32"),               public :: GLFW_PLATFORM_WIN32
+    integer(kind=c_int), bind(C, name="glf90w_platform_cocoa"),               public :: GLFW_PLATFORM_COCOA
+    integer(kind=c_int), bind(C, name="glf90w_platform_wayland"),             public :: GLFW_PLATFORM_WAYLAND
+    integer(kind=c_int), bind(C, name="glf90w_platform_x11"),                 public :: GLFW_PLATFORM_X11
+    integer(kind=c_int), bind(C, name="glf90w_platform_null"),                public :: GLFW_PLATFORM_NULL
+    integer(kind=c_int), bind(C, name="glf90w_dont_care"),                    public :: GLFW_DONT_CARE
 
 
     ! --------------------------------------------------------------------------
@@ -449,9 +400,65 @@ module glf90w
 
     public :: associated
 
+    type, abstract :: C_opaque_ptr
+        private
+        type(c_ptr) :: ptr = c_null_ptr
+    end type c_opaque_ptr
+
     interface associated
         module procedure :: associated_opaque
     end interface associated
+
+
+    ! --------------------------------------------------------------------------
+    ! GLFW API types
+    ! --------------------------------------------------------------------------
+
+
+    type, extends(C_opaque_ptr), public :: GLFWmonitor_ptr
+    end type GLFWmonitor_ptr
+
+    type, extends(C_opaque_ptr), public :: GLFWwindow_ptr
+    end type GLFWwindow_ptr
+
+    type, extends(C_opaque_ptr), public :: GLFWcursor_ptr
+    end type GLFWcursor_ptr
+
+    type, bind(C), public :: GLFWvidmode
+        integer(kind=c_int) :: width
+        integer(kind=c_int) :: height
+        integer(kind=c_int) :: redBits
+        integer(kind=c_int) :: greenBits
+        integer(kind=c_int) :: blueBits
+        integer(kind=c_int) :: refreshRate
+    end type GLFWvidmode
+
+    ! TODO Those are supposed to be "unsigned short*", leaving it to the user for now...
+    type, bind(C), public :: GLFWgammaramp
+        type(c_ptr) :: red
+        type(c_ptr) :: green
+        type(c_ptr) :: blue
+        integer(kind=c_int) :: size
+    end type GLFWgammaramp
+
+!    type, public :: GLFWallocator
+!        procedure(GLFWallocatefun), pointer :: allocate_fn
+!        procedure(GLFWallocatefun), pointer :: reallocate_fn
+!        procedure(GLFWallocatefun), pointer :: deallocate_fn
+!        type(c_ptr)                         :: user
+!    end type GLFWallocator
+
+    type, bind(C), public :: GLFWallocator
+        type(c_funptr) :: allocate_fn
+        type(c_funptr) :: reallocate_fn
+        type(c_funptr) :: deallocate_fn
+        type(c_ptr)    :: user
+    end type GLFWallocator
+
+    ! TODO
+    !type, bind(C), public :: GLFWimage
+    !type, bind(C), public :: GLFWgamepadstate
+    !type, bind(C), public :: GLFWallocator
 
 
     ! --------------------------------------------------------------------------
@@ -495,33 +502,33 @@ module glf90w
 
     abstract interface
         subroutine GLFWerrorfun(error_code, description)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
 
             implicit none
-            integer(kind=int32), intent(in) :: error_code
+            integer(kind=c_int), intent(in) :: error_code
             character(len=*),    intent(in) :: description
         end subroutine GLFWerrorfun
     end interface
 
     abstract interface
         subroutine GLFWwindowposfun(window, x, y)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            integer(kind=int32),  intent(in) :: x, y
+            integer(kind=c_int),  intent(in) :: x, y
         end subroutine GLFWwindowposfun
     end interface
 
     abstract interface
         subroutine GLFWwindowsizefun(window, width, height)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            integer(kind=int32),  intent(in) :: width, height
+            integer(kind=c_int),  intent(in) :: width, height
         end subroutine GLFWwindowsizefun
     end interface
 
@@ -575,45 +582,45 @@ module glf90w
 
     abstract interface
         subroutine GLFWframebuffersizefun(window, width, height)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            integer(kind=int32),  intent(in) :: width, height
+            integer(kind=c_int),  intent(in) :: width, height
         end subroutine GLFWframebuffersizefun
     end interface
 
     abstract interface
         subroutine GLFWwindowcontentscalefun(window, xscale, yscale)
-            use, intrinsic :: iso_fortran_env, only: real32
+            use, intrinsic :: iso_c_binding, only: c_float
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            real(kind=real32),    intent(in) :: xscale, yscale
+            real(kind=c_float),    intent(in) :: xscale, yscale
         end subroutine GLFWwindowcontentscalefun
     end interface
 
     abstract interface
         subroutine GLFWmousebuttonfun(window, button, action, mods)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            integer(kind=int32),  intent(in) :: button, action, mods
+            integer(kind=c_int),  intent(in) :: button, action, mods
         end subroutine GLFWmousebuttonfun
     end interface
 
     abstract interface
         subroutine GLFWcursorposfun(window, x, y)
-            use, intrinsic :: iso_fortran_env, only: real64
+            use, intrinsic :: iso_c_binding, only: c_double
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            real(kind=real64),    intent(in) :: x, y
+            real(kind=c_double),    intent(in) :: x, y
         end subroutine GLFWcursorposfun
     end interface
 
@@ -629,46 +636,46 @@ module glf90w
 
     abstract interface
         subroutine GLFWscrollfun(window, xoffset, yoffset)
-            use, intrinsic :: iso_fortran_env, only: real64
+            use, intrinsic :: iso_c_binding, only: c_double
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            real(kind=real64),    intent(in) :: xoffset, yoffset
+            real(kind=c_double),    intent(in) :: xoffset, yoffset
         end subroutine GLFWscrollfun
     end interface
 
     abstract interface
         subroutine GLFWkeyfun(window, key, scancode, action, mods)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            integer(kind=int32),  intent(in) :: key, scancode, action, mods
+            integer(kind=c_int),  intent(in) :: key, scancode, action, mods
         end subroutine GLFWkeyfun
     end interface
 
     abstract interface
         subroutine GLFWcharfun(window, codepoint)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            integer(kind=int32),  intent(in) :: codepoint ! TODO This is supposed to be unsigned int
+            integer(kind=c_int),  intent(in) :: codepoint ! TODO This is supposed to be unsigned int
         end subroutine GLFWcharfun
     end interface
 
     abstract interface
         subroutine GLFWcharmodsfun(window, codepoint, mods)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow_ptr
 
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
-            integer(kind=int32),  intent(in) :: codepoint ! TODO This is supposed to be unsigned int
-            integer(kind=int32),  intent(in) :: mods
+            integer(kind=c_int),  intent(in) :: codepoint ! TODO This is supposed to be unsigned int
+            integer(kind=c_int),  intent(in) :: mods
         end subroutine GLFWcharmodsfun
     end interface
 
@@ -684,22 +691,22 @@ module glf90w
 
     abstract interface
         subroutine GLFWmonitorfun(monitor, event)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWmonitor_ptr
 
             implicit none
             type(GLFWmonitor_ptr),   intent(in) :: monitor
-            integer(kind=int32), intent(in) :: event
+            integer(kind=c_int), intent(in) :: event
         end subroutine GLFWmonitorfun
     end interface
 
     abstract interface
         subroutine GLFWjoystickfun(jid, event)
-            use, intrinsic :: iso_fortran_env, only: int32
+            use, intrinsic :: iso_c_binding, only: c_int
 
             implicit none
-            integer(kind=int32), intent(in) :: jid
-            integer(kind=int32), intent(in) :: event
+            integer(kind=c_int), intent(in) :: jid
+            integer(kind=c_int), intent(in) :: event
         end subroutine GLFWjoystickfun
     end interface
 
@@ -743,31 +750,33 @@ module glf90w
         glfwTerminate, &
         ! -- void glfwInitHint(int IN hint, int IN value)
         glfwInitHint, &
-        !glfwInitAllocator, &
-        !glfwInitVulkanLoader, &
+        ! -- void glfwInitAllocator(GLFWallocator IN allocator)
+        glfwInitAllocator, &
+        ! TODO glfwInitVulkanLoader, &
         ! -- void glfwGetVersion(int OUT major, int OUT minor, int OUT rev)
         glfwGetVersion, &
-        ! -- char glfwGetVersionString() result(str)
+        ! -- char POINTER glfwGetVersionString() result(str)
         glfwGetVersionString, &
-        ! -- int glfwGetError(char POINTER OPTIONAL OUT description) result(error_code)
+        ! -- int glfwGetError(char OPTIONAL POINTER OUT description) result(error_code)
         glfwGetError, &
-        ! -- procedure(GLFWerrorfun) POINTER glfwSetErrorCallback(procedure(GLFWerrorfun) POINTER IN callback) result(prev_callback)
+        ! -- GLFWerrorfun POINTER glfwSetErrorCallback(GLFWerrorfun OPTIONAL IN callback) result(prev_callback)
         glfwSetErrorCallback, &
         ! -- int glfwGetPlatform() result(platform)
         glfwGetPlatform, &
         ! -- logical glfwPlatformSupported(int IN platform) result(supported)
         glfwPlatformSupported, &
-        ! -- GLFWmonitor_ptr ARRAY glfwGetMonitors() result(monitors)
+        ! -- GLFWmonitor_ptr(:) glfwGetMonitors() result(monitors)
         glfwGetMonitors, &
         ! -- GLFWmonitor_ptr glfwGetPrimaryMonitor() result(monitor)
         glfwGetPrimaryMonitor, &
-        ! -- void glfwGetMonitorPos(GLFWmonitor_ptr IN monitor, int OUT x, int OUT y)
+        ! -- void glfwGetMonitorPos(GLFWmonitor_ptr IN monitor, int OPTIONAL OUT x, int OPTIONAL OUT y)
         glfwGetMonitorPos, &
-        ! -- void glfwGetMonitorWorkarea(GLFWmonitor_ptr IN monitor, int OUT x, int OUT y, int OUT w, int OUT h)
+        ! -- void glfwGetMonitorWorkarea(GLFWmonitor_ptr IN monitor, int OPTIONAL OUT x, int OPTIONAL OUT y,
+        !                                int OPTIONAL OUT w, int OPTIONAL OUT h)
         glfwGetMonitorWorkarea, &
-        ! -- void glfwGetMonitorPhysicalSize(GLFWmonitor_ptr IN monitor, int OUT widthMM, int OUT heightMM)
+        ! -- void glfwGetMonitorPhysicalSize(GLFWmonitor_ptr IN monitor, int OPTIONAL OUT widthMM, int OPTIONAL OUT heightMM)
         glfwGetMonitorPhysicalSize, &
-        ! -- void glfwGetMonitorContentScale(GLFWmonitor_ptr IN monitor, float OUT xscale, float OUT yscale)
+        ! -- void glfwGetMonitorContentScale(GLFWmonitor_ptr IN monitor, float OPTIONAL OUT xscale, float OPTIONAL OUT yscale)
         glfwGetMonitorContentScale, &
         ! -- char POINTER glfwGetMonitorName(GLFWmonitor_ptr IN monitor) result(name)
         glfwGetMonitorName, &
@@ -775,14 +784,33 @@ module glf90w
         glfwSetMonitorUserPointer, &
         ! -- type(c_ptr) glfwGetMonitorUserPointer(GLFWmonitor_ptr IN monitor) result(user_pointer)
         glfwGetMonitorUserPointer, &
-        ! -- procedure(GLFWmonitorfun) POINTER glfwSetMonitorCallback(procedure(GLFWmonitorfun) POINTER IN callback) result(prev_callback)
+        ! -- GLFWmonitorfun POINTER glfwSetMonitorCallback(GLFWmonitorfun OPTIONAL IN callback) result(prev_callback)
         glfwSetMonitorCallback, &
+        ! -- GLFWvidmode(:) POINTER glfwGetVideoModes(GLFWmonitor_ptr IN monitor) result(vidmodes)
+        glfwGetVideoModes, &
+        ! -- GLFWvidmode POINTER glfwGetVideoMode(GLFWmonitor_ptr IN monitor) result(vidmode)
+        glfwGetVideoMode, &
+        ! -- void glfwSetGamma(GLFWmonitor_ptr IN monitor, real IN gamma)
+        glfwSetGamma, &
+        ! -- GLFWgammaramp POINTER glfwGetGammaRamp(GLFWmonitor_ptr IN monitor) result(gammaramp)
+        glfwGetGammaRamp, &
+        ! -- void glfwSetGammaRamp(GLFWmonitor_ptr IN monitor, GLFWgammaramp POINTER IN gammaramp)
+        glfwSetGammaRamp, &
         ! -- void glfwDefaultWindowHints()
         glfwDefaultWindowHints, &
         ! -- void glfwWindowHint(int IN hint, int IN value)
         glfwWindowHint, &
         ! -- void glfwWindowHintString(int IN hint, char IN value)
         glfwWindowHintString, &
+        ! -- GLFWwindow_ptr glfwCreateWindow(int IN width, int IN height, char IN title,
+        !                                    GLFWmonitor_ptr OPTIONAL IN monitor, GLFWwindow_ptr OPTIONAL IN share) result(window)
+        glfwCreateWindow, &
+        ! -- void glfwDestroyWindow(GLFWwindow_ptr IN window)
+        glfwDestroyWindow, &
+        ! -- logical glfwWindowShouldClose(GLFWwindow_ptr IN window) result(closeflag)
+        glfwWindowShouldClose, &
+        ! -- void glfwSetWindowShouldClose(GLFWwindow_ptr IN window, logical IN val)
+        glfwSetWindowShouldClose, &
         ! -- void glfwPollEvents()
         glfwPollEvents, &
         ! -- void glfwWaitEvents()
@@ -809,7 +837,7 @@ module glf90w
         glfwGetJoystickGUID, &
         ! -- logical glfwJoystickIsGamepad(int IN jid) result(is_gamepad)
         glfwJoystickIsGamepad, &
-        ! -- procedure(GLFWjoystickfun) POINTER glfwSetJoystickCallback(procedure(GLFWjoystickfun) POINTER IN callback) result(prev_callback)
+        ! -- GLFWjoystickfun POINTER glfwSetJoystickCallback(GLFWjoystickfun OPTIONAL IN callback) result(prev_callback)
         glfwSetJoystickCallback, &
         ! -- logical glfwJoystickIsGamepad(char IN mappings) result(success)
         glfwUpdateGamepadMappings, &
@@ -851,13 +879,22 @@ module glf90w
     end interface
 
     interface
-        subroutine glfwInitHint(hint, value) bind(C, name="glfwInitHint")
+        subroutine glfwInitHint(hint, val) bind(C, name="glfwInitHint")
             use, intrinsic :: iso_c_binding, only: c_int
 
             implicit none
             integer(kind=c_int), value, intent(in) :: hint
-            integer(kind=c_int), value, intent(in) :: value
+            integer(kind=c_int), value, intent(in) :: val
         end subroutine glfwInitHint
+    end interface
+
+    interface
+        subroutine glfwInitAllocator(allocator) bind(C, name="glfwInitAllocator")
+            import :: GLFWallocator
+
+            implicit none
+            type(GLFWallocator), intent(in) :: allocator
+        end subroutine glfwInitAllocator
     end interface
 
     interface
@@ -943,7 +980,7 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
             implicit none
-            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr), value,  intent(in)  :: monitor
             integer(kind=c_int), intent(out) :: x, y
         end subroutine c_glfwGetMonitorPos
     end interface
@@ -953,7 +990,7 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
             implicit none
-            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr), value,  intent(in)  :: monitor
             integer(kind=c_int), intent(out) :: x, y, w, h
         end subroutine c_glfwGetMonitorWorkarea
     end interface
@@ -963,7 +1000,7 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
             implicit none
-            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr), value,  intent(in)  :: monitor
             integer(kind=c_int), intent(out) :: widthMM, heightMM
         end subroutine c_glfwGetMonitorPhysicalSize
     end interface
@@ -973,7 +1010,7 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_ptr, c_float
 
             implicit none
-            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr), value, intent(in)  :: monitor
             real(kind=c_float), intent(out) :: xscale, yscale
         end subroutine c_glfwGetMonitorContentScale
     end interface
@@ -1019,6 +1056,55 @@ module glf90w
     end interface
 
     interface
+        function c_glfwGetVideoModes(monitor, count) result(vidmodes) bind(C, name="glfwGetVideoModes")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            integer(kind=c_int)            :: count
+            type(c_ptr)                    :: vidmodes
+        end function c_glfwGetVideoModes
+    end interface
+
+    interface
+        function c_glfwGetVideoMode(monitor) result(vidmode) bind(C, name="glfwGetVideoMode")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr)                    :: vidmode
+        end function c_glfwGetVideoMode
+    end interface
+
+    interface
+        subroutine c_glfwSetGamma(monitor, gamma) bind(C, name="glfwSetGamma")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_float
+
+            implicit none
+            type(c_ptr),        value, intent(in) :: monitor
+            real(kind=c_float), value, intent(in) :: gamma
+        end subroutine c_glfwSetGamma
+    end interface
+
+    interface
+        function c_glfwGetGammaRamp(monitor) result(gammaramp) bind(C, name="glfwGetGammaRamp")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr)                    :: gammaramp
+        end function c_glfwGetGammaRamp
+    end interface
+
+    interface
+        subroutine c_glfwSetGammaRamp(monitor, gammaramp) bind(C, name="glfwSetGammaRamp")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            type(c_ptr), value, intent(in) :: monitor
+            type(c_ptr), value, intent(in) :: gammaramp
+        end subroutine c_glfwSetGammaRamp
+    end interface
+
+    interface
         subroutine glfwDefaultWindowHints() bind(C, name="glfwDefaultWindowHints")
         end subroutine glfwDefaultWindowHints
     end interface
@@ -1034,13 +1120,55 @@ module glf90w
     end interface
 
     interface
-        subroutine c_glfwWindowHintString(hint, value) bind(C, name="glfwWindowHintString")
+        subroutine c_glfwWindowHintString(hint, val) bind(C, name="glfwWindowHintString")
             use, intrinsic :: iso_c_binding, only: c_char, c_int
 
             implicit none
-            integer(kind=c_int), value, intent(in)                  :: hint
-            character(len=1, kind=c_char), dimension(*), intent(in) :: value
+            integer(kind=c_int), value,                  intent(in) :: hint
+            character(len=1, kind=c_char), dimension(*), intent(in) :: val
         end subroutine c_glfwWindowHintString
+    end interface
+
+    interface
+        function c_glfwCreateWindow(width, height, title, monitor, share) result(window) bind(C, name="glfwCreateWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
+
+            implicit none
+            integer(kind=c_int), value,                  intent(in) :: width, height
+            character(len=1, kind=c_char), dimension(*), intent(in) :: title
+            type(c_ptr), value,                          intent(in) :: monitor
+            type(c_ptr), value,                          intent(in) :: share
+            type(c_ptr)                                             :: window
+        end function c_glfwCreateWindow
+    end interface
+
+    interface
+        subroutine c_glfwDestroyWindow(window) bind(C, name="glfwDestroyWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwDestroyWindow
+    end interface
+
+    interface
+        function c_glfwWindowShouldClose(window) result(closeflag) bind(C, name="glfwWindowShouldClose")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+            integer(kind=c_int)            :: closeflag
+        end function c_glfwWindowShouldClose
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowShouldClose(window, val) bind(C, name="glfwSetWindowShouldClose")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: val
+        end subroutine c_glfwSetWindowShouldClose
     end interface
 
     interface
@@ -1248,14 +1376,21 @@ module glf90w
     ! --------------------------------------------------------------------------
 
 
-    interface
-        pure function c_strlen(cstr) result(length) bind(C, name="strlen")
+    interface c_strlen
+        pure function c_ptr_strlen(cstr) result(length) bind(C, name="strlen")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
             implicit none
-            type(c_ptr), value, intent(in) :: cstr
-            integer(kind=c_size_t)         :: length
-        end function c_strlen
-    end interface
+            type(c_ptr), intent(in) :: cstr
+            integer(kind=c_size_t)  :: length
+        end function c_ptr_strlen
+
+        pure function c_char_strlen(cstr) result(length) bind(C, name="strlen")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_size_t
+            implicit none
+            character(len=1, kind=c_char), dimension(*), intent(in) :: cstr
+            integer(kind=c_size_t)  :: length
+        end function c_char_strlen
+    end interface c_strlen
 
     interface c_f_string
         module procedure :: c_str_f_string, c_ptr_f_string
@@ -1316,27 +1451,27 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_ptr, c_char
 
             implicit none
-            character(len=:), pointer :: str
+            character(len=:, kind=c_char), pointer :: str
 
             type(c_ptr) :: c_str
 
             c_str = c_glfwGetVersionString()
-            call c_f_strptr(c_str, str)
+            call c_f_strpointer(c_str, str)
         end function glfwGetVersionString
 
         function glfwGetError(description) result(error_code)
             use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_int, c_char
 
             implicit none
-            integer(kind=c_int)                 :: error_code
-            character(len=:), pointer, optional :: description
+            character(len=:, kind=c_char), pointer, optional :: description
+            integer(kind=c_int)                              :: error_code
 
-            type(c_ptr) :: desc_cptr
+            type(c_ptr) :: c_desc
 
-            error_code = c_glfwGetError(desc_cptr)
+            error_code = c_glfwGetError(c_desc)
             if (present(description)) then
-                if (c_associated(desc_cptr)) then
-                    call c_f_strptr(desc_cptr, description)
+                if (c_associated(c_desc)) then
+                    call c_f_strpointer(c_desc, description)
                 else
                     description => null()
                 end if
@@ -1344,18 +1479,20 @@ module glf90w
         end function glfwGetError
 
         function glfwSetErrorCallback(callback) result(prev_callback)
-            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
-            procedure(GLFWerrorfun), optional :: callback
-            procedure(GLFWerrorfun), pointer  :: prev_callback
-            type(c_funptr) :: ret
+            procedure(GLFWerrorfun), optional, intent(in) :: callback
+            procedure(GLFWerrorfun), pointer              :: prev_callback
 
-            ret = c_glfwSetErrorCallback(c_funloc(glf90wErrorWrapper))
+            type(c_funptr) :: res
+
             prev_callback => glf90wErrorCallback
             if (present(callback)) then
+                res = c_glfwSetErrorCallback(c_funloc(glf90wErrorWrapper))
                 glf90wErrorCallback => callback
             else
+                res = c_glfwSetErrorCallback(c_null_funptr)
                 glf90wErrorCallback => null()
             end if
         end function glfwSetErrorCallback
@@ -1385,14 +1522,14 @@ module glf90w
 
             type(c_ptr) :: c_monitors
             integer(kind=c_int) :: count
-            type(c_ptr), dimension(:), pointer :: c_array
+            type(c_ptr), dimension(:), pointer :: ptr_array
             count = 0
 
             c_monitors = c_glfwGetMonitors(count)
             allocate(monitors(count))
             if (count > 0) then
-                call c_f_pointer(c_monitors, c_array, [count])
-                monitors(:)%ptr = c_array
+                call c_f_pointer(c_monitors, ptr_array, [count])
+                monitors(:)%ptr = ptr_array
             end if
         end function glfwGetMonitors
 
@@ -1405,65 +1542,60 @@ module glf90w
 
         subroutine glfwGetMonitorPos(monitor, x, y)
             use, intrinsic :: iso_c_binding, only: c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
-            type(GLFWmonitor_ptr), intent(in) :: monitor
-            integer(kind=int32), optional, intent(out) :: x, y
+            type(GLFWmonitor_ptr),         intent(in)  :: monitor
+            integer(kind=c_int), optional, intent(out) :: x, y
 
             integer(kind=c_int) :: c_x, c_y
 
             call c_glfwGetMonitorPos(monitor%ptr, c_x, c_y)
-            if (present(x)) x = int(c_x, kind=int32)
-            if (present(y)) y = int(c_y, kind=int32)
+            if (present(x)) x = c_x
+            if (present(y)) y = c_y
         end subroutine glfwGetMonitorPos
 
         subroutine glfwGetMonitorWorkarea(monitor, x, y, width, height)
             use, intrinsic :: iso_c_binding, only: c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
-            type(GLFWmonitor_ptr), intent(in) :: monitor
-            integer(kind=int32), optional, intent(out) :: x, y, width, height
+            type(GLFWmonitor_ptr),         intent(in)  :: monitor
+            integer(kind=c_int), optional, intent(out) :: x, y, width, height
 
             integer(kind=c_int) :: c_x, c_y, c_w, c_h
 
             call c_glfwGetMonitorWorkarea(monitor%ptr, c_x, c_y, c_w, c_h)
-            if (present(x))      x      = int(c_x, kind=int32)
-            if (present(y))      y      = int(c_y, kind=int32)
-            if (present(width))  width  = int(c_w, kind=int32)
-            if (present(height)) height = int(c_h, kind=int32)
+            if (present(x))      x      = c_x
+            if (present(y))      y      = c_y
+            if (present(width))  width  = c_w
+            if (present(height)) height = c_h
         end subroutine glfwGetMonitorWorkarea
 
         subroutine glfwGetMonitorPhysicalSize(monitor, widthMM, heightMM)
             use, intrinsic :: iso_c_binding, only: c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
-            type(GLFWmonitor_ptr), intent(in) :: monitor
-            integer(kind=int32), optional, intent(out) :: widthMM, heightMM
+            type(GLFWmonitor_ptr),         intent(in)  :: monitor
+            integer(kind=c_int), optional, intent(out) :: widthMM, heightMM
 
-            integer(kind=c_int) :: c_w
-            integer(kind=c_int) :: c_h
+            integer(kind=c_int) :: c_w, c_h
 
             call c_glfwGetMonitorPhysicalSize(monitor%ptr, c_w, c_h)
-            if (present(widthMM))  widthMM  = int(c_w, kind=int32)
-            if (present(heightMM)) heightMM = int(c_h, kind=int32)
+            if (present(widthMM))  widthMM  = c_w
+            if (present(heightMM)) heightMM = c_h
         end subroutine glfwGetMonitorPhysicalSize
 
         subroutine glfwGetMonitorContentScale(monitor, xscale, yscale)
             use, intrinsic :: iso_c_binding, only: c_float
-            use, intrinsic :: iso_fortran_env, only: real32
 
             implicit none
-            type(GLFWmonitor_ptr), intent(in) :: monitor
-            real(kind=real32), optional, intent(out) :: xscale, yscale
+            type(GLFWmonitor_ptr),        intent(in)  :: monitor
+            real(kind=c_float), optional, intent(out) :: xscale, yscale
 
             real(kind=c_float) :: c_xscale, c_yscale
 
             call c_glfwGetMonitorContentScale(monitor%ptr, c_xscale, c_yscale)
-            if (present(xscale)) xscale = real(c_xscale, kind=real32)
-            if (present(yscale)) yscale = real(c_yscale, kind=real32)
+            if (present(xscale)) xscale = c_xscale
+            if (present(yscale)) yscale = c_yscale
         end subroutine glfwGetMonitorContentScale
 
         function glfwGetMonitorName(monitor) result(name)
@@ -1471,13 +1603,13 @@ module glf90w
 
             implicit none
             type(GLFWmonitor_ptr), intent(in) :: monitor
-            character(len=:), pointer :: name
+            character(len=:), pointer         :: name
 
             type(c_ptr) :: c_name
 
             c_name = c_glfwGetMonitorName(monitor%ptr)
             if (c_associated(c_name)) then
-                call c_f_strptr(c_name, name)
+                call c_f_strpointer(c_name, name)
             else
                 name => null()
             end if
@@ -1488,7 +1620,7 @@ module glf90w
 
             implicit none
             type(GLFWmonitor_ptr), intent(in) :: monitor
-            type(c_ptr), intent(in)           :: ptr
+            type(c_ptr),           intent(in) :: ptr
 
             call c_glfwSetMonitorUserPointer(monitor%ptr, ptr)
         end subroutine glfwSetMonitorUserPointer
@@ -1504,31 +1636,147 @@ module glf90w
         end function glfwGetMonitorUserPointer
 
         function glfwSetMonitorCallback(callback) result(prev_callback)
-            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
-            procedure(GLFWmonitorfun), optional :: callback
-            procedure(GLFWmonitorfun), pointer  :: prev_callback
+            procedure(GLFWmonitorfun), optional, intent(in) :: callback
+            procedure(GLFWmonitorfun), pointer              :: prev_callback
             type(c_funptr) :: ret
 
-            ret = c_glfwSetMonitorCallback(c_funloc(glf90wMonitorWrapper))
             prev_callback => glf90wMonitorCallback
             if (present(callback)) then
+                ret = c_glfwSetMonitorCallback(c_funloc(glf90wMonitorWrapper))
                 glf90wMonitorCallback => callback
             else
+                ret = c_glfwSetMonitorCallback(c_null_funptr)
                 glf90wMonitorCallback => null()
             end if
         end function glfwSetMonitorCallback
 
-        subroutine glfwWindowHintString(hint, value)
+        function glfwGetVideoModes(monitor) result(vidmodes)
+            use, intrinsic :: iso_c_binding, only: c_associated, c_f_pointer, c_ptr, c_int
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in)        :: monitor
+            type(GLFWvidmode), dimension(:), pointer :: vidmodes
+
+            type(c_ptr) :: c_vidmodes
+            integer(kind=c_int) :: count
+
+            vidmodes => null()
+            c_vidmodes = c_glfwGetVideoModes(monitor%ptr, count)
+            if (c_associated(c_vidmodes)) then
+                call c_f_pointer(c_vidmodes, vidmodes, [count])
+            end if
+        end function glfwGetVideoModes
+
+        function glfwGetVideoMode(monitor) result(vidmode)
+            use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_int
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            type(GLFWvidmode), pointer        :: vidmode
+
+            type(c_ptr) :: c_vidmode
+
+            vidmode => null()
+            c_vidmode = c_glfwGetVideoMode(monitor%ptr)
+            call c_f_pointer(c_vidmode, vidmode)
+        end function glfwGetVideoMode
+
+        subroutine glfwSetGamma(monitor, gamma)
+            use, intrinsic :: iso_c_binding, only: c_float
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            real(kind=c_float),    intent(in) :: gamma
+
+            call c_glfwSetGamma(monitor%ptr, gamma)
+        end subroutine glfwSetGamma
+
+        function glfwGetGammaRamp(monitor) result(gammaramp)
+            use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr
+
+            implicit none
+            type(GLFWmonitor_ptr), intent(in) :: monitor
+            type(GLFWgammaramp), pointer      :: gammaramp
+
+            type(c_ptr) :: c_gammaramp
+
+            gammaramp => null()
+            c_gammaramp = c_glfwGetGammaRamp(monitor%ptr)
+            call c_f_pointer(c_gammaramp, gammaramp)
+        end function glfwGetGammaRamp
+
+        subroutine glfwSetGammaRamp(monitor, gammaramp)
+            use, intrinsic :: iso_c_binding, only: c_loc
+
+            implicit none
+            type(GLFWmonitor_ptr),        intent(in) :: monitor
+            type(GLFWgammaramp), pointer, intent(in) :: gammaramp
+
+            call c_glfwSetGammaRamp(monitor%ptr, c_loc(gammaramp))
+        end subroutine glfwSetGammaRamp
+
+        subroutine glfwWindowHintString(hint, val)
             use, intrinsic :: iso_c_binding, only: c_char, c_int
 
             implicit none
-            integer(kind=c_int), intent(in) :: hint
-            character(len=*), intent(in)    :: value
+            integer(kind=c_int),           intent(in) :: hint
+            character(len=*, kind=c_char), intent(in) :: val
 
-            call c_glfwWindowHintString(hint, f_c_string(value))
+            call c_glfwWindowHintString(hint, f_c_string(val))
         end subroutine glfwWindowHintString
+
+        function glfwCreateWindow(width, height, title, monitor, share) result(window)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_int, c_null_ptr
+
+            implicit none
+            integer(kind=c_int),             intent(in) :: width, height
+            character(len=*, kind=c_char),   intent(in) :: title
+            type(GLFWmonitor_ptr), optional, intent(in) :: monitor
+            type(GLFWwindow_ptr),  optional, intent(in) :: share
+            type(GLFWwindow_ptr)                        :: window
+
+            type(c_ptr) :: c_monitor, c_share
+            c_monitor = c_null_ptr
+            c_share = c_null_ptr
+
+            if (present(monitor)) c_monitor = monitor%ptr
+            if (present(share)) c_share = share%ptr
+
+            window%ptr = c_glfwCreateWindow(width, height, f_c_string(title), c_monitor, c_share)
+        end function glfwCreateWindow
+
+        subroutine glfwDestroyWindow(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwDestroyWindow(window%ptr)
+        end subroutine glfwDestroyWindow
+
+        function glfwWindowShouldClose(window) result(closeflag)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            logical                          :: closeflag
+
+            integer(kind=c_int) :: c_flag
+
+            c_flag = c_glfwWindowShouldClose(window%ptr)
+            closeflag = merge(.true., .false., .not. c_flag == GLFW_FALSE)
+        end function glfwWindowShouldClose
+
+        subroutine glfwSetWindowShouldClose(window, val)
+            use, intrinsic :: iso_c_binding, only: 
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            logical,              intent(in) :: val
+
+            call c_glfwSetWindowShouldClose(window%ptr, merge(GLFW_TRUE, GLFW_FALSE, val))
+        end subroutine glfwSetWindowShouldClose
 
         function glfwRawMouseMotionSupported() result(supported)
             use, intrinsic :: iso_c_binding, only: c_int
@@ -1558,7 +1806,7 @@ module glf90w
 
             c_name = c_glfwGetKeyName(key, scancode)
             if (c_associated(c_name)) then
-                call c_f_strptr(c_name, name)
+                call c_f_strpointer(c_name, name)
             else
                 name => null()
             end if
@@ -1614,7 +1862,7 @@ module glf90w
 
             c_name = c_glfwGetJoystickName(jid)
             if (c_associated(c_name)) then
-                call c_f_strptr(c_name, name)
+                call c_f_strpointer(c_name, name)
             else
                 name => null()
             end if
@@ -1631,7 +1879,7 @@ module glf90w
 
             c_name = c_glfwGetJoystickGUID(jid)
             if (c_associated(c_name)) then
-                call c_f_strptr(c_name, GUID)
+                call c_f_strpointer(c_name, GUID)
             else
                 GUID => null()
             end if
@@ -1699,7 +1947,7 @@ module glf90w
 
             c_name = c_glfwGetGamepadName(jid)
             if (c_associated(c_name)) then
-                call c_f_strptr(c_name, name)
+                call c_f_strpointer(c_name, name)
             else
                 name => null()
             end if
@@ -1750,7 +1998,6 @@ module glf90w
 
         subroutine glf90wErrorWrapper(error_code, desc_ptr) bind(C)
             use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             integer(kind=c_int), value, intent(in) :: error_code
@@ -1759,34 +2006,28 @@ module glf90w
             character(len=:), pointer :: f_desc
             f_desc => null()
 
-            if (c_associated(desc_ptr)) call c_f_strptr(desc_ptr, f_desc)
-            call glf90wErrorCallback(int(error_code, kind=int32), f_desc)
+            if (c_associated(desc_ptr)) call c_f_strpointer(desc_ptr, f_desc)
+            call glf90wErrorCallback(error_code, f_desc)
         end subroutine glf90wErrorWrapper
 
         subroutine glf90wWindowPosWrapper(window, x, y) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: x, y
 
-            call glf90wWindowPosCallback(GLFWwindow_ptr(ptr = window), &
-                                         int(x, kind=int32), &
-                                         int(y, kind=int32))
+            call glf90wWindowPosCallback(GLFWwindow_ptr(ptr = window), x, y)
         end subroutine glf90wWindowPosWrapper
 
         subroutine glf90wWindowSizeWrapper(window, width, height) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: width, height
 
-            call glf90wWindowSizeCallback(GLFWwindow_ptr(ptr = window), &
-                                          int(width, kind=int32), &
-                                          int(height, kind=int32))
+            call glf90wWindowSizeCallback(GLFWwindow_ptr(ptr = window), width, height)
         end subroutine glf90wWindowSizeWrapper
 
         subroutine glf90wWindowCloseWrapper(window) bind(C)
@@ -1842,55 +2083,42 @@ module glf90w
 
         subroutine glf90wFramebufferSizeWrapper(window, width, height) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: width, height
 
-            call glf90wFramebufferSizeCallback(GLFWwindow_ptr(ptr = window), &
-                                               int(width, kind=int32), &
-                                               int(height, kind=int32))
+            call glf90wFramebufferSizeCallback(GLFWwindow_ptr(ptr = window), width, height)
         end subroutine glf90wFramebufferSizeWrapper
 
         subroutine glf90wWindowContentScaleWrapper(window, xscale, yscale) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_float
-            use, intrinsic :: iso_fortran_env, only: real32
 
             implicit none
             type(c_ptr),        value, intent(in) :: window
             real(kind=c_float), value, intent(in) :: xscale, yscale
 
-            call glf90wWindowContentScaleCallback(GLFWwindow_ptr(ptr = window), &
-                                                  real(xscale, kind=real32), &
-                                                  real(yscale, kind=real32))
+            call glf90wWindowContentScaleCallback(GLFWwindow_ptr(ptr = window), xscale, yscale)
         end subroutine glf90wWindowContentScaleWrapper
 
         subroutine glf90wMouseButtonWrapper(window, button, action, mods) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: button, action, mods
 
-            call glf90wMouseButtonCallback(GLFWwindow_ptr(ptr = window), &
-                                           int(button, kind=int32), &
-                                           int(action, kind=int32), &
-                                           int(mods, kind=int32))
+            call glf90wMouseButtonCallback(GLFWwindow_ptr(ptr = window), button, action, mods)
         end subroutine glf90wMouseButtonWrapper
 
         subroutine glf90wCursorPosWrapper(window, x, y)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_double
-            use, intrinsic :: iso_fortran_env, only: real64
 
             implicit none
             type(c_ptr),       value, intent(in) :: window
             real(kind=c_double), value, intent(in) :: x, y
 
-            call glf90wCursorPosCallback(GLFWwindow_ptr(ptr = window), &
-                                         real(x, kind=real64), &
-                                         real(y, kind=real64))
+            call glf90wCursorPosCallback(GLFWwindow_ptr(ptr = window), x, y)
         end subroutine glf90wCursorPosWrapper
 
         subroutine glf90wCursorEnterWrapper(window, entered) bind(C)
@@ -1906,55 +2134,42 @@ module glf90w
 
         subroutine glf90wScrollWrapper(window, xoffset, yoffset)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_double
-            use, intrinsic :: iso_fortran_env, only: real64
 
             implicit none
             type(c_ptr),       value, intent(in) :: window
             real(kind=c_double), value, intent(in) :: xoffset, yoffset
 
-            call glf90wScrollCallback(GLFWwindow_ptr(ptr = window), &
-                                      real(xoffset, kind=real64), &
-                                      real(yoffset, kind=real64))
+            call glf90wScrollCallback(GLFWwindow_ptr(ptr = window), xoffset, yoffset)
         end subroutine glf90wScrollWrapper
 
         subroutine glf90wKeyWrapper(window, key, scancode, action, mods) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: key, scancode, action, mods
 
-            call glf90wKeyCallback(GLFWwindow_ptr(ptr = window), &
-                                   int(key, kind=int32), &
-                                   int(scancode, kind=int32), &
-                                   int(action, kind=int32), &
-                                   int(mods, kind=int32))
+            call glf90wKeyCallback(GLFWwindow_ptr(ptr = window), key, scancode, action, mods)
         end subroutine glf90wKeyWrapper
 
         subroutine glf90wCharWrapper(window, codepoint) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: codepoint
 
-            call glf90wCharCallback(GLFWwindow_ptr(ptr = window), &
-                                    int(codepoint, kind=int32))
+            call glf90wCharCallback(GLFWwindow_ptr(ptr = window), codepoint)
         end subroutine glf90wCharWrapper
 
         subroutine glf90wCharModsWrapper(window, codepoint, mods) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: codepoint, mods
 
-            call glf90wCharModsCallback(GLFWwindow_ptr(ptr = window), &
-                                        int(codepoint, kind=int32), &
-                                        int(mods, kind=int32))
+            call glf90wCharModsCallback(GLFWwindow_ptr(ptr = window), codepoint, mods)
         end subroutine glf90wCharModsWrapper
 
         subroutine glf90wDropWrapper(window, path_count, paths) bind(C)
@@ -1985,26 +2200,23 @@ module glf90w
 
         subroutine glf90wMonitorWrapper(monitor, event) bind(C)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             type(c_ptr),         value, intent(in) :: monitor
             integer(kind=c_int), value, intent(in) :: event
 
-            call glf90wMonitorCallback(GLFWmonitor_ptr(ptr = monitor), &
-                                       int(event, kind=int32))
+            call glf90wMonitorCallback(GLFWmonitor_ptr(ptr = monitor), event)
         end subroutine glf90wMonitorWrapper
 
 
         subroutine glf90wJoystickWrapper(jid, event) bind(C)
             use, intrinsic :: iso_c_binding, only: c_int
-            use, intrinsic :: iso_fortran_env, only: int32
 
             implicit none
             integer(kind=c_int), value, intent(in) :: jid
             integer(kind=c_int), value, intent(in) :: event
 
-            call glf90wJoystickCallback(int(jid, kind=int32), int(event, kind=int32))
+            call glf90wJoystickCallback(jid, event)
         end subroutine glf90wJoystickWrapper
 
 
@@ -2039,37 +2251,37 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_char, c_null_char
 
             implicit none
-            character(len=*), intent(in)                             :: fstr
-            logical, optional, intent(in)                            :: asis
+            character(len=*, kind=c_char), intent(in)                :: fstr
+            logical, optional,             intent(in)                :: asis
             character(len=1, kind=c_char), dimension(:), allocatable :: cstr
 
-            integer :: length
+            integer :: c_length
             integer :: i
 
             if (present(asis)) then
                 if (asis) then
-                    length = len(fstr) + 1
+                    c_length = len(fstr) + 1
                 else
-                    length = len_trim(fstr) + 1
+                    c_length = len_trim(fstr) + 1
                 end if
             else
-                length = len_trim(fstr) + 1
+                c_length = len_trim(fstr) + 1
             end if
 
-            allocate(character(len=1, kind=c_char) :: cstr(length))
-            do i = 1,length
+            allocate(character(len=1, kind=c_char) :: cstr(c_length))
+            do i = 1, c_length-1
                 cstr(i) = fstr(i:i)
             end do
-            cstr(length + 1) = c_null_char
+            cstr(c_length) = c_null_char
         end function f_c_string
 
         ! Converts a C interoperable string (character array) to a Fortran character string
         pure function c_str_f_string(cstr) result(fstr)
-            use, intrinsic :: iso_c_binding, only: c_loc, c_char
+            use, intrinsic :: iso_c_binding, only: c_char
 
             implicit none
-            character(len=1, kind=c_char), dimension(:), target, intent(in) :: cstr
-            character(len=c_strlen(c_loc(cstr)))                            :: fstr
+            character(len=1, kind=c_char), dimension(:), intent(in) :: cstr
+            character(len=c_strlen(cstr), kind=c_char)              :: fstr
 
             integer :: i
 
@@ -2083,8 +2295,8 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_associated, c_f_pointer, c_ptr, c_char
 
             implicit none
-            type(c_ptr), intent(in)       :: cptr
-            character(len=:), allocatable :: fstr
+            type(c_ptr), intent(in)                    :: cptr
+            character(len=:, kind=c_char), allocatable :: fstr
 
             character(len=1, kind=c_char), dimension(:), pointer :: cstr
             integer :: i
@@ -2098,19 +2310,18 @@ module glf90w
 
         ! TODO test zero-length strings are not a problem ?
         ! Obtain a Fortran pointer to a C string (char*)
-        subroutine c_f_strptr(cptr, fptr)
+        subroutine c_f_strpointer(cptr, fptr)
             use, intrinsic :: iso_c_binding, only: c_f_pointer, c_ptr, c_char
 
             implicit none
-            type(c_ptr), intent(in)                :: cptr
+            type(c_ptr),               intent(in)  :: cptr
             character(len=:), pointer, intent(out) :: fptr
 
             character(len=c_strlen(cptr), kind=c_char), pointer :: temp
 
             call c_f_pointer(cptr, temp)
             fptr => temp
-            temp => null()
-        end subroutine c_f_strptr
+        end subroutine c_f_strpointer
 
 end module glf90w
 ! -----------------
