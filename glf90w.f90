@@ -404,7 +404,7 @@ module glf90w
         ! -- void (*GLFWwindowfocusfun)(GLFWwindow_ptr window, int focused);
         GLFWwindowfocusfun, &
         ! -- void (*GLFWwindowiconifyfun)(GLFWwindow_ptr window, int iconified);
-        GLFWwindowfocusfun, &
+        GLFWwindowiconifyfun, &
         ! -- void (*GLFWwindowmaximizefun)(GLFWwindow_ptr window, int maximized);
         GLFWwindowmaximizefun, &
         ! -- void (*GLFWframebuffersizefun)(GLFWwindow_ptr window, int width, int height);
@@ -430,7 +430,7 @@ module glf90w
         ! -- void (*GLFWmonitorfun)(GLFWmonitor_ptr IN monitor, int IN description)
         GLFWmonitorfun, &
         ! -- void (*GLFWjoystickfun)(int IN jid, int IN event)
-        GLFWjoystickfun, &
+        GLFWjoystickfun
 
     public :: associated
 
@@ -845,6 +845,50 @@ module glf90w
         glfwWindowShouldClose, &
         ! -- void glfwSetWindowShouldClose(GLFWwindow_ptr IN window, logical IN val)
         glfwSetWindowShouldClose, &
+        ! -- char POINTER glfwGetWindowTitle(GLFWwindow_ptr IN window) result(title)
+        glfwGetWindowTitle, &
+        ! -- void glfwSetWindowTitle(GLFWwindow_ptr IN window, char IN title)
+        glfwSetWindowTitle, &
+        ! -- void glfwGetWindowPos(GLFWwindow_ptr IN window, int OPTIONAL OUT x, int OPTIONAL OUT y)
+        glfwGetWindowPos, &
+        ! -- void glfwSetWindowPos(GLFWwindow_ptr IN window, int IN x, int IN y)
+        glfwSetWindowPos, &
+        ! -- void glfwGetWindowSize(GLFWwindow_ptr IN window, int OPTIONAL OUT width, int OPTIONAL OUT height)
+        glfwGetWindowSize, &
+        ! -- void glfwSetWindowSizeLimits(GLFWwindow_ptr IN window, int IN minwidth, int IN minheight,
+        !                                                           int IN maxwidth, int IN maxheight)
+        glfwSetWindowSizeLimits, &
+        ! -- void glfwSetWindowAspectRatio(GLFWwindow_ptr IN window, int IN numer, int IN denom)
+        glfwSetWindowAspectRatio, &
+        ! -- void glfwSetWindowSize(GLFWwindow_ptr IN window, int IN width, int IN height)
+        glfwSetWindowSize, &
+        ! -- void glfwGetFramebufferSize(GLFWwindow_ptr IN window, int OPTIONAL OUT width, int OPTIONAL OUT height)
+        glfwGetFramebufferSize, &
+        ! -- void glfwGetWindowFrameSize(GLFWwindow_ptr IN window, int OPTIONAL OUT left, int OPTIONAL OUT top,
+        !                                                          int OPTIONAL OUT right, int OPTIONAL OUT bottom)
+        glfwGetWindowFrameSize, &
+        ! -- void glfwGetWindowContentScale(GLFWwindow_ptr IN window, int OPTIONAL OUT xscale, int OPTIONAL OUT yscale)
+        glfwGetWindowContentScale, &
+        ! -- float glfwGetWindowOpacity(GLFWwindow_ptr IN window) result(opacity)
+        glfwGetWindowOpacity, &
+        ! -- void glfwSetWindowOpacity(GLFWwindow_ptr IN window, float IN opacity)
+        glfwSetWindowOpacity, &
+        ! -- void glfwIconifyWindow(GLFWwindow_ptr IN window)
+        glfwIconifyWindow, &
+        ! -- void glfwRestoreWindow(GLFWwindow_ptr IN window)
+        glfwRestoreWindow, &
+        ! -- void glfwMaximizeWindow(GLFWwindow_ptr IN window)
+        glfwMaximizeWindow, &
+        ! -- void glfwShowWindow(GLFWwindow_ptr IN window)
+        glfwShowWindow, &
+        ! -- void glfwHideWindow(GLFWwindow_ptr IN window)
+        glfwHideWindow, &
+        ! -- void glfwFocusWindow(GLFWwindow_ptr IN window)
+        glfwFocusWindow, &
+        ! -- void glfwRequestWindowAttention(GLFWwindow_ptr IN window)
+        glfwRequestWindowAttention, &
+        ! -- GLFWmonitor_ptr glfwGetWindowMonitor(GLFWwindow_ptr IN window) result(monitor)
+        glfwGetWindowMonitor, &
         ! -- void glfwPollEvents()
         glfwPollEvents, &
         ! -- void glfwWaitEvents()
@@ -1206,6 +1250,352 @@ module glf90w
     end interface
 
     interface
+        function c_glfwGetWindowTitle(window) result(title) bind(C, name="glfwGetWindowTitle")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+            type(c_ptr)                    :: title
+        end function c_glfwGetWindowTitle
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowTitle(window, title) bind(C, name="glfwSetWindowTitle")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_char
+
+            implicit none
+            type(c_ptr), value,                          intent(in) :: window
+            character(len=1, kind=c_char), dimension(*), intent(in) :: title
+        end subroutine c_glfwSetWindowTitle
+    end interface
+
+    interface
+        subroutine c_glfwGetWindowPos(window, x, y) bind(C, name="glfwGetWindowPos")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value,  intent(in)  :: window
+            integer(kind=c_int), intent(out) :: x, y
+        end subroutine c_glfwGetWindowPos
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowPos(window, x, y) bind(C, name="glfwSetWindowPos")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: x, y
+        end subroutine c_glfwSetWindowPos
+    end interface
+
+    interface
+        subroutine c_glfwGetWindowSize(window, width, height) bind(C, name="glfwGetWindowSize")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value,  intent(in)  :: window
+            integer(kind=c_int), intent(out) :: width, height
+        end subroutine c_glfwGetWindowSize
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowSizeLimits(window, minw, minh, maxw, maxh) bind(C, name="glfwSetWindowSizeLimits")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: minw, minh, maxw, maxh
+        end subroutine c_glfwSetWindowSizeLimits
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowAspectRatio(window, numer, denom) bind(C, name="glfwSetWindowAspectRatio")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: numer, denom
+        end subroutine c_glfwSetWindowAspectRatio
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowSize(window, width, height) bind(C, name="glfwSetWindowSize")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: width, height
+        end subroutine c_glfwSetWindowSize
+    end interface
+
+    interface
+        subroutine c_glfwGetFramebufferSize(window, width, height) bind(C, name="glfwGetFramebufferSize")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value,  intent(in)  :: window
+            integer(kind=c_int), intent(out) :: width, height
+        end subroutine c_glfwGetFramebufferSize
+    end interface
+
+    interface
+        subroutine c_glfwGetWindowFrameSize(window, left, top, right, bottom) bind(C, name="glfwGetWindowFrameSize")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr), value,  intent(in)  :: window
+            integer(kind=c_int), intent(out) :: left, top, right, bottom
+        end subroutine c_glfwGetWindowFrameSize
+    end interface
+
+    interface
+        subroutine c_glfwGetWindowContentScale(window, xscale, yscale) bind(C, name="glfwGetWindowContentScale")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_float
+
+            implicit none
+            type(c_ptr), value,  intent(in)  :: window
+            real(kind=c_float),  intent(out) :: xscale, yscale
+        end subroutine c_glfwGetWindowContentScale
+    end interface
+
+    interface
+        function c_glfwGetWindowOpacity(window) result(opacity) bind(C, name="glfwGetWindowOpacity")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_float
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+            real(kind=c_float)             :: opacity
+        end function c_glfwGetWindowOpacity
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowOpacity(window, opacity) bind(C, name="glfwSetWindowOpacity")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_float
+
+            implicit none
+            type(c_ptr),        value, intent(in) :: window
+            real(kind=c_float), value, intent(in) :: opacity
+        end subroutine c_glfwSetWindowOpacity
+    end interface
+
+    interface
+        subroutine c_glfwIconifyWindow(window) bind(C, name="glfwIconifyWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwIconifyWindow
+    end interface
+
+    interface
+        subroutine c_glfwRestoreWindow(window) bind(C, name="glfwRestoreWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwRestoreWindow
+    end interface
+
+    interface
+        subroutine c_glfwMaximizeWindow(window) bind(C, name="glfwMaximizeWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwMaximizeWindow
+    end interface
+
+    interface
+        subroutine c_glfwShowWindow(window) bind(C, name="glfwShowWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwShowWindow
+    end interface
+
+    interface
+        subroutine c_glfwHideWindow(window) bind(C, name="glfwHideWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwHideWindow
+    end interface
+
+    interface
+        subroutine c_glfwFocusWindow(window) bind(C, name="glfwFocusWindow")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwFocusWindow
+    end interface
+
+    interface
+        subroutine c_glfwRequestWindowAttention(window) bind(C, name="glfwRequestWindowAttention")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+        end subroutine c_glfwRequestWindowAttention
+    end interface
+
+    interface
+        function c_glfwGetWindowMonitor(window) result(monitor) bind(C, name="glfwGetWindowMonitor")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+            type(c_ptr)                    :: monitor
+        end function c_glfwGetWindowMonitor
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowMonitor(window, monitor, x, y, w, h, refresh_rate) bind(C, name="glfwSetWindowMonitor")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            type(c_ptr),         value, intent(in) :: monitor
+            integer(kind=c_int), value, intent(in) :: x, y, w, h, refresh_rate
+        end subroutine c_glfwSetWindowMonitor
+    end interface
+
+    interface
+        function c_glfwGetWindowAttrib(window, attrib) result(val) bind(C, name="glfwGetWindowAttrib")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: attrib
+            integer(kind=c_int)                    :: val
+        end function c_glfwGetWindowAttrib
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowAttrib(window, attrib, val) bind(C, name="glfwSetWindowAttrib")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: attrib
+            integer(kind=c_int), value, intent(in) :: val
+        end subroutine c_glfwSetWindowAttrib
+    end interface
+
+    interface
+        subroutine c_glfwSetWindowUserPointer(window, user_pointer) bind(C, name="glfwSetWindowUserPointer")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+            type(c_ptr), value, intent(in) :: user_pointer
+        end subroutine c_glfwSetWindowUserPointer
+    end interface
+
+    interface
+        function c_glfwGetWindowUserPointer(window) result(user_pointer) bind(C, name="glfwGetWindowUserPointer")
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), value, intent(in) :: window
+            type(c_ptr)                    :: user_pointer
+        end function c_glfwGetWindowUserPointer
+    end interface
+
+    interface
+        function c_glfwSetWindowPosCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowPosCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowPosCallback
+    end interface
+
+    interface
+        function c_glfwSetWindowSizeCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowSizeCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowSizeCallback
+    end interface
+
+    interface
+        function c_glfwSetWindowCloseCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowCloseCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowCloseCallback
+    end interface
+
+    interface
+        function c_glfwSetWindowRefreshCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowRefreshCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowRefreshCallback
+    end interface
+
+    interface
+        function c_glfwSetWindowFocusCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowFocusCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowFocusCallback
+    end interface
+
+    interface
+        function c_glfwSetWindowIconifyCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowIconifyCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowIconifyCallback
+    end interface
+
+    interface
+        function c_glfwSetWindowMaximizeCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowMaximizeCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowMaximizeCallback
+    end interface
+
+    interface
+        function c_glfwSetFramebufferSizeCallback(callback) result(prev_callback) bind(C, name="glfwSetFramebufferSizeCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetFramebufferSizeCallback
+    end interface
+
+    interface
+        function c_glfwSetWindowContentScaleCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowContentScaleCallback")
+            use, intrinsic :: iso_c_binding, only: c_funptr
+
+            implicit none
+            type(c_funptr), value, intent(in) :: callback
+            type(c_funptr)                    :: prev_callback
+        end function c_glfwSetWindowContentScaleCallback
+    end interface
+
+    interface
         subroutine glfwPollEvents() bind(C, name="glfwPollEvents")
         end subroutine glfwPollEvents
     end interface
@@ -1227,6 +1617,28 @@ module glf90w
     interface
         subroutine glfwPostEmptyEvent() bind(C, name="glfwPostEmptyEvent")
         end subroutine glfwPostEmptyEvent
+    end interface
+
+    interface
+        function c_glfwGetInputMode(window, mode) result(val) bind(C, name="glfwGetInputMode")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: mode
+            integer(kind=c_int)                    :: val
+        end function c_glfwGetInputMode
+    end interface
+
+    interface
+        subroutine c_glfwSetInputMode(window, mode, val) bind(C, name="glfwSetInputMode")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int
+
+            implicit none
+            type(c_ptr),         value, intent(in) :: window
+            integer(kind=c_int), value, intent(in) :: mode
+            integer(kind=c_int), value, intent(in) :: val
+        end subroutine c_glfwSetInputMode
     end interface
 
     interface
@@ -1516,8 +1928,8 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
-            procedure(GLFWerrorfun), optional, intent(in) :: callback
-            procedure(GLFWerrorfun), pointer              :: prev_callback
+            procedure(GLFWerrorfun), optional :: callback
+            procedure(GLFWerrorfun), pointer  :: prev_callback
 
             type(c_funptr) :: res
 
@@ -1673,8 +2085,8 @@ module glf90w
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
-            procedure(GLFWmonitorfun), optional, intent(in) :: callback
-            procedure(GLFWmonitorfun), pointer              :: prev_callback
+            procedure(GLFWmonitorfun), optional :: callback
+            procedure(GLFWmonitorfun), pointer  :: prev_callback
             type(c_funptr) :: ret
 
             prev_callback => glf90wMonitorCallback
@@ -1803,14 +2215,479 @@ module glf90w
         end function glfwWindowShouldClose
 
         subroutine glfwSetWindowShouldClose(window, val)
-            use, intrinsic :: iso_c_binding, only: 
-
             implicit none
             type(GLFWwindow_ptr), intent(in) :: window
             logical,              intent(in) :: val
 
             call c_glfwSetWindowShouldClose(window%ptr, merge(GLFW_TRUE, GLFW_FALSE, val))
         end subroutine glfwSetWindowShouldClose
+
+        function glfwGetWindowTitle(window) result(title)
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            character(len=:), pointer        :: title
+
+            type(c_ptr) :: c_title
+
+            c_title = c_glfwGetWindowTitle(window%ptr)
+            if (c_associated(c_title)) then
+                call c_f_strpointer(c_title, title)
+            else
+                title => null()
+            end if
+        end function glfwGetWindowTitle
+
+        subroutine glfwSetWindowTitle(window, title)
+            use, intrinsic :: iso_c_binding, only: c_char
+
+            implicit none
+            type(GLFWwindow_ptr),          intent(in) :: window
+            character(len=*, kind=c_char), intent(in) :: title
+
+            call c_glfwSetWindowTitle(window%ptr, f_c_string(title))
+        end subroutine glfwSetWindowTitle
+
+        subroutine glfwGetWindowPos(window, x, y)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr),          intent(in)  :: window
+            integer(kind=c_int), optional, intent(out) :: x, y
+
+            integer(kind=c_int) :: c_x, c_y
+
+            call c_glfwGetWindowPos(window%ptr, c_x, c_y)
+            if (present(x)) x = c_x
+            if (present(y)) y = c_y
+        end subroutine glfwGetWindowPos
+
+        subroutine glfwSetWindowPos(window, x, y)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: x, y
+
+            call c_glfwSetWindowPos(window%ptr, x, y)
+        end subroutine glfwSetWindowPos
+
+        subroutine glfwGetWindowSize(window, width, height)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr),          intent(in)  :: window
+            integer(kind=c_int), optional, intent(out) :: width, height
+
+            integer(kind=c_int) :: c_w, c_h
+
+            call c_glfwGetWindowSize(window%ptr, c_w, c_h)
+            if (present(width))  width  = c_w
+            if (present(height)) height = c_h
+        end subroutine glfwGetWindowSize
+
+        subroutine glfwSetWindowSizeLimits(window, minwidth, minheight, maxwidth, maxheight)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: minwidth, minheight, maxwidth, maxheight
+
+            call c_glfwSetWindowSizeLimits(window%ptr, minwidth, minheight, maxwidth, maxheight)
+        end subroutine glfwSetWindowSizeLimits
+
+        subroutine glfwSetWindowAspectRatio(window, numer, denom)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: numer, denom
+
+            call c_glfwSetWindowAspectRatio(window%ptr, numer, denom)
+        end subroutine glfwSetWindowAspectRatio
+
+        subroutine glfwSetWindowSize(window, width, height)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: width, height
+
+            call c_glfwSetWindowSize(window%ptr, width, height)
+        end subroutine glfwSetWindowSize
+
+        subroutine glfwGetFramebufferSize(window, width, height)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr),          intent(in)  :: window
+            integer(kind=c_int), optional, intent(out) :: width, height
+
+            integer(kind=c_int) :: c_w, c_h
+
+            call c_glfwGetFramebufferSize(window%ptr, c_w, c_h)
+            if (present(width))  width  = c_w
+            if (present(height)) height = c_h
+        end subroutine glfwGetFramebufferSize
+
+        subroutine glfwGetWindowFrameSize(window, left, top, right, bottom)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr),          intent(in)  :: window
+            integer(kind=c_int), optional, intent(out) :: left, top, right, bottom
+
+            integer(kind=c_int) :: c_l, c_t, c_r, c_b
+
+            call c_glfwGetWindowFrameSize(window%ptr, c_l, c_t, c_r, c_b)
+            if (present(left))   left   = c_l
+            if (present(top))    top    = c_t
+            if (present(right))  right  = c_r
+            if (present(bottom)) bottom = c_b
+        end subroutine glfwGetWindowFrameSize
+
+        subroutine glfwGetWindowContentScale(window, xscale, yscale)
+            use, intrinsic :: iso_c_binding, only: c_float
+
+            implicit none
+            type(GLFWwindow_ptr),         intent(in)  :: window
+            real(kind=c_float), optional, intent(out) :: xscale, yscale
+
+            real(kind=c_float) :: c_x, c_y
+
+            call c_glfwGetWindowContentScale(window%ptr, c_x, c_y)
+            if (present(xscale)) xscale = c_x
+            if (present(yscale)) yscale = c_y
+        end subroutine glfwGetWindowContentScale
+
+        function glfwGetWindowOpacity(window) result(opacity)
+            use, intrinsic :: iso_c_binding, only: c_float
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            real(kind=c_float)               :: opacity
+
+            opacity = c_glfwGetWindowOpacity(window%ptr)
+        end function glfwGetWindowOpacity
+
+        subroutine glfwSetWindowOpacity(window, opacity)
+            use, intrinsic :: iso_c_binding, only: c_float
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            real(kind=c_float),   intent(in) :: opacity
+
+            call c_glfwSetWindowOpacity(window%ptr, opacity)
+        end subroutine glfwSetWindowOpacity
+
+        subroutine glfwIconifyWindow(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwIconifyWindow(window%ptr)
+        end subroutine glfwIconifyWindow
+
+        subroutine glfwRestoreWindow(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwRestoreWindow(window%ptr)
+        end subroutine glfwRestoreWindow
+
+        subroutine glfwMaximizeWindow(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwMaximizeWindow(window%ptr)
+        end subroutine glfwMaximizeWindow
+
+        subroutine glfwShowWindow(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwShowWindow(window%ptr)
+        end subroutine glfwShowWindow
+
+        subroutine glfwHideWindow(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwHideWindow(window%ptr)
+        end subroutine glfwHideWindow
+
+        subroutine glfwFocusWindow(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwFocusWindow(window%ptr)
+        end subroutine glfwFocusWindow
+
+        subroutine glfwRequestWindowAttention(window)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+
+            call c_glfwRequestWindowAttention(window%ptr)
+        end subroutine glfwRequestWindowAttention
+
+        function glfwGetWindowMonitor(window) result(monitor)
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            type(GLFWmonitor_ptr)            :: monitor
+
+            monitor = GLFWmonitor_ptr(ptr = c_glfwGetWindowMonitor(window%ptr))
+        end function glfwGetWindowMonitor
+
+        subroutine glfwSetWindowMonitor(window, monitor, x, y, width, height, refresh_rate)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_null_ptr
+
+            implicit none
+            type(GLFWwindow_ptr),            intent(in) :: window
+            type(GLFWmonitor_ptr), optional, intent(in) :: monitor
+            integer(kind=c_int),             intent(in) :: x, y, width, height, refresh_rate
+
+            type(c_ptr) :: c_monitor
+
+            c_monitor = c_null_ptr
+            if (present(monitor)) c_monitor = monitor%ptr
+
+            call c_glfwSetWindowMonitor(window%ptr, c_monitor, x, y, width, height, refresh_rate)
+        end subroutine glfwSetWindowMonitor
+
+        function glfwGetWindowAttrib(window, attrib) result(val)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: attrib
+            integer(kind=c_int)              :: val
+
+            val = c_glfwGetWindowAttrib(window%ptr, attrib)
+        end function glfwGetWindowAttrib
+
+        subroutine glfwSetWindowAttrib(window, attrib, val)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: attrib
+            integer(kind=c_int),  intent(in) :: val
+
+            call c_glfwSetWindowAttrib(window%ptr, attrib, val)
+        end subroutine glfwSetWindowAttrib
+
+        subroutine glfwSetWindowUserPointer(window, user_pointer)
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            type(c_ptr),          intent(in) :: user_pointer
+
+            call c_glfwSetWindowUserPointer(window%ptr, user_pointer)
+        end subroutine glfwSetWindowUserPointer
+
+        function glfwGetWindowUserPointer(window) result(user_pointer)
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            type(c_ptr)                      :: user_pointer
+
+            user_pointer = c_glfwGetWindowUserPointer(window%ptr)
+        end function glfwGetWindowUserPointer
+
+        function glfwSetWindowPosCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowposfun), optional :: callback
+            procedure(GLFWwindowposfun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowPosCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowPosCallback(c_funloc(glf90wWindowPosWrapper))
+                glf90wWindowPosCallback => callback
+            else
+                res = c_glfwSetWindowPosCallback(c_null_funptr)
+                glf90wWindowPosCallback => null()
+            end if
+        end function glfwSetWindowPosCallback
+
+        function glfwSetWindowSizeCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowsizefun), optional :: callback
+            procedure(GLFWwindowsizefun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowSizeCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowSizeCallback(c_funloc(glf90wWindowSizeWrapper))
+                glf90wWindowSizeCallback => callback
+            else
+                res = c_glfwSetWindowSizeCallback(c_null_funptr)
+                glf90wWindowSizeCallback => null()
+            end if
+        end function glfwSetWindowSizeCallback
+
+        function glfwSetWindowCloseCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowclosefun), optional :: callback
+            procedure(GLFWwindowclosefun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowCloseCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowCloseCallback(c_funloc(glf90wWindowCloseWrapper))
+                glf90wWindowCloseCallback => callback
+            else
+                res = c_glfwSetWindowCloseCallback(c_null_funptr)
+                glf90wWindowCloseCallback => null()
+            end if
+        end function glfwSetWindowCloseCallback
+
+        function glfwSetWindowRefreshCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowrefreshfun), optional :: callback
+            procedure(GLFWwindowrefreshfun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowRefreshCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowRefreshCallback(c_funloc(glf90wWindowRefreshWrapper))
+                glf90wWindowRefreshCallback => callback
+            else
+                res = c_glfwSetWindowRefreshCallback(c_null_funptr)
+                glf90wWindowRefreshCallback => null()
+            end if
+        end function glfwSetWindowRefreshCallback
+
+        function glfwSetWindowFocusCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowfocusfun), optional :: callback
+            procedure(GLFWwindowfocusfun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowFocusCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowFocusCallback(c_funloc(glf90wWindowFocusWrapper))
+                glf90wWindowFocusCallback => callback
+            else
+                res = c_glfwSetWindowFocusCallback(c_null_funptr)
+                glf90wWindowFocusCallback => null()
+            end if
+        end function glfwSetWindowFocusCallback
+
+        function glfwSetWindowIconifyCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowiconifyfun), optional :: callback
+            procedure(GLFWwindowiconifyfun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowIconifyCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowIconifyCallback(c_funloc(glf90wWindowIconifyWrapper))
+                glf90wWindowIconifyCallback => callback
+            else
+                res = c_glfwSetWindowIconifyCallback(c_null_funptr)
+                glf90wWindowIconifyCallback => null()
+            end if
+        end function glfwSetWindowIconifyCallback
+
+        function glfwSetWindowMaximizeCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowmaximizefun), optional :: callback
+            procedure(GLFWwindowmaximizefun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowMaximizeCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowMaximizeCallback(c_funloc(glf90wWindowMaximizeWrapper))
+                glf90wWindowMaximizeCallback => callback
+            else
+                res = c_glfwSetWindowMaximizeCallback(c_null_funptr)
+                glf90wWindowMaximizeCallback => null()
+            end if
+        end function glfwSetWindowMaximizeCallback
+
+        function glfwSetFramebufferSizeCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWframebuffersizefun), optional :: callback
+            procedure(GLFWframebuffersizefun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wFramebufferSizeCallback
+            if (present(callback)) then
+                res = c_glfwSetFramebufferSizeCallback(c_funloc(glf90wFramebufferSizeWrapper))
+                glf90wFramebufferSizeCallback => callback
+            else
+                res = c_glfwSetFramebufferSizeCallback(c_null_funptr)
+                glf90wFramebufferSizeCallback => null()
+            end if
+        end function glfwSetFramebufferSizeCallback
+
+        function glfwSetWindowContentScaleCallback(callback) result(prev_callback)
+            use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
+
+            implicit none
+            procedure(GLFWwindowcontentscalefun), optional :: callback
+            procedure(GLFWwindowcontentscalefun), pointer  :: prev_callback
+
+            type(c_funptr) :: res
+
+            prev_callback => glf90wWindowContentScaleCallback
+            if (present(callback)) then
+                res = c_glfwSetWindowContentScaleCallback(c_funloc(glf90wWindowContentScaleWrapper))
+                glf90wWindowContentScaleCallback => callback
+            else
+                res = c_glfwSetWindowContentScaleCallback(c_null_funptr)
+                glf90wWindowContentScaleCallback => null()
+            end if
+        end function glfwSetWindowContentScaleCallback
+
+        function glfwGetInputMode(window, mode) result(val)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: mode
+            integer(kind=c_int)              :: val
+
+            val = c_glfwGetInputMode(window%ptr, mode)
+        end function glfwGetInputMode
+
+        subroutine glfwSetInputMode(window, mode, val)
+            use, intrinsic :: iso_c_binding, only: c_int
+
+            implicit none
+            type(GLFWwindow_ptr), intent(in) :: window
+            integer(kind=c_int),  intent(in) :: mode
+            integer(kind=c_int),  intent(in) :: val
+
+            call c_glfwSetInputMode(window%ptr, mode, val)
+        end subroutine glfwSetInputMode
 
         function glfwRawMouseMotionSupported() result(supported)
             use, intrinsic :: iso_c_binding, only: c_int
