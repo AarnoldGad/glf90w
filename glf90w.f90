@@ -385,18 +385,52 @@ module glf90w
 
 
     public :: &
-        ! -- void (*GLFWerrorfun)(int IN error_code, char IN description)
+        ! -- void (*GLFWerrorfun)(int error_code, char description)
         GLFWerrorfun, &
-        ! -- void (*GLFWmonitorfun)(GLFWmonitor IN monitor, int IN description)
-        GLFWmonitorfun, &
-        ! -- void (*GLFWjoystickfun)(int IN jid, int IN event)
-        GLFWjoystickfun
         ! -- void* (*GLFWallocatefun)(size_t size, void* user)
         ! GLFWallocatefun
         ! -- void* (*GLFWreallocatefun)(void* block, size_t size, void* user)
         ! GLFWreallocatefun
         ! -- void (*GLFWdeallocatefun)(void* block, void* user)
         ! GLFWdeallocatefun
+        ! -- void (*GLFWwindowposfun)(GLFWwindow_ptr window, int x, int y)
+        GLFWwindowposfun, &
+        ! -- void (*GLFWwindowsizefun)(GLFWwindow_ptr window, int x, int y)
+        GLFWwindowsizefun, &
+        ! -- void (*GLFWwindowclosefun)(GLFWwindow_ptr window);
+        GLFWwindowclosefun, &
+        ! -- void (*GLFWwindowrefreshfun)(GLFWwindow_ptr window);
+        GLFWwindowrefreshfun, &
+        ! -- void (*GLFWwindowfocusfun)(GLFWwindow_ptr window, int focused);
+        GLFWwindowfocusfun, &
+        ! -- void (*GLFWwindowiconifyfun)(GLFWwindow_ptr window, int iconified);
+        GLFWwindowfocusfun, &
+        ! -- void (*GLFWwindowmaximizefun)(GLFWwindow_ptr window, int maximized);
+        GLFWwindowmaximizefun, &
+        ! -- void (*GLFWframebuffersizefun)(GLFWwindow_ptr window, int width, int height);
+        GLFWframebuffersizefun, &
+        ! -- void (*GLFWwindowcontentscalefun)(GLFWwindow_ptr window, float xscale, float yscale);
+        GLFWwindowcontentscalefun, &
+        ! -- void (*GLFWmousebuttonfun)(GLFWwindow_ptr window, int button, int action, int mods);
+        GLFWmousebuttonfun, &
+        ! -- void (*GLFWcursorposfun)(GLFWwindow_ptr window, double xpos, double ypos);
+        GLFWcursorposfun, &
+        ! -- void (*GLFWcursorenterfun)(GLFWwindow_ptr window, int entered);
+        GLFWcursorenterfun, &
+        ! -- void (*GLFWscrollfun)(GLFWwindow_ptr window, double xoffset, double yoffset);
+        GLFWscrollfun, &
+        ! -- void (*GLFWkeyfun)(GLFWwindow_ptr window, int key, int scancode, int action, int mods);
+        GLFWkeyfun, &
+        ! -- void (*GLFWcharfun)(GLFWwindow_ptr window, unsigned int codepoint);
+        GLFWcharfun, &
+        ! -- void (*GLFWcharmodsfun)(GLFWwindow_ptr window, unsigned int codepoint, int mods);
+        GLFWcharmodsfun, &
+        ! -- void (*GLFWdropfun)(GLFWwindow_ptr window, int path_count, const char* paths[]);
+        GLFWdropfun, &
+        ! -- void (*GLFWmonitorfun)(GLFWmonitor_ptr IN monitor, int IN description)
+        GLFWmonitorfun, &
+        ! -- void (*GLFWjoystickfun)(int IN jid, int IN event)
+        GLFWjoystickfun, &
 
     public :: associated
 
