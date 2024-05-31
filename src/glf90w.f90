@@ -9,7 +9,7 @@
 ! Gaétan J.A.M. Jalin
 ! See end of file for complete licence description
 ! ------------------
-module GLF90W
+module glf90w
     use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr, c_char, c_int, c_float, c_null_ptr, c_null_funptr
 
     implicit none
@@ -941,23 +941,32 @@ module GLF90W
         glfwSetWindowUserPointer, &
         ! -- void* glfwGetWindowUserPointer(GLFWwindow_ptr IN window) result(user_pointer)
         glfwGetWindowUserPointer, &
-        ! -- GLFWwindowposfun POINTER glfwSetWindowPosCallback(GLFWwindowposfun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowposfun POINTER glfwSetWindowPosCallback(GLFWwindow_ptr IN window,
+        !                   GLFWwindowposfun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowPosCallback, &
-        ! -- GLFWwindowsizefun POINTER glfwSetWindowSizeCallback(GLFWwindowsizefun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowsizefun POINTER glfwSetWindowSizeCallback(GLFWwindow_ptr IN window, 
+        !                    GLFWwindowsizefun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowSizeCallback, &
-        ! -- GLFWwindowclosefun POINTER glfwSetWindowCloseCallback(GLFWwindowclosefun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowclosefun POINTER glfwSetWindowCloseCallback(GLFWwindow_ptr IN window,
+        !                     GLFWwindowclosefun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowCloseCallback, &
-        ! -- GLFWwindowrefreshfun POINTER glfwSetWindowRefreshCallback(GLFWwindowrefreshfun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowrefreshfun POINTER glfwSetWindowRefreshCallback(GLFWwindow_ptr IN window,
+        !                       GLFWwindowrefreshfun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowRefreshCallback, &
-        ! -- GLFWwindowfocusfun POINTER glfwSetWindowFocusCallback(GLFWwindowfocusfun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowfocusfun POINTER glfwSetWindowFocusCallback(GLFWwindow_ptr IN window,
+        !                       GLFWwindowfocusfun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowFocusCallback, &
-        ! -- GLFWwindowiconifyfun POINTER glfwSetWindowIconifyCallback(GLFWwindowiconifyfun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowiconifyfun POINTER glfwSetWindowIconifyCallback(GLFWwindow_ptr IN window,
+        !                       GLFWwindowiconifyfun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowIconifyCallback, &
-        ! -- GLFWwindowmaximizefun POINTER glfwSetWindowMaximizeCallback(GLFWwindowmaximizefun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowmaximizefun POINTER glfwSetWindowMaximizeCallback(GLFWwindow_ptr IN window,
+        !                        GLFWwindowmaximizefun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowMaximizeCallback, &
-        ! -- GLFWframebuffersizefun glfwSetFramebufferSizeCallback(GLFWframebuffersizefun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWframebuffersizefun POINTER glfwSetFramebufferSizeCallback(GLFWwindow_ptr IN window,
+        !                         GLFWframebuffersizefun OPTIONAL IN callback) result(prev_callback)
         glfwSetFramebufferSizeCallback, &
-        ! -- GLFWwindowcontentscalefun POINTER glfwSetWindowContentScaleCallback(GLFWwindowcontentscalefun OPTIONAL IN callback) result(prev_callback)
+        ! -- GLFWwindowcontentscalefun POINTER glfwSetWindowContentScaleCallback(GLFWwindow_ptr IN window,
+        !                            GLFWwindowcontentscalefun OPTIONAL IN callback) result(prev_callback)
         glfwSetWindowContentScaleCallback, &
         ! -- void glfwPollEvents()
         glfwPollEvents, &
@@ -1663,90 +1672,99 @@ module GLF90W
     end interface
 
     interface
-        function c_glfwSetWindowPosCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowPosCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowPosCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowPosCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowPosCallback
     end interface
 
     interface
-        function c_glfwSetWindowSizeCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowSizeCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowSizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowSizeCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowSizeCallback
     end interface
 
     interface
-        function c_glfwSetWindowCloseCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowCloseCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowCloseCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowCloseCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowCloseCallback
     end interface
 
     interface
-        function c_glfwSetWindowRefreshCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowRefreshCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowRefreshCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowRefreshCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowRefreshCallback
     end interface
 
     interface
-        function c_glfwSetWindowFocusCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowFocusCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowFocusCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowFocusCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowFocusCallback
     end interface
 
     interface
-        function c_glfwSetWindowIconifyCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowIconifyCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowIconifyCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowIconifyCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowIconifyCallback
     end interface
 
     interface
-        function c_glfwSetWindowMaximizeCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowMaximizeCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowMaximizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowMaximizeCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowMaximizeCallback
     end interface
 
     interface
-        function c_glfwSetFramebufferSizeCallback(callback) result(prev_callback) bind(C, name="glfwSetFramebufferSizeCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetFramebufferSizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetFramebufferSizeCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetFramebufferSizeCallback
     end interface
 
     interface
-        function c_glfwSetWindowContentScaleCallback(callback) result(prev_callback) bind(C, name="glfwSetWindowContentScaleCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetWindowContentScaleCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowContentScaleCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowContentScaleCallback
@@ -1911,80 +1929,88 @@ module GLF90W
     end interface
 
     interface
-        function c_glfwSetKeyCallback(callback) result(prev_callback) bind(C, name="glfwSetKeyCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetKeyCallback(window, callback) result(prev_callback) bind(C, name="glfwSetKeyCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetKeyCallback
     end interface
 
     interface
-        function c_glfwSetCharCallback(callback) result(prev_callback) bind(C, name="glfwSetCharCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetCharCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCharCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCharCallback
     end interface
 
     interface
-        function c_glfwSetCharModsCallback(callback) result(prev_callback) bind(C, name="glfwSetCharModsCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetCharModsCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCharModsCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCharModsCallback
     end interface
 
     interface
-        function c_glfwSetMouseButtonCallback(callback) result(prev_callback) bind(C, name="glfwSetMouseButtonCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetMouseButtonCallback(window, callback) result(prev_callback) bind(C, name="glfwSetMouseButtonCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetMouseButtonCallback
     end interface
 
     interface
-        function c_glfwSetCursorPosCallback(callback) result(prev_callback) bind(C, name="glfwSetCursorPosCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetCursorPosCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCursorPosCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCursorPosCallback
     end interface
 
     interface
-        function c_glfwSetCursorEnterCallback(callback) result(prev_callback) bind(C, name="glfwSetCursorEnterCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetCursorEnterCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCursorEnterCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCursorEnterCallback
     end interface
 
     interface
-        function c_glfwSetScrollCallback(callback) result(prev_callback) bind(C, name="glfwSetScrollCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetScrollCallback(window, callback) result(prev_callback) bind(C, name="glfwSetScrollCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetScrollCallback
     end interface
 
     interface
-        function c_glfwSetDropCallback(callback) result(prev_callback) bind(C, name="glfwSetDropCallback")
-            use, intrinsic :: iso_c_binding, only: c_funptr
+        function c_glfwSetDropCallback(window, callback) result(prev_callback) bind(C, name="glfwSetDropCallback")
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
             implicit none
+            type(c_ptr),    value, intent(in) :: window
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetDropCallback
@@ -2936,10 +2962,11 @@ module GLF90W
             user_pointer = c_glfwGetWindowUserPointer(window%ptr)
         end function glfwGetWindowUserPointer
 
-        function glfwSetWindowPosCallback(callback) result(prev_callback)
+        function glfwSetWindowPosCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowposfun), optional :: callback
             procedure(GLFWwindowposfun), pointer  :: prev_callback
 
@@ -2947,18 +2974,19 @@ module GLF90W
 
             prev_callback => glf90wWindowPosCallback
             if (present(callback)) then
-                res = c_glfwSetWindowPosCallback(c_funloc(glf90wWindowPosWrapper))
+                res = c_glfwSetWindowPosCallback(window%ptr, c_funloc(glf90wWindowPosWrapper))
                 glf90wWindowPosCallback => callback
             else
-                res = c_glfwSetWindowPosCallback(c_null_funptr)
+                res = c_glfwSetWindowPosCallback(window%ptr, c_null_funptr)
                 glf90wWindowPosCallback => null()
             end if
         end function glfwSetWindowPosCallback
 
-        function glfwSetWindowSizeCallback(callback) result(prev_callback)
+        function glfwSetWindowSizeCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowsizefun), optional :: callback
             procedure(GLFWwindowsizefun), pointer  :: prev_callback
 
@@ -2966,18 +2994,19 @@ module GLF90W
 
             prev_callback => glf90wWindowSizeCallback
             if (present(callback)) then
-                res = c_glfwSetWindowSizeCallback(c_funloc(glf90wWindowSizeWrapper))
+                res = c_glfwSetWindowSizeCallback(window%ptr, c_funloc(glf90wWindowSizeWrapper))
                 glf90wWindowSizeCallback => callback
             else
-                res = c_glfwSetWindowSizeCallback(c_null_funptr)
+                res = c_glfwSetWindowSizeCallback(window%ptr, c_null_funptr)
                 glf90wWindowSizeCallback => null()
             end if
         end function glfwSetWindowSizeCallback
 
-        function glfwSetWindowCloseCallback(callback) result(prev_callback)
+        function glfwSetWindowCloseCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowclosefun), optional :: callback
             procedure(GLFWwindowclosefun), pointer  :: prev_callback
 
@@ -2985,18 +3014,19 @@ module GLF90W
 
             prev_callback => glf90wWindowCloseCallback
             if (present(callback)) then
-                res = c_glfwSetWindowCloseCallback(c_funloc(glf90wWindowCloseWrapper))
+                res = c_glfwSetWindowCloseCallback(window%ptr, c_funloc(glf90wWindowCloseWrapper))
                 glf90wWindowCloseCallback => callback
             else
-                res = c_glfwSetWindowCloseCallback(c_null_funptr)
+                res = c_glfwSetWindowCloseCallback(window%ptr, c_null_funptr)
                 glf90wWindowCloseCallback => null()
             end if
         end function glfwSetWindowCloseCallback
 
-        function glfwSetWindowRefreshCallback(callback) result(prev_callback)
+        function glfwSetWindowRefreshCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowrefreshfun), optional :: callback
             procedure(GLFWwindowrefreshfun), pointer  :: prev_callback
 
@@ -3004,18 +3034,19 @@ module GLF90W
 
             prev_callback => glf90wWindowRefreshCallback
             if (present(callback)) then
-                res = c_glfwSetWindowRefreshCallback(c_funloc(glf90wWindowRefreshWrapper))
+                res = c_glfwSetWindowRefreshCallback(window%ptr, c_funloc(glf90wWindowRefreshWrapper))
                 glf90wWindowRefreshCallback => callback
             else
-                res = c_glfwSetWindowRefreshCallback(c_null_funptr)
+                res = c_glfwSetWindowRefreshCallback(window%ptr, c_null_funptr)
                 glf90wWindowRefreshCallback => null()
             end if
         end function glfwSetWindowRefreshCallback
 
-        function glfwSetWindowFocusCallback(callback) result(prev_callback)
+        function glfwSetWindowFocusCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowfocusfun), optional :: callback
             procedure(GLFWwindowfocusfun), pointer  :: prev_callback
 
@@ -3023,18 +3054,19 @@ module GLF90W
 
             prev_callback => glf90wWindowFocusCallback
             if (present(callback)) then
-                res = c_glfwSetWindowFocusCallback(c_funloc(glf90wWindowFocusWrapper))
+                res = c_glfwSetWindowFocusCallback(window%ptr, c_funloc(glf90wWindowFocusWrapper))
                 glf90wWindowFocusCallback => callback
             else
-                res = c_glfwSetWindowFocusCallback(c_null_funptr)
+                res = c_glfwSetWindowFocusCallback(window%ptr, c_null_funptr)
                 glf90wWindowFocusCallback => null()
             end if
         end function glfwSetWindowFocusCallback
 
-        function glfwSetWindowIconifyCallback(callback) result(prev_callback)
+        function glfwSetWindowIconifyCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowiconifyfun), optional :: callback
             procedure(GLFWwindowiconifyfun), pointer  :: prev_callback
 
@@ -3042,18 +3074,19 @@ module GLF90W
 
             prev_callback => glf90wWindowIconifyCallback
             if (present(callback)) then
-                res = c_glfwSetWindowIconifyCallback(c_funloc(glf90wWindowIconifyWrapper))
+                res = c_glfwSetWindowIconifyCallback(window%ptr, c_funloc(glf90wWindowIconifyWrapper))
                 glf90wWindowIconifyCallback => callback
             else
-                res = c_glfwSetWindowIconifyCallback(c_null_funptr)
+                res = c_glfwSetWindowIconifyCallback(window%ptr, c_null_funptr)
                 glf90wWindowIconifyCallback => null()
             end if
         end function glfwSetWindowIconifyCallback
 
-        function glfwSetWindowMaximizeCallback(callback) result(prev_callback)
+        function glfwSetWindowMaximizeCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowmaximizefun), optional :: callback
             procedure(GLFWwindowmaximizefun), pointer  :: prev_callback
 
@@ -3061,18 +3094,19 @@ module GLF90W
 
             prev_callback => glf90wWindowMaximizeCallback
             if (present(callback)) then
-                res = c_glfwSetWindowMaximizeCallback(c_funloc(glf90wWindowMaximizeWrapper))
+                res = c_glfwSetWindowMaximizeCallback(window%ptr, c_funloc(glf90wWindowMaximizeWrapper))
                 glf90wWindowMaximizeCallback => callback
             else
-                res = c_glfwSetWindowMaximizeCallback(c_null_funptr)
+                res = c_glfwSetWindowMaximizeCallback(window%ptr, c_null_funptr)
                 glf90wWindowMaximizeCallback => null()
             end if
         end function glfwSetWindowMaximizeCallback
 
-        function glfwSetFramebufferSizeCallback(callback) result(prev_callback)
+        function glfwSetFramebufferSizeCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWframebuffersizefun), optional :: callback
             procedure(GLFWframebuffersizefun), pointer  :: prev_callback
 
@@ -3080,18 +3114,19 @@ module GLF90W
 
             prev_callback => glf90wFramebufferSizeCallback
             if (present(callback)) then
-                res = c_glfwSetFramebufferSizeCallback(c_funloc(glf90wFramebufferSizeWrapper))
+                res = c_glfwSetFramebufferSizeCallback(window%ptr, c_funloc(glf90wFramebufferSizeWrapper))
                 glf90wFramebufferSizeCallback => callback
             else
-                res = c_glfwSetFramebufferSizeCallback(c_null_funptr)
+                res = c_glfwSetFramebufferSizeCallback(window%ptr, c_null_funptr)
                 glf90wFramebufferSizeCallback => null()
             end if
         end function glfwSetFramebufferSizeCallback
 
-        function glfwSetWindowContentScaleCallback(callback) result(prev_callback)
+        function glfwSetWindowContentScaleCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWwindowcontentscalefun), optional :: callback
             procedure(GLFWwindowcontentscalefun), pointer  :: prev_callback
 
@@ -3099,10 +3134,10 @@ module GLF90W
 
             prev_callback => glf90wWindowContentScaleCallback
             if (present(callback)) then
-                res = c_glfwSetWindowContentScaleCallback(c_funloc(glf90wWindowContentScaleWrapper))
+                res = c_glfwSetWindowContentScaleCallback(window%ptr, c_funloc(glf90wWindowContentScaleWrapper))
                 glf90wWindowContentScaleCallback => callback
             else
-                res = c_glfwSetWindowContentScaleCallback(c_null_funptr)
+                res = c_glfwSetWindowContentScaleCallback(window%ptr, c_null_funptr)
                 glf90wWindowContentScaleCallback => null()
             end if
         end function glfwSetWindowContentScaleCallback
@@ -3239,29 +3274,31 @@ module GLF90W
             call c_glfwSetCursor(window%ptr, cursor%ptr)
         end subroutine glfwSetCursor
 
-        function glfwSetKeyCallback(callback) result(prev_callback)
+        function glfwSetKeyCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
-            procedure(GLFWkeyfun), optional :: callback
-            procedure(GLFWkeyfun), pointer  :: prev_callback
+            type(GLFWwindow_ptr), intent(in) :: window
+            procedure(GLFWkeyfun), optional  :: callback
+            procedure(GLFWkeyfun), pointer   :: prev_callback
 
             type(c_funptr) :: res
 
             prev_callback => glf90wKeyCallback
             if (present(callback)) then
-                res = c_glfwSetKeyCallback(c_funloc(glf90wKeyWrapper))
+                res = c_glfwSetKeyCallback(window%ptr, c_funloc(glf90wKeyWrapper))
                 glf90wKeyCallback => callback
             else
-                res = c_glfwSetKeyCallback(c_null_funptr)
+                res = c_glfwSetKeyCallback(window%ptr, c_null_funptr)
                 glf90wKeyCallback => null()
             end if
         end function glfwSetKeyCallback
 
-        function glfwSetCharCallback(callback) result(prev_callback)
+        function glfwSetCharCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWcharfun), optional :: callback
             procedure(GLFWcharfun), pointer  :: prev_callback
 
@@ -3269,18 +3306,19 @@ module GLF90W
 
             prev_callback => glf90wCharCallback
             if (present(callback)) then
-                res = c_glfwSetCharCallback(c_funloc(glf90wCharWrapper))
+                res = c_glfwSetCharCallback(window%ptr, c_funloc(glf90wCharWrapper))
                 glf90wCharCallback => callback
             else
-                res = c_glfwSetCharCallback(c_null_funptr)
+                res = c_glfwSetCharCallback(window%ptr, c_null_funptr)
                 glf90wCharCallback => null()
             end if
         end function glfwSetCharCallback
 
-        function glfwSetCharModsCallback(callback) result(prev_callback)
+        function glfwSetCharModsCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWcharmodsfun), optional :: callback
             procedure(GLFWcharmodsfun), pointer  :: prev_callback
 
@@ -3288,18 +3326,19 @@ module GLF90W
 
             prev_callback => glf90wCharModsCallback
             if (present(callback)) then
-                res = c_glfwSetCharModsCallback(c_funloc(glf90wCharModsWrapper))
+                res = c_glfwSetCharModsCallback(window%ptr, c_funloc(glf90wCharModsWrapper))
                 glf90wCharModsCallback => callback
             else
-                res = c_glfwSetCharModsCallback(c_null_funptr)
+                res = c_glfwSetCharModsCallback(window%ptr, c_null_funptr)
                 glf90wCharModsCallback => null()
             end if
         end function glfwSetCharModsCallback
 
-        function glfwSetMouseButtonCallback(callback) result(prev_callback)
+        function glfwSetMouseButtonCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWmousebuttonfun), optional :: callback
             procedure(GLFWmousebuttonfun), pointer  :: prev_callback
 
@@ -3307,18 +3346,19 @@ module GLF90W
 
             prev_callback => glf90wMouseButtonCallback
             if (present(callback)) then
-                res = c_glfwSetMouseButtonCallback(c_funloc(glf90wMouseButtonWrapper))
+                res = c_glfwSetMouseButtonCallback(window%ptr, c_funloc(glf90wMouseButtonWrapper))
                 glf90wMouseButtonCallback => callback
             else
-                res = c_glfwSetMouseButtonCallback(c_null_funptr)
+                res = c_glfwSetMouseButtonCallback(window%ptr, c_null_funptr)
                 glf90wMouseButtonCallback => null()
             end if
         end function glfwSetMouseButtonCallback
 
-        function glfwSetCursorPosCallback(callback) result(prev_callback)
+        function glfwSetCursorPosCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWcursorposfun), optional :: callback
             procedure(GLFWcursorposfun), pointer  :: prev_callback
 
@@ -3326,18 +3366,19 @@ module GLF90W
 
             prev_callback => glf90wCursorPosCallback
             if (present(callback)) then
-                res = c_glfwSetCursorPosCallback(c_funloc(glf90wCursorPosWrapper))
+                res = c_glfwSetCursorPosCallback(window%ptr, c_funloc(glf90wCursorPosWrapper))
                 glf90wCursorPosCallback => callback
             else
-                res = c_glfwSetCursorPosCallback(c_null_funptr)
+                res = c_glfwSetCursorPosCallback(window%ptr, c_null_funptr)
                 glf90wCursorPosCallback => null()
             end if
         end function glfwSetCursorPosCallback
 
-        function glfwSetCursorEnterCallback(callback) result(prev_callback)
+        function glfwSetCursorEnterCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWcursorenterfun), optional :: callback
             procedure(GLFWcursorenterfun), pointer  :: prev_callback
 
@@ -3345,18 +3386,19 @@ module GLF90W
 
             prev_callback => glf90wCursorEnterCallback
             if (present(callback)) then
-                res = c_glfwSetCursorEnterCallback(c_funloc(glf90wCursorEnterWrapper))
+                res = c_glfwSetCursorEnterCallback(window%ptr, c_funloc(glf90wCursorEnterWrapper))
                 glf90wCursorEnterCallback => callback
             else
-                res = c_glfwSetCursorEnterCallback(c_null_funptr)
+                res = c_glfwSetCursorEnterCallback(window%ptr, c_null_funptr)
                 glf90wCursorEnterCallback => null()
             end if
         end function glfwSetCursorEnterCallback
 
-        function glfwSetScrollCallback(callback) result(prev_callback)
+        function glfwSetScrollCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWscrollfun), optional :: callback
             procedure(GLFWscrollfun), pointer  :: prev_callback
 
@@ -3364,18 +3406,19 @@ module GLF90W
 
             prev_callback => glf90wScrollCallback
             if (present(callback)) then
-                res = c_glfwSetScrollCallback(c_funloc(glf90wScrollWrapper))
+                res = c_glfwSetScrollCallback(window%ptr, c_funloc(glf90wScrollWrapper))
                 glf90wScrollCallback => callback
             else
-                res = c_glfwSetScrollCallback(c_null_funptr)
+                res = c_glfwSetScrollCallback(window%ptr, c_null_funptr)
                 glf90wScrollCallback => null()
             end if
         end function glfwSetScrollCallback
 
-        function glfwSetDropCallback(callback) result(prev_callback)
+        function glfwSetDropCallback(window, callback) result(prev_callback)
             use, intrinsic :: iso_c_binding, only: c_funloc, c_funptr, c_null_funptr
 
             implicit none
+            type(GLFWwindow_ptr), intent(in)      :: window
             procedure(GLFWdropfun), optional :: callback
             procedure(GLFWdropfun), pointer  :: prev_callback
 
@@ -3383,10 +3426,10 @@ module GLF90W
 
             prev_callback => glf90wDropCallback
             if (present(callback)) then
-                res = c_glfwSetDropCallback(c_funloc(glf90wDropWrapper))
+                res = c_glfwSetDropCallback(window%ptr, c_funloc(glf90wDropWrapper))
                 glf90wDropCallback => callback
             else
-                res = c_glfwSetDropCallback(c_null_funptr)
+                res = c_glfwSetDropCallback(window%ptr, c_null_funptr)
                 glf90wDropCallback => null()
             end if
         end function glfwSetDropCallback
@@ -3994,7 +4037,7 @@ module GLF90W
             fptr => temp
         end subroutine c_f_strpointer
 
-end module GLF90W
+end module glf90w
 ! -----------------
 ! GLF90W is provided under the zlib licence
 !
