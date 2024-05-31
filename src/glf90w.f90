@@ -2298,15 +2298,15 @@ module glf90w
         pure function c_ptr_strlen(cstr) result(length) bind(C, name="strlen")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
             implicit none
-            type(c_ptr), intent(in) :: cstr
-            integer(kind=c_size_t)  :: length
+            type(c_ptr), value, intent(in) :: cstr
+            integer(kind=c_size_t)         :: length
         end function c_ptr_strlen
 
         pure function c_char_strlen(cstr) result(length) bind(C, name="strlen")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_char, c_size_t
             implicit none
             character(len=1, kind=c_char), dimension(*), intent(in) :: cstr
-            integer(kind=c_size_t)  :: length
+            integer(kind=c_size_t)                                  :: length
         end function c_char_strlen
     end interface c_strlen
 
@@ -3710,13 +3710,13 @@ module glf90w
         ! But remember to check here if something goes wrong (?)
 
         subroutine glf90wErrorWrapper(error_code, desc_ptr) bind(C)
-            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_int
+            use, intrinsic :: iso_c_binding, only: c_associated, c_ptr, c_char, c_int
 
             implicit none
             integer(kind=c_int), value, intent(in) :: error_code
             type(c_ptr),         value, intent(in) :: desc_ptr
 
-            character(len=:), pointer :: f_desc
+            character(len=:, kind=c_char), pointer :: f_desc
 
             f_desc => null()
             if (c_associated(desc_ptr)) call c_f_strpointer(desc_ptr, f_desc)
