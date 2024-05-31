@@ -9,8 +9,8 @@
 ! Gaétan J.A.M. Jalin
 ! See end of file for complete licence description
 ! ------------------
-module glf90w
-    use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr, c_char, c_int, c_float, c_null_ptr
+module GLF90W
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr, c_char, c_int, c_float, c_null_ptr, c_null_funptr
 
     implicit none
     private
@@ -513,10 +513,10 @@ module glf90w
 !    end type GLFWallocator
 
     type, bind(C), public :: GLFWallocator
-        type(c_funptr) :: allocate_fn
-        type(c_funptr) :: reallocate_fn
-        type(c_funptr) :: deallocate_fn
-        type(c_ptr)    :: user
+        type(c_funptr) :: allocate_fn   = c_null_funptr
+        type(c_funptr) :: reallocate_fn = c_null_funptr
+        type(c_funptr) :: deallocate_fn = c_null_funptr
+        type(c_ptr)    :: user          = c_null_ptr
     end type GLFWallocator
 
 
@@ -3994,7 +3994,7 @@ module glf90w
             fptr => temp
         end subroutine c_f_strpointer
 
-end module glf90w
+end module GLF90W
 ! -----------------
 ! GLF90W is provided under the zlib licence
 !
