@@ -11,6 +11,8 @@
 // -----------------
 #include "glf90w.h"
 
+#include <stdint.h>
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
