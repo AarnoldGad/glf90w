@@ -3663,12 +3663,9 @@ module glf90w
 
             implicit none
             character(len=*, kind=c_char), intent(in) :: procname
-            procedure(GLFWglproc), pointer            :: procaddr
+            type(c_funptr)                            :: procaddr
 
-            type(c_funptr) :: c_procaddr
-
-            c_procaddr = c_glfwGetProcAddress(f_c_string(procname))
-            call c_f_procpointer(c_procaddr, procaddr)
+            procaddr = c_glfwGetProcAddress(f_c_string(procname))
         end function glfwGetProcAddress
 
         function glfwVulkanSupported() result(supported)
