@@ -2,7 +2,7 @@ program basic_window
     use glf90w
 
     implicit none
-    type(GLFWwindow_ptr) :: window
+    type(GLFWwindow) :: window
     integer :: major, minor, rev
 
     call glfwSetErrorCallback(handle_error)
