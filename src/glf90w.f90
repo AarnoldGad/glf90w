@@ -391,6 +391,13 @@ module glf90w
         type(c_ptr) :: ptr = c_null_ptr
     end type c_opaque_ptr
 
+    type, bind(C) :: C_GLFWallocator
+        type(c_funptr) :: allocate_fn   = c_null_funptr
+        type(c_funptr) :: reallocate_fn = c_null_funptr
+        type(c_funptr) :: deallocate_fn = c_null_funptr
+        type(c_ptr)    :: user          = c_null_ptr
+    end type C_GLFWallocator
+
     type, public :: string_ptr
         character(len=:, kind=c_char), pointer :: str => null()
     end type string_ptr
@@ -405,12 +412,6 @@ module glf90w
     ! --------------------------------------------------------------------------
 
 
-    public :: &
-        ! -- typedef void (*GLFWglproc)(void)
-        GLFWglproc, &
-        ! -- typedef void (*GLFWvkproc)(void)
-        GLFWvkproc
-
     type, extends(C_opaque_ptr), public :: GLFWmonitor
     end type GLFWmonitor
 
@@ -421,12 +422,12 @@ module glf90w
     end type GLFWcursor
 
     public :: &
-        !! -- typedef void* (*GLFWallocatefun)(size_t size, void* user)
-        ! GLFWallocatefun
-        !! -- typedef void* (*GLFWreallocatefun)(void* block, size_t size, void* user)
-        ! GLFWreallocatefun, &
-        !! -- typedef void (*GLFWdeallocatefun)(void* block, void* user)
-        ! GLFWdeallocatefun, &
+        ! -- typedef void* (*GLFWallocatefun)(size_t size, void* user)
+        GLFWallocatefun, &
+        ! -- typedef void* (*GLFWreallocatefun)(void* block, size_t size, void* user)
+        GLFWreallocatefun, &
+        ! -- typedef void (*GLFWdeallocatefun)(void* block, void* user)
+        GLFWdeallocatefun, &
         ! -- typedef void (*GLFWerrorfun)(int error_code, char description)
         GLFWerrorfun, &
         ! -- typedef void (*GLFWwindowposfun)(GLFWwindow window, int x, int y)
@@ -505,18 +506,11 @@ module glf90w
         real(kind=c_float),     dimension(6)  :: axes
     end type GLFWgamepadstate
 
-!    type, public :: GLFWallocator
-!        procedure(GLFWallocatefun),   pointer :: allocate_fn
-!        procedure(GLFWreallocatefun), pointer :: reallocate_fn
-!        procedure(GLFWdeallocatefun), pointer :: deallocate_fn
-!        type(c_ptr)                           :: user
-!    end type GLFWallocator
-
-    type, bind(C), public :: GLFWallocator
-        type(c_funptr) :: allocate_fn   = c_null_funptr
-        type(c_funptr) :: reallocate_fn = c_null_funptr
-        type(c_funptr) :: deallocate_fn = c_null_funptr
-        type(c_ptr)    :: user          = c_null_ptr
+    type, public :: GLFWallocator
+        procedure(GLFWallocatefun),   pointer, nopass :: allocate_fn   => null()
+        procedure(GLFWreallocatefun), pointer, nopass :: reallocate_fn => null()
+        procedure(GLFWdeallocatefun), pointer, nopass :: deallocate_fn => null()
+        type(c_ptr)                                   :: user          =  c_null_ptr
     end type GLFWallocator
 
 
@@ -524,50 +518,35 @@ module glf90w
     ! GLF90W API abstract interfaces
     ! --------------------------------------------------------------------------
 
-    ! NOTE For completeness but not sure this is any useful
-    abstract interface
-        subroutine GLFWglproc()
-        end subroutine
-    end interface
 
     abstract interface
-        subroutine GLFWvkproc()
-        end subroutine
-    end interface
+        function GLFWallocatefun(blckSize, user) result(blck) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
 
-! NOTE Leave this here but probably useless as it would require C interfaces
-!    abstract interface
-!        function GLFWallocatefun(blckSize, user) result(blck)
-!            use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
-!
-!            implicit none
-!            integer(kind=c_size_t), intent(in) :: blckSize
-!            type(c_ptr)                        :: user
-!            type(c_ptr)                        :: blck
-!        end function GLFWallocatefun
-!    end interface
-!
-!    abstract interface
-!        function GLFWreallocatefun(blck, blckSize, user) result(reblck)
-!            use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
-!
-!            implicit none
-!            type(c_ptr)                        :: blck
-!            integer(kind=c_size_t), intent(in) :: blckSize
-!            type(c_ptr)                        :: user
-!            type(c_ptr)                        :: reblck
-!        end function GLFWreallocatefun
-!    end interface
-!
-!    abstract interface
-!        subroutine GLFWdeallocatefun(blck, user)
-!            use, intrinsic :: iso_c_binding, only: c_ptr
-!
-!            implicit none
-!            type(c_ptr) :: blck
-!            type(c_ptr) :: user
-!        end function GLFWallocatefun
-!    end interface
+            implicit none
+            integer(kind=c_size_t), intent(in) :: blckSize
+            type(c_ptr),            intent(in) :: user
+            type(c_ptr)                        :: blck
+        end function GLFWallocatefun
+
+        function GLFWreallocatefun(blck, blckSize, user) result(reblck) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr, c_size_t
+
+            implicit none
+            type(c_ptr),            intent(in) :: blck
+            integer(kind=c_size_t), intent(in) :: blckSize
+            type(c_ptr),            intent(in) :: user
+            type(c_ptr)                        :: reblck
+        end function GLFWreallocatefun
+
+        subroutine GLFWdeallocatefun(blck, user) bind(C)
+            use, intrinsic :: iso_c_binding, only: c_ptr
+
+            implicit none
+            type(c_ptr), intent(in) :: blck
+            type(c_ptr), intent(in) :: user
+        end subroutine GLFWdeallocatefun
+    end interface
 
     abstract interface
         subroutine GLFWerrorfun(error_code, description)
@@ -577,9 +556,7 @@ module glf90w
             integer(kind=c_int),           intent(in) :: error_code
             character(len=*, kind=c_char), intent(in) :: description
         end subroutine GLFWerrorfun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowposfun(window, x, y)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow
@@ -588,9 +565,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             integer(kind=c_int),  intent(in) :: x, y
         end subroutine GLFWwindowposfun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowsizefun(window, width, height)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow
@@ -599,27 +574,21 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             integer(kind=c_int),  intent(in) :: width, height
         end subroutine GLFWwindowsizefun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowclosefun(window)
             import :: GLFWwindow
 
             implicit none
             type(GLFWwindow), intent(in) :: window
         end subroutine GLFWwindowclosefun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowrefreshfun(window)
             import :: GLFWwindow
 
             implicit none
             type(GLFWwindow), intent(in) :: window
         end subroutine GLFWwindowrefreshfun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowfocusfun(window, focused)
             import :: GLFWwindow
 
@@ -627,9 +596,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             logical,              intent(in) :: focused
         end subroutine GLFWwindowfocusfun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowiconifyfun(window, iconified)
             import :: GLFWwindow
 
@@ -637,9 +604,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             logical,              intent(in) :: iconified
         end subroutine GLFWwindowiconifyfun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowmaximizefun(window, maximized)
             import :: GLFWwindow
 
@@ -647,9 +612,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             logical,              intent(in) :: maximized
         end subroutine GLFWwindowmaximizefun
-    end interface
 
-    abstract interface
         subroutine GLFWframebuffersizefun(window, width, height)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow
@@ -658,9 +621,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             integer(kind=c_int),  intent(in) :: width, height
         end subroutine GLFWframebuffersizefun
-    end interface
 
-    abstract interface
         subroutine GLFWwindowcontentscalefun(window, xscale, yscale)
             use, intrinsic :: iso_c_binding, only: c_float
             import :: GLFWwindow
@@ -669,9 +630,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             real(kind=c_float),   intent(in) :: xscale, yscale
         end subroutine GLFWwindowcontentscalefun
-    end interface
 
-    abstract interface
         subroutine GLFWmousebuttonfun(window, button, action, mods)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow
@@ -680,9 +639,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             integer(kind=c_int),  intent(in) :: button, action, mods
         end subroutine GLFWmousebuttonfun
-    end interface
 
-    abstract interface
         subroutine GLFWcursorposfun(window, x, y)
             use, intrinsic :: iso_c_binding, only: c_double
             import :: GLFWwindow
@@ -691,9 +648,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             real(kind=c_double),  intent(in) :: x, y
         end subroutine GLFWcursorposfun
-    end interface
 
-    abstract interface
         subroutine GLFWcursorenterfun(window, entered)
             import :: GLFWwindow
 
@@ -701,9 +656,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             logical,              intent(in) :: entered
         end subroutine GLFWcursorenterfun
-    end interface
 
-    abstract interface
         subroutine GLFWscrollfun(window, xoffset, yoffset)
             use, intrinsic :: iso_c_binding, only: c_double
             import :: GLFWwindow
@@ -712,9 +665,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             real(kind=c_double),  intent(in) :: xoffset, yoffset
         end subroutine GLFWscrollfun
-    end interface
 
-    abstract interface
         subroutine GLFWkeyfun(window, key, scancode, action, mods)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow
@@ -723,9 +674,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             integer(kind=c_int),  intent(in) :: key, scancode, action, mods
         end subroutine GLFWkeyfun
-    end interface
 
-    abstract interface
         subroutine GLFWcharfun(window, codepoint)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow
@@ -734,9 +683,7 @@ module glf90w
             type(GLFWwindow), intent(in) :: window
             integer(kind=c_int),  intent(in) :: codepoint ! NOTE This is supposed to be unsigned int
         end subroutine GLFWcharfun
-    end interface
 
-    abstract interface
         subroutine GLFWcharmodsfun(window, codepoint, mods)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWwindow
@@ -746,9 +693,7 @@ module glf90w
             integer(kind=c_int),  intent(in) :: codepoint ! NOTE This is supposed to be unsigned int
             integer(kind=c_int),  intent(in) :: mods
         end subroutine GLFWcharmodsfun
-    end interface
 
-    abstract interface
         subroutine GLFWdropfun(window, paths)
             import :: GLFWwindow
 
@@ -756,9 +701,7 @@ module glf90w
             type(GLFWwindow),                    intent(in) :: window
             character(len=:), dimension(:), pointer, intent(in) :: paths
         end subroutine GLFWdropfun
-    end interface
 
-    abstract interface
         subroutine GLFWmonitorfun(monitor, event)
             use, intrinsic :: iso_c_binding, only: c_int
             import :: GLFWmonitor
@@ -767,9 +710,7 @@ module glf90w
             type(GLFWmonitor), intent(in) :: monitor
             integer(kind=c_int),   intent(in) :: event
         end subroutine GLFWmonitorfun
-    end interface
 
-    abstract interface
         subroutine GLFWjoystickfun(jid, event)
             use, intrinsic :: iso_c_binding, only: c_int
 
@@ -1101,36 +1042,28 @@ module glf90w
             implicit none
             integer(kind=c_int) :: success
         end function c_glfwInit
-    end interface
 
-    interface
         subroutine c_glfwTerminate() bind(C, name="glfwTerminate")
         end subroutine c_glfwTerminate
-    end interface
 
-    interface
-        subroutine glfwInitHint(hint, val) bind(C, name="glfwInitHint")
+        subroutine glfwInitHint(hint, value) bind(C, name="glfwInitHint")
             use, intrinsic :: iso_c_binding, only: c_int
 
             implicit none
             integer(kind=c_int), value, intent(in) :: hint
-            integer(kind=c_int), value, intent(in) :: val
+            integer(kind=c_int), value, intent(in) :: value
         end subroutine glfwInitHint
-    end interface
 
-    interface
-        subroutine glfwInitAllocator(allocator) bind(C, name="glfwInitAllocator")
-            import :: GLFWallocator
+        subroutine c_glfwInitAllocator(allocator) bind(C, name="glfwInitAllocator")
+            import :: C_GLFWallocator
 
             implicit none
-            type(GLFWallocator), intent(in) :: allocator
-        end subroutine glfwInitAllocator
-    end interface
+            type(C_GLFWallocator), optional, intent(in) :: allocator
+        end subroutine c_glfwInitAllocator
 
     ! TODO Vulkan support
     ! void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr loader);
 
-    interface
         subroutine glfwGetVersion(major, minor, rev) bind(C, name="glfwGetVersion")
             use, intrinsic :: iso_c_binding, only: c_int
 
@@ -1139,18 +1072,14 @@ module glf90w
             integer(kind=c_int), intent(out) :: minor
             integer(kind=c_int), intent(out) :: rev
         end subroutine glfwGetVersion
-    end interface
 
-    interface
         function c_glfwGetVersionString() result(str) bind(C, name="glfwGetVersionString")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr) :: str
         end function c_glfwGetVersionString
-    end interface
 
-    interface
         function c_glfwGetError(description) result(error_code) bind(C, name="glfwGetError")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1158,9 +1087,7 @@ module glf90w
             type(c_ptr)         :: description
             integer(kind=c_int) :: error_code
         end function c_glfwGetError
-    end interface
 
-    interface
         function c_glfwSetErrorCallback(callback) result(prev_callback) bind(C, name="glfwSetErrorCallback")
             use, intrinsic :: iso_c_binding, only: c_funptr
 
@@ -1168,18 +1095,14 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetErrorCallback
-    end interface
 
-    interface
         function glfwGetPlatform() result(platform) bind(C, name="glfwGetPlatform")
             use, intrinsic :: iso_c_binding, only: c_int
 
             implicit none
             integer(kind=c_int) :: platform
         end function glfwGetPlatform
-    end interface
 
-    interface
         function c_glfwPlatformSupported(platform) result(supported) bind(C, name="glfwPlatformSupported")
             use, intrinsic :: iso_c_binding, only: c_int
 
@@ -1187,9 +1110,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: platform
             integer(kind=c_int)                    :: supported
         end function c_glfwPlatformSupported
-    end interface
 
-    interface
         function c_glfwGetMonitors(count) result(monitors) bind(C, name="glfwGetMonitors")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1197,18 +1118,14 @@ module glf90w
             integer(kind=c_int) :: count
             type(c_ptr)         :: monitors
         end function c_glfwGetMonitors
-    end interface
 
-    interface
         function c_glfwGetPrimaryMonitor() result(monitor) bind(C, name="glfwGetPrimaryMonitor")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr) :: monitor
         end function c_glfwGetPrimaryMonitor
-    end interface
 
-    interface
         subroutine c_glfwGetMonitorPos(monitor, x, y) bind(C, name="glfwGetMonitorPos")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1216,9 +1133,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: monitor
             integer(kind=c_int), intent(out) :: x, y
         end subroutine c_glfwGetMonitorPos
-    end interface
 
-    interface
         subroutine c_glfwGetMonitorWorkarea(monitor, x, y, w, h) bind(C, name="glfwGetMonitorWorkarea")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1226,9 +1141,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: monitor
             integer(kind=c_int), intent(out) :: x, y, w, h
         end subroutine c_glfwGetMonitorWorkarea
-    end interface
 
-    interface
         subroutine c_glfwGetMonitorPhysicalSize(monitor, widthMM, heightMM) bind(C, name="glfwGetMonitorPhysicalSize")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1236,9 +1149,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: monitor
             integer(kind=c_int), intent(out) :: widthMM, heightMM
         end subroutine c_glfwGetMonitorPhysicalSize
-    end interface
 
-    interface
         subroutine c_glfwGetMonitorContentScale(monitor, xscale, yscale) bind(C, name="glfwGetMonitorContentScale")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_float
 
@@ -1246,9 +1157,7 @@ module glf90w
             type(c_ptr), value, intent(in)  :: monitor
             real(kind=c_float), intent(out) :: xscale, yscale
         end subroutine c_glfwGetMonitorContentScale
-    end interface
 
-    interface
         function c_glfwGetMonitorName(monitor) result(name) bind(C, name="glfwGetMonitorName")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1256,9 +1165,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: monitor
             type(c_ptr)                    :: name
         end function c_glfwGetMonitorName
-    end interface
 
-    interface
         subroutine c_glfwSetMonitorUserPointer(monitor, ptr) bind(C, name="glfwSetMonitorUserPointer")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1266,9 +1173,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: monitor
             type(c_ptr), value, intent(in) :: ptr
         end subroutine c_glfwSetMonitorUserPointer
-    end interface
 
-    interface
         function c_glfwGetMonitorUserPointer(monitor) result(ptr) bind(C, name="glfwGetMonitorUserPointer")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1276,9 +1181,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: monitor
             type(c_ptr)                    :: ptr
         end function c_glfwGetMonitorUserPointer
-    end interface
 
-    interface
         function c_glfwSetMonitorCallback(callback) result(prev_callback) bind(C, name="glfwSetMonitorCallback")
             use, intrinsic :: iso_c_binding, only: c_funptr
 
@@ -1286,9 +1189,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetMonitorCallback
-    end interface
 
-    interface
         function c_glfwGetVideoModes(monitor, count) result(vidmodes) bind(C, name="glfwGetVideoModes")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1297,9 +1198,7 @@ module glf90w
             integer(kind=c_int)            :: count
             type(c_ptr)                    :: vidmodes
         end function c_glfwGetVideoModes
-    end interface
 
-    interface
         function c_glfwGetVideoMode(monitor) result(vidmode) bind(C, name="glfwGetVideoMode")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1307,9 +1206,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: monitor
             type(c_ptr)                    :: vidmode
         end function c_glfwGetVideoMode
-    end interface
 
-    interface
         subroutine c_glfwSetGamma(monitor, gamma) bind(C, name="glfwSetGamma")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_float
 
@@ -1317,32 +1214,24 @@ module glf90w
             type(c_ptr),        value, intent(in) :: monitor
             real(kind=c_float), value, intent(in) :: gamma
         end subroutine c_glfwSetGamma
-    end interface
 
-    interface
         function c_glfwGetGammaRamp(monitor) result(gammaramp) bind(C, name="glfwGetGammaRamp")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             type(c_ptr), value, intent(in) :: monitor
             type(c_ptr)                    :: gammaramp
         end function c_glfwGetGammaRamp
-    end interface
 
-    interface
         subroutine c_glfwSetGammaRamp(monitor, gammaramp) bind(C, name="glfwSetGammaRamp")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             type(c_ptr), value, intent(in) :: monitor
             type(c_ptr), value, intent(in) :: gammaramp
         end subroutine c_glfwSetGammaRamp
-    end interface
 
-    interface
         subroutine glfwDefaultWindowHints() bind(C, name="glfwDefaultWindowHints")
         end subroutine glfwDefaultWindowHints
-    end interface
 
-    interface
         subroutine glfwWindowHint(hint, value) bind(C, name="glfwWindowHint")
             use, intrinsic :: iso_c_binding, only: c_int
 
@@ -1350,9 +1239,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: hint
             integer(kind=c_int), value, intent(in) :: value
         end subroutine glfwWindowHint
-    end interface
 
-    interface
         subroutine c_glfwWindowHintString(hint, val) bind(C, name="glfwWindowHintString")
             use, intrinsic :: iso_c_binding, only: c_char, c_int
 
@@ -1360,9 +1247,7 @@ module glf90w
             integer(kind=c_int), value,                  intent(in) :: hint
             character(len=1, kind=c_char), dimension(*), intent(in) :: val
         end subroutine c_glfwWindowHintString
-    end interface
 
-    interface
         function c_glfwCreateWindow(width, height, title, monitor, share) result(window) bind(C, name="glfwCreateWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int, c_char
 
@@ -1373,18 +1258,14 @@ module glf90w
             type(c_ptr), value,                          intent(in) :: share
             type(c_ptr)                                             :: window
         end function c_glfwCreateWindow
-    end interface
 
-    interface
         subroutine c_glfwDestroyWindow(window) bind(C, name="glfwDestroyWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwDestroyWindow
-    end interface
 
-    interface
         function c_glfwWindowShouldClose(window) result(closeflag) bind(C, name="glfwWindowShouldClose")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1392,9 +1273,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             integer(kind=c_int)            :: closeflag
         end function c_glfwWindowShouldClose
-    end interface
 
-    interface
         subroutine c_glfwSetWindowShouldClose(window, val) bind(C, name="glfwSetWindowShouldClose")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1402,9 +1281,7 @@ module glf90w
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: val
         end subroutine c_glfwSetWindowShouldClose
-    end interface
 
-    interface
         function c_glfwGetWindowTitle(window) result(title) bind(C, name="glfwGetWindowTitle")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1412,9 +1289,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             type(c_ptr)                    :: title
         end function c_glfwGetWindowTitle
-    end interface
 
-    interface
         subroutine c_glfwSetWindowTitle(window, title) bind(C, name="glfwSetWindowTitle")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_char
 
@@ -1422,9 +1297,7 @@ module glf90w
             type(c_ptr), value,                          intent(in) :: window
             character(len=1, kind=c_char), dimension(*), intent(in) :: title
         end subroutine c_glfwSetWindowTitle
-    end interface
 
-    interface
         subroutine c_glfwSetWindowIcon(window, count, images) bind(C, name="glfwSetWindowIcon")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1433,9 +1306,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: count
             type(c_ptr),         value, intent(in) :: images
         end subroutine c_glfwSetWindowIcon
-    end interface
 
-    interface
         subroutine c_glfwGetWindowPos(window, x, y) bind(C, name="glfwGetWindowPos")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1443,9 +1314,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: window
             integer(kind=c_int), intent(out) :: x, y
         end subroutine c_glfwGetWindowPos
-    end interface
 
-    interface
         subroutine c_glfwSetWindowPos(window, x, y) bind(C, name="glfwSetWindowPos")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1453,9 +1322,7 @@ module glf90w
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: x, y
         end subroutine c_glfwSetWindowPos
-    end interface
 
-    interface
         subroutine c_glfwGetWindowSize(window, width, height) bind(C, name="glfwGetWindowSize")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1463,9 +1330,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: window
             integer(kind=c_int), intent(out) :: width, height
         end subroutine c_glfwGetWindowSize
-    end interface
 
-    interface
         subroutine c_glfwSetWindowSizeLimits(window, minw, minh, maxw, maxh) bind(C, name="glfwSetWindowSizeLimits")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1473,9 +1338,7 @@ module glf90w
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: minw, minh, maxw, maxh
         end subroutine c_glfwSetWindowSizeLimits
-    end interface
 
-    interface
         subroutine c_glfwSetWindowAspectRatio(window, numer, denom) bind(C, name="glfwSetWindowAspectRatio")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1483,9 +1346,7 @@ module glf90w
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: numer, denom
         end subroutine c_glfwSetWindowAspectRatio
-    end interface
 
-    interface
         subroutine c_glfwSetWindowSize(window, width, height) bind(C, name="glfwSetWindowSize")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1493,9 +1354,7 @@ module glf90w
             type(c_ptr),         value, intent(in) :: window
             integer(kind=c_int), value, intent(in) :: width, height
         end subroutine c_glfwSetWindowSize
-    end interface
 
-    interface
         subroutine c_glfwGetFramebufferSize(window, width, height) bind(C, name="glfwGetFramebufferSize")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1503,9 +1362,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: window
             integer(kind=c_int), intent(out) :: width, height
         end subroutine c_glfwGetFramebufferSize
-    end interface
 
-    interface
         subroutine c_glfwGetWindowFrameSize(window, left, top, right, bottom) bind(C, name="glfwGetWindowFrameSize")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1513,9 +1370,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: window
             integer(kind=c_int), intent(out) :: left, top, right, bottom
         end subroutine c_glfwGetWindowFrameSize
-    end interface
 
-    interface
         subroutine c_glfwGetWindowContentScale(window, xscale, yscale) bind(C, name="glfwGetWindowContentScale")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_float
 
@@ -1523,9 +1378,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: window
             real(kind=c_float),  intent(out) :: xscale, yscale
         end subroutine c_glfwGetWindowContentScale
-    end interface
 
-    interface
         function c_glfwGetWindowOpacity(window) result(opacity) bind(C, name="glfwGetWindowOpacity")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_float
 
@@ -1533,9 +1386,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             real(kind=c_float)             :: opacity
         end function c_glfwGetWindowOpacity
-    end interface
 
-    interface
         subroutine c_glfwSetWindowOpacity(window, opacity) bind(C, name="glfwSetWindowOpacity")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_float
 
@@ -1543,72 +1394,56 @@ module glf90w
             type(c_ptr),        value, intent(in) :: window
             real(kind=c_float), value, intent(in) :: opacity
         end subroutine c_glfwSetWindowOpacity
-    end interface
 
-    interface
         subroutine c_glfwIconifyWindow(window) bind(C, name="glfwIconifyWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwIconifyWindow
-    end interface
 
-    interface
         subroutine c_glfwRestoreWindow(window) bind(C, name="glfwRestoreWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwRestoreWindow
-    end interface
 
-    interface
         subroutine c_glfwMaximizeWindow(window) bind(C, name="glfwMaximizeWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwMaximizeWindow
-    end interface
 
-    interface
         subroutine c_glfwShowWindow(window) bind(C, name="glfwShowWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwShowWindow
-    end interface
 
-    interface
         subroutine c_glfwHideWindow(window) bind(C, name="glfwHideWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwHideWindow
-    end interface
 
-    interface
         subroutine c_glfwFocusWindow(window) bind(C, name="glfwFocusWindow")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwFocusWindow
-    end interface
 
-    interface
         subroutine c_glfwRequestWindowAttention(window) bind(C, name="glfwRequestWindowAttention")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwRequestWindowAttention
-    end interface
 
-    interface
         function c_glfwGetWindowMonitor(window) result(monitor) bind(C, name="glfwGetWindowMonitor")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1616,9 +1451,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             type(c_ptr)                    :: monitor
         end function c_glfwGetWindowMonitor
-    end interface
 
-    interface
         subroutine c_glfwSetWindowMonitor(window, monitor, x, y, w, h, refresh_rate) bind(C, name="glfwSetWindowMonitor")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1627,9 +1460,7 @@ module glf90w
             type(c_ptr),         value, intent(in) :: monitor
             integer(kind=c_int), value, intent(in) :: x, y, w, h, refresh_rate
         end subroutine c_glfwSetWindowMonitor
-    end interface
 
-    interface
         function c_glfwGetWindowAttrib(window, attrib) result(val) bind(C, name="glfwGetWindowAttrib")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1638,9 +1469,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: attrib
             integer(kind=c_int)                    :: val
         end function c_glfwGetWindowAttrib
-    end interface
 
-    interface
         subroutine c_glfwSetWindowAttrib(window, attrib, val) bind(C, name="glfwSetWindowAttrib")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1649,9 +1478,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: attrib
             integer(kind=c_int), value, intent(in) :: val
         end subroutine c_glfwSetWindowAttrib
-    end interface
 
-    interface
         subroutine c_glfwSetWindowUserPointer(window, user_pointer) bind(C, name="glfwSetWindowUserPointer")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1659,9 +1486,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             type(c_ptr), value, intent(in) :: user_pointer
         end subroutine c_glfwSetWindowUserPointer
-    end interface
 
-    interface
         function c_glfwGetWindowUserPointer(window) result(user_pointer) bind(C, name="glfwGetWindowUserPointer")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1669,9 +1494,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             type(c_ptr)                    :: user_pointer
         end function c_glfwGetWindowUserPointer
-    end interface
 
-    interface
         function c_glfwSetWindowPosCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowPosCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1680,9 +1503,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowPosCallback
-    end interface
 
-    interface
         function c_glfwSetWindowSizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowSizeCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1691,9 +1512,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowSizeCallback
-    end interface
 
-    interface
         function c_glfwSetWindowCloseCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowCloseCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1702,9 +1521,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowCloseCallback
-    end interface
 
-    interface
         function c_glfwSetWindowRefreshCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowRefreshCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1713,9 +1530,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowRefreshCallback
-    end interface
 
-    interface
         function c_glfwSetWindowFocusCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowFocusCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1724,9 +1539,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowFocusCallback
-    end interface
 
-    interface
         function c_glfwSetWindowIconifyCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowIconifyCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1735,9 +1548,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowIconifyCallback
-    end interface
 
-    interface
         function c_glfwSetWindowMaximizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowMaximizeCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1746,9 +1557,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowMaximizeCallback
-    end interface
 
-    interface
         function c_glfwSetFramebufferSizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetFramebufferSizeCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1757,9 +1566,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetFramebufferSizeCallback
-    end interface
 
-    interface
         function c_glfwSetWindowContentScaleCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowContentScaleCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1768,33 +1575,23 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowContentScaleCallback
-    end interface
 
-    interface
         subroutine glfwPollEvents() bind(C, name="glfwPollEvents")
         end subroutine glfwPollEvents
-    end interface
 
-    interface
         subroutine glfwWaitEvents() bind(C, name="glfwWaitEvents")
         end subroutine glfwWaitEvents
-    end interface
 
-    interface
         subroutine glfwWaitEventsTimeout(timeout) bind(C, name="glfwWaitEventsTimeout")
             use, intrinsic :: iso_c_binding, only: c_double
 
             implicit none
             real(kind=c_double), value, intent(in) :: timeout
         end subroutine glfwWaitEventsTimeout
-    end interface
 
-    interface
         subroutine glfwPostEmptyEvent() bind(C, name="glfwPostEmptyEvent")
         end subroutine glfwPostEmptyEvent
-    end interface
 
-    interface
         function c_glfwGetInputMode(window, mode) result(val) bind(C, name="glfwGetInputMode")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1803,9 +1600,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: mode
             integer(kind=c_int)                    :: val
         end function c_glfwGetInputMode
-    end interface
 
-    interface
         subroutine c_glfwSetInputMode(window, mode, val) bind(C, name="glfwSetInputMode")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1814,18 +1609,14 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: mode
             integer(kind=c_int), value, intent(in) :: val
         end subroutine c_glfwSetInputMode
-    end interface
 
-    interface
         function c_glfwRawMouseMotionSupported() result(supported) bind(C, name="glfwRawMouseMotionSupported")
             use, intrinsic :: iso_c_binding, only: c_int
 
             implicit none
             integer(kind=c_int) :: supported
         end function c_glfwRawMouseMotionSupported
-    end interface
 
-    interface
         function c_glfwGetKeyName(key, scancode) result(name) bind(C, name="glfwGetKeyName")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1834,9 +1625,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: scancode
             type(c_ptr)                            :: name
         end function c_glfwGetKeyName
-    end interface
 
-    interface
         function glfwGetKeyScancode(key) result(scancode) bind(C, name="glfwGetKeyScancode")
             use, intrinsic :: iso_c_binding, only: c_int
 
@@ -1844,9 +1633,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: key
             integer(kind=c_int)                    :: scancode
         end function glfwGetKeyScancode
-    end interface
 
-    interface
         function c_glfwGetKey(window, key) result(status) bind(C, name="glfwGetKey")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1855,9 +1642,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: key
             integer(kind=c_int)                    :: status
         end function c_glfwGetKey
-    end interface
 
-    interface
         function c_glfwGetMouseButton(window, button) result(status) bind(C, name="glfwGetMouseButton")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1866,9 +1651,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: button
             integer(kind=c_int)                    :: status
         end function c_glfwGetMouseButton
-    end interface
 
-    interface
         subroutine c_glfwGetCursorPos(window, x, y) bind(C, name="glfwGetCursorPos")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_double
 
@@ -1876,9 +1659,7 @@ module glf90w
             type(c_ptr), value,  intent(in)  :: window
             real(kind=c_double), intent(out) :: x, y
         end subroutine c_glfwGetCursorPos
-    end interface
 
-    interface
         subroutine c_glfwSetCursorPos(window, x, y) bind(C, name="glfwSetCursorPos")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_double
 
@@ -1886,9 +1667,7 @@ module glf90w
             type(c_ptr),         value, intent(in) :: window
             real(kind=c_double), value, intent(in) :: x, y
         end subroutine c_glfwSetCursorPos
-    end interface
 
-    interface
         function c_glfwCreateCursor(image, xhot, yhot) result(cursor) bind(C, name="glfwCreateCursor")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1897,9 +1676,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: xhot, yhot
             type(c_ptr)                            :: cursor
         end function c_glfwCreateCursor
-    end interface
 
-    interface
         function c_glfwCreateStandardCursor(cursor_shape) result(cursor) bind(C, name="glfwCreateStandardCursor")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -1907,18 +1684,14 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: cursor_shape
             type(c_ptr)                            :: cursor
         end function c_glfwCreateStandardCursor
-    end interface
 
-    interface
         subroutine c_glfwDestroyCursor(cursor) bind(C, name="glfwDestroyCursor")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: cursor
         end subroutine c_glfwDestroyCursor
-    end interface
 
-    interface
         subroutine c_glfwSetCursor(window, cursor) bind(C, name="glfwSetCursor")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -1926,9 +1699,7 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             type(c_ptr), value, intent(in) :: cursor
         end subroutine c_glfwSetCursor
-    end interface
 
-    interface
         function c_glfwSetKeyCallback(window, callback) result(prev_callback) bind(C, name="glfwSetKeyCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1937,9 +1708,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetKeyCallback
-    end interface
 
-    interface
         function c_glfwSetCharCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCharCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1948,9 +1717,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCharCallback
-    end interface
 
-    interface
         function c_glfwSetCharModsCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCharModsCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1959,9 +1726,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCharModsCallback
-    end interface
 
-    interface
         function c_glfwSetMouseButtonCallback(window, callback) result(prev_callback) bind(C, name="glfwSetMouseButtonCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1970,9 +1735,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetMouseButtonCallback
-    end interface
 
-    interface
         function c_glfwSetCursorPosCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCursorPosCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1981,9 +1744,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCursorPosCallback
-    end interface
 
-    interface
         function c_glfwSetCursorEnterCallback(window, callback) result(prev_callback) bind(C, name="glfwSetCursorEnterCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -1992,9 +1753,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetCursorEnterCallback
-    end interface
 
-    interface
         function c_glfwSetScrollCallback(window, callback) result(prev_callback) bind(C, name="glfwSetScrollCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -2003,9 +1762,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetScrollCallback
-    end interface
 
-    interface
         function c_glfwSetDropCallback(window, callback) result(prev_callback) bind(C, name="glfwSetDropCallback")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_funptr
 
@@ -2014,9 +1771,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetDropCallback
-    end interface
 
-    interface
         function c_glfwJoystickPresent(jid) result(jpresent) bind(C, name="glfwJoystickPresent")
             use, intrinsic :: iso_c_binding, only: c_int
 
@@ -2024,9 +1779,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             integer(kind=c_int)                    :: jpresent
         end function c_glfwJoystickPresent
-    end interface
 
-    interface
         function c_glfwGetJoystickAxes(jid, count) result(axes) bind(C, name="glfwGetJoystickAxes")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2035,9 +1788,7 @@ module glf90w
             integer(kind=c_int)                    :: count
             type(c_ptr)                            :: axes
         end function c_glfwGetJoystickAxes
-    end interface
 
-    interface
         function c_glfwGetJoystickButtons(jid, count) result(states) bind(C, name="glfwGetJoystickButtons")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2046,9 +1797,7 @@ module glf90w
             integer(kind=c_int)                    :: count
             type(c_ptr)                            :: states
         end function c_glfwGetJoystickButtons
-    end interface
 
-    interface
         function c_glfwGetJoystickHats(jid, count) result(states) bind(C, name="glfwGetJoystickHats")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2057,9 +1806,7 @@ module glf90w
             integer(kind=c_int)                    :: count
             type(c_ptr)                            :: states
         end function c_glfwGetJoystickHats
-    end interface
 
-    interface
         function c_glfwGetJoystickName(jid) result(name) bind(C, name="glfwGetJoystickName")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2067,9 +1814,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             type(c_ptr)                            :: name
         end function c_glfwGetJoystickName
-    end interface
 
-    interface
         function c_glfwGetJoystickGUID(jid) result(GUID) bind(C, name="glfwGetJoystickGUID")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2077,9 +1822,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             type(c_ptr)                            :: GUID
         end function c_glfwGetJoystickGUID
-    end interface
 
-    interface
         subroutine glfwSetJoystickUserPointer(jid, user_pointer) bind(C, name="glfwSetJoystickUserPointer")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2087,9 +1830,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             type(c_ptr),         value, intent(in) :: user_pointer
         end subroutine glfwSetJoystickUserPointer
-    end interface
 
-    interface
         function glfwGetJoystickUserPointer(jid) result(user_pointer) bind(C, name="glfwGetJoystickUserPointer")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2097,9 +1838,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             type(c_ptr)                            :: user_pointer
         end function glfwGetJoystickUserPointer
-    end interface
 
-    interface
         function c_glfwJoystickIsGamepad(jid) result(is_gamepad) bind(C, name="glfwJoystickIsGamepad")
             use, intrinsic :: iso_c_binding, only: c_int
 
@@ -2107,9 +1846,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             integer(kind=c_int)                    :: is_gamepad
         end function c_glfwJoystickIsGamepad
-    end interface
 
-    interface
         function c_glfwSetJoystickCallback(callback) result(prev_callback) bind(C, name="glfwSetJoystickCallback")
             use, intrinsic :: iso_c_binding, only: c_funptr
 
@@ -2117,9 +1854,7 @@ module glf90w
             type(c_funptr), value, intent(in) :: callback
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetJoystickCallback
-    end interface
 
-    interface
         function c_glfwUpdateGamepadMappings(mappings) result(success) bind(C, name="glfwUpdateGamepadMappings")
             use, intrinsic :: iso_c_binding, only: c_char, c_int
 
@@ -2127,9 +1862,7 @@ module glf90w
             character(len=1, kind=c_char), dimension(*), intent(in) :: mappings
             integer(kind=c_int)                                     :: success
         end function c_glfwUpdateGamepadMappings
-    end interface
 
-    interface
         function c_glfwGetGamepadName(jid) result(name) bind(C, name="glfwGetGamepadName")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
 
@@ -2137,9 +1870,7 @@ module glf90w
             integer(kind=c_int), value, intent(in) :: jid
             type(c_ptr)                            :: name
         end function c_glfwGetGamepadName
-    end interface
 
-    interface
         function c_glfwGetGamepadState(jid, state) result(success) bind(C, name="glfwGetGamepadState")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int
             import GLFWgamepadstate
@@ -2149,9 +1880,7 @@ module glf90w
             type(GLFWgamepadstate)                 :: state
             integer(kind=c_int)                    :: success
         end function c_glfwGetGamepadState
-    end interface
 
-    interface
         subroutine c_glfwSetClipboardString(window, string) bind(C, name="glfwSetClipboardString")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_char
 
@@ -2159,9 +1888,7 @@ module glf90w
             type(c_ptr), value,                          intent(in) :: window
             character(len=1, kind=c_char), dimension(*), intent(in) :: string
         end subroutine c_glfwSetClipboardString
-    end interface
 
-    interface
         function c_glfwGetClipboardString(window) result(string) bind(C, name="glfwGetClipboardString")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
@@ -2169,81 +1896,63 @@ module glf90w
             type(c_ptr), value, intent(in) :: window
             type(c_ptr)                    :: string
         end function c_glfwGetClipboardString
-    end interface
 
-    interface
         function glfwGetTime() result(time) bind(C, name="glfwGetTime")
             use, intrinsic :: iso_c_binding, only: c_double
 
             implicit none
             real(kind=c_double) :: time
         end function glfwGetTime
-    end interface
 
-    interface
         subroutine glfwSetTime(time) bind(C, name="glfwSetTime")
             use, intrinsic :: iso_c_binding, only: c_double
 
             implicit none
             real(kind=c_double), value, intent(in) :: time
         end subroutine glfwSetTime
-    end interface
 
-    interface
         function glfwGetTimerValue() result(value) bind(C, name="glfwGetTimerValue")
             use, intrinsic :: iso_c_binding, only: c_int64_t
 
             implicit none
             integer(kind=c_int64_t) :: value
         end function glfwGetTimerValue
-    end interface
 
-    interface
         function glfwGetTimerFrequency() result(frequency) bind(C, name="glfwGetTimerFrequency")
             use, intrinsic :: iso_c_binding, only: c_int64_t
 
             implicit none
             integer(kind=c_int64_t) :: frequency
         end function glfwGetTimerFrequency
-    end interface
 
-    interface
         subroutine c_glfwMakeContextCurrent(window) bind(C, name="glfwMakeContextCurrent")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwMakeContextCurrent
-    end interface
 
-    interface
         function c_glfwGetCurrentContext() result(window) bind(C, name="glfwGetCurrentContext")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr) :: window
         end function c_glfwGetCurrentContext
-    end interface
 
-    interface
         subroutine c_glfwSwapBuffers(window) bind(C, name="glfwSwapBuffers")
             use, intrinsic :: iso_c_binding, only: c_ptr
 
             implicit none
             type(c_ptr), value, intent(in) :: window
         end subroutine c_glfwSwapBuffers
-    end interface
 
-    interface
         subroutine glfwSwapInterval(interval) bind(C, name="glfwSwapInterval")
             use, intrinsic :: iso_c_binding, only: c_int
 
             implicit none
             integer(kind=c_int), value, intent(in) :: interval
         end subroutine glfwSwapInterval
-    end interface
 
-    interface
         function c_glfwExtensionSupported(extension) result(supported) bind(C, name="glfwExtensionSupported")
             use, intrinsic :: iso_c_binding, only: c_char, c_int
 
@@ -2251,9 +1960,7 @@ module glf90w
             character(len=1, kind=c_char), dimension(*), intent(in) :: extension
             integer(kind=c_int)                                     :: supported
         end function c_glfwExtensionSupported
-    end interface
 
-    interface
         function c_glfwGetProcAddress(procname) result(procaddr) bind(C, name="glfwGetProcAddress")
             use, intrinsic :: iso_c_binding, only: c_funptr, c_char
 
@@ -2261,18 +1968,14 @@ module glf90w
             character(len=1, kind=c_char), dimension(*), intent(in) :: procname
             type(c_funptr)                                          :: procaddr
         end function c_glfwGetProcAddress
-    end interface
 
-    interface
         function c_glfwVulkanSupported() result(supported) bind(C, name="glfwVulkanSupported")
             use, intrinsic :: iso_c_binding, only: c_char, c_int
 
             implicit none
             integer(kind=c_int) :: supported
         end function c_glfwVulkanSupported
-    end interface
 
-    interface
         function c_glfwGetRequiredInstanceExtensions(count) result(names) bind(C, name="glfwGetRequiredInstanceExtensions")
             use, intrinsic :: iso_c_binding, only: c_ptr, c_int32_t
 
@@ -2286,7 +1989,6 @@ module glf90w
     ! GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* procname);
     ! int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
     ! VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
-
 
 
     ! --------------------------------------------------------------------------
@@ -2357,6 +2059,25 @@ module glf90w
             glf90wMonitorCallback            => null()
             glf90wJoystickCallback           => null()
         end subroutine glfwTerminate
+
+        subroutine glfwInitAllocator(allocator)
+            use, intrinsic :: iso_c_binding, only: c_funloc
+
+            implicit none
+            type(GLFWallocator), optional, intent(in) :: allocator
+            type(C_GLFWallocator) :: c_allocator
+
+            if (present(allocator)) then
+                c_allocator%allocate_fn = c_funloc(allocator%allocate_fn)
+                c_allocator%reallocate_fn = c_funloc(allocator%reallocate_fn)
+                c_allocator%deallocate_fn = c_funloc(allocator%deallocate_fn)
+                c_allocator%user = allocator%user
+
+                call c_glfwInitAllocator(c_allocator)
+            else
+                call c_glfwInitAllocator()
+            end if
+        end subroutine glfwInitAllocator
 
         function glfwGetVersionString() result(str)
             use, intrinsic :: iso_c_binding, only: c_ptr, c_char
@@ -3629,9 +3350,13 @@ module glf90w
 
         subroutine glfwMakeContextCurrent(window)
             implicit none
-            type(GLFWwindow), intent(in) :: window
+            type(GLFWwindow), optional, intent(in) :: window
 
-            call c_glfwMakeContextCurrent(window%ptr)
+            if (present(window)) then
+                call c_glfwMakeContextCurrent(window%ptr)
+            else
+                call c_glfwMakeContextCurrent(c_null_ptr)
+            end if
         end subroutine glfwMakeContextCurrent
 
         function glfwGetCurrentContext() result(window)
