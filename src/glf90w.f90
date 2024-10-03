@@ -1043,8 +1043,8 @@ module glf90w
         function c_glfwGetError(description) result(error_code) bind(C, name="glfwGetError")
             import
             implicit none
-            type(c_ptr)         :: description
-            integer(kind=c_int) :: error_code
+            type(c_ptr), optional :: description
+            integer(kind=c_int)   :: error_code
         end function c_glfwGetError
 
         function c_glfwSetErrorCallback(callback) result(prev_callback) bind(C, name="glfwSetErrorCallback")
@@ -1291,8 +1291,8 @@ module glf90w
         subroutine c_glfwGetWindowFrameSize(window, left, top, right, bottom) bind(C, name="glfwGetWindowFrameSize")
             import
             implicit none
-            type(c_ptr), value,           intent(in)  :: window
-            integer(kind=c_int), optinal, intent(out) :: left, top, right, bottom
+            type(c_ptr), value,            intent(in)  :: window
+            integer(kind=c_int), optional, intent(out) :: left, top, right, bottom
         end subroutine c_glfwGetWindowFrameSize
 
         subroutine c_glfwGetWindowContentScale(window, xscale, yscale) bind(C, name="glfwGetWindowContentScale")
@@ -1698,7 +1698,7 @@ module glf90w
             import
             implicit none
             integer(kind=c_int), value, intent(in) :: jid
-            type(c_ptr),         value, intent(in) :: user_pointer
+            type(*),                    intent(in) :: user_pointer
         end subroutine glfwSetJoystickUserPointer
 
         function glfwGetJoystickUserPointer(jid) result(user_pointer) bind(C, name="glfwGetJoystickUserPointer")
@@ -2676,9 +2676,13 @@ module glf90w
         subroutine glfwSetCursor(window, cursor)
             implicit none
             type(GLFWwindow), intent(in) :: window
-            type(GLFWcursor), intent(in) :: cursor
+            type(GLFWcursor), optional, intent(in) :: cursor
 
-            call c_glfwSetCursor(window%ptr, cursor%ptr)
+            type(c_ptr) :: c_cursor
+            c_cursor = c_null_ptr
+
+            if (present(cursor)) c_cursor = cursor%ptr
+            call c_glfwSetCursor(window%ptr, c_cursor)
         end subroutine glfwSetCursor
 
         function glfwSetKeyCallback(window, callback) result(prev_callback)
@@ -2971,20 +2975,27 @@ module glf90w
 
         subroutine glfwSetClipboardString(window, string)
             implicit none
-            type(GLFWwindow),              intent(in) :: window
+            type(GLFWwindow), optional,    intent(in) :: window
             character(len=*, kind=c_char), intent(in) :: string
 
-            call c_glfwSetClipboardString(window%ptr, f_c_string(string))
+            type(c_ptr) :: c_window
+            c_window = c_null_ptr
+
+            if (present(window)) c_window = window%ptr
+            call c_glfwSetClipboardString(c_window, f_c_string(string))
         end subroutine glfwSetClipboardString
 
         function glfwGetClipboardString(window) result(string)
             implicit none
-            type(GLFWwindow), intent(in)           :: window
+            type(GLFWwindow), optional, intent(in) :: window
             character(len=:, kind=c_char), pointer :: string
 
+            type(c_ptr) :: c_window
             type(c_ptr) :: c_string
+            c_window = c_null_ptr
 
-            c_string = c_glfwGetClipboardString(window%ptr)
+            if (present(window)) c_window = window%ptr
+            c_string = c_glfwGetClipboardString(c_window)
             if (c_associated(c_string)) then
                 call c_f_strpointer(c_string, string)
             else
