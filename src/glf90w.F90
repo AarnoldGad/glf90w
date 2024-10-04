@@ -4,7 +4,7 @@
 ! Fortran 2003 bindings for GLFW (Yes, I know...)
 !
 ! ------------------
-! glf90w.f90
+! glf90w.F90
 ! 25 Feb 2024
 ! Gaétan J.A.M. Jalin
 ! See end of file for complete licence description
@@ -728,9 +728,10 @@ module glf90w
         glfwInitHint, &
         ! -- void glfwInitAllocator(GLFWallocator IN allocator)
         glfwInitAllocator, &
-        ! TODO Vulkan support
-        !! -- void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr IN loader)
-        ! glfwInitVulkanLoader, &
+#if defined(VK_VERSION_1_0)
+        ! -- void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr IN loader)
+        glfwInitVulkanLoader, &
+#endif
         ! -- void glfwGetVersion(int OUT major, int OUT minor, int OUT rev)
         glfwGetVersion, &
         ! -- char POINTER glfwGetVersionString() result(str)
@@ -987,12 +988,16 @@ module glf90w
         glfwGetProcAddress, &
         ! -- logical glfwVulkanSupported() result(supported)
         glfwVulkanSupported, &
+#if defined(VK_VERSION_1_0)
+        ! GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* procname);
+        glfwGetInstanceProcAddress, &
+        ! int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
+        glfwGetPhysicalDevicePresentationSupport, &
+        ! VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
+        glfwCreateWindowSurface, &
+#endif
         ! -- string_ptr(:) glfwGetRequiredInstanceExtensions(void) result(names)
         glfwGetRequiredInstanceExtensions
-        ! TODO Vulkan support
-        ! GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* procname);
-        ! int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
-        ! VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 
 
     ! --------------------------------------------------------------------------
@@ -1023,8 +1028,13 @@ module glf90w
             type(C_GLFWallocator), optional, intent(in) :: allocator
         end subroutine c_glfwInitAllocator
 
-    ! TODO Vulkan support
-    ! void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr loader);
+#if defined(VK_VERSION_1_0)
+        subroutine c_glfwInitVulkanLoader(loader) bind(C, name="glfwInitVulkanLoader")
+            import
+            implicit none
+            type(c_funptr), value, intent(in) :: loader
+        end subroutine c_glfwInitVulkanLoader
+#endif
 
         subroutine glfwGetVersion(major, minor, rev) bind(C, name="glfwGetVersion")
             import
@@ -1427,7 +1437,8 @@ module glf90w
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowCloseCallback
 
-        function c_glfwSetWindowRefreshCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowRefreshCallback")
+        function c_glfwSetWindowRefreshCallback(window, callback) &
+        result(prev_callback) bind(C, name="glfwSetWindowRefreshCallback")
             import
             implicit none
             type(c_ptr),    value, intent(in) :: window
@@ -1443,7 +1454,8 @@ module glf90w
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowFocusCallback
 
-        function c_glfwSetWindowIconifyCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowIconifyCallback")
+        function c_glfwSetWindowIconifyCallback(window, callback) &
+        result(prev_callback) bind(C, name="glfwSetWindowIconifyCallback")
             import
             implicit none
             type(c_ptr),    value, intent(in) :: window
@@ -1451,7 +1463,8 @@ module glf90w
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowIconifyCallback
 
-        function c_glfwSetWindowMaximizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowMaximizeCallback")
+        function c_glfwSetWindowMaximizeCallback(window, callback) &
+        result(prev_callback) bind(C, name="glfwSetWindowMaximizeCallback")
             import
             implicit none
             type(c_ptr),    value, intent(in) :: window
@@ -1459,7 +1472,8 @@ module glf90w
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetWindowMaximizeCallback
 
-        function c_glfwSetFramebufferSizeCallback(window, callback) result(prev_callback) bind(C, name="glfwSetFramebufferSizeCallback")
+        function c_glfwSetFramebufferSizeCallback(window, callback) &
+        result(prev_callback) bind(C, name="glfwSetFramebufferSizeCallback")
             import
             implicit none
             type(c_ptr),    value, intent(in) :: window
@@ -1467,7 +1481,8 @@ module glf90w
             type(c_funptr)                    :: prev_callback
         end function c_glfwSetFramebufferSizeCallback
 
-        function c_glfwSetWindowContentScaleCallback(window, callback) result(prev_callback) bind(C, name="glfwSetWindowContentScaleCallback")
+        function c_glfwSetWindowContentScaleCallback(window, callback) &
+        result(prev_callback) bind(C, name="glfwSetWindowContentScaleCallback")
             import
             implicit none
             type(c_ptr),    value, intent(in) :: window
@@ -1826,6 +1841,38 @@ module glf90w
             integer(kind=c_int) :: supported
         end function c_glfwVulkanSupported
 
+#if defined(VK_VERSION_1_0)
+        function c_glfwGetInstanceProcAddress(instance, procname) &
+        result(procaddr) bind(C, name="glfwGetInstanceProcAddress")
+            import
+            implicit none
+            type(c_ptr), value,                          intent(in) :: instance
+            character(len=1, kind=c_char), dimension(*), intent(in) :: procname
+            type(c_funptr)                                          :: procaddr
+        end function c_glfwGetInstanceProcAddress
+
+        function c_glfwGetPhysicalDevicePresentationSupport(instance, device, queuefamily) &
+        result(supported) bind(C, name="glfwGetPhysicalDevicePresentationSupport")
+            import
+            implicit none
+            type(c_ptr),             value, intent(in) :: instance
+            type(c_ptr),             value, intent(in) :: device
+            integer(kind=c_int32_t), value, intent(in) :: queuefamily
+            integer(kind=c_int)                        :: supported
+        end function c_glfwGetPhysicalDevicePresentationSupport
+
+        function c_glfwCreateWindowSurface(instance, window, allocator, surface) &
+        result(res) bind(C, name="glfwCreateWindowSurface")
+            import
+            implicit none
+            type(c_ptr),             value, intent(in) :: instance
+            type(c_ptr),             value, intent(in) :: window
+            type(c_ptr),             value, intent(in) :: allocator
+            type(c_ptr),             value, intent(in) :: surface
+            integer(kind=c_int)                        :: res
+        end function c_glfwCreateWindowSurface
+#endif
+
         function c_glfwGetRequiredInstanceExtensions(count) result(names) bind(C, name="glfwGetRequiredInstanceExtensions")
             import
             implicit none
@@ -1833,11 +1880,6 @@ module glf90w
             type(c_ptr)             :: names
         end function c_glfwGetRequiredInstanceExtensions
     end interface
-
-    ! TODO Vulkan support
-    ! GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* procname);
-    ! int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
-    ! VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 
 
     ! --------------------------------------------------------------------------
@@ -1860,10 +1902,6 @@ module glf90w
             integer(kind=c_size_t)                                  :: length
         end function c_char_strlen
     end interface c_strlen
-
-    interface c_f_string
-        module procedure :: c_str_f_string, c_ptr_f_string
-    end interface c_f_string
 
     contains
 
@@ -1923,6 +1961,26 @@ module glf90w
                 call c_glfwInitAllocator()
             end if
         end subroutine glfwInitAllocator
+
+#if defined(VK_VERSION_1_0)
+        subroutine glfwInitVulkanLoader(loader)
+            implicit none
+            ! TODO This has to be the C interface with C-string argument. 
+            ! Can I make a wrapper or have it in a way that allows
+            ! passing a fortran string instead ?
+            interface
+                function loader(instance, procname) result(procaddr)
+                    import
+                    implicit none
+                    type(c_ptr), value,                          intent(in) :: instance
+                    character(len=1, kind=c_char), dimension(*), intent(in) :: procname
+                    type(c_funptr)                                          :: procaddr
+                end function loader
+            end interface
+
+            call c_glfwInitVulkanLoader(c_funloc(loader))
+        end subroutine glfwInitVulkanLoader
+#endif
 
         function glfwGetVersionString() result(str)
             implicit none
@@ -3052,6 +3110,46 @@ module glf90w
             supported = merge(.false., .true., c_glfwVulkanSupported() == GLFW_FALSE)
         end function glfwVulkanSupported
 
+#if defined(VK_VERSION_1_0)
+        function glfwGetInstanceProcAddress(instance, procname) result(procaddr)
+            implicit none
+            type(c_ptr),                   intent(in) :: instance
+            character(len=*, kind=c_char), intent(in) :: procname
+            type(c_funptr)                            :: procaddr
+
+            procaddr = c_glfwGetInstanceProcAddress(instance, f_c_string(procname))
+        end function glfwGetInstanceProcAddress
+
+        function glfwGetPhysicalDevicePresentationSupport(instance, device, queuefamily) result(supported)
+            implicit none
+            type(c_ptr),             intent(in) :: instance
+            type(c_ptr),             intent(in) :: device
+            integer(kind=c_int32_t), intent(in) :: queuefamily
+            logical                             :: supported
+
+            supported = merge(.false., .true., &
+                c_glfwGetPhysicalDevicePresentationSupport(instance, device, queuefamily) == GLFW_FALSE)
+        end function glfwGetPhysicalDevicePresentationSupport
+
+        ! TODO Vulkan types for allocator, surface, and result? 
+        ! But also opaque pointer types for instance, device and what-not?
+        ! This asks for a whole Vulkan Fortran binding OMG
+        function glfwCreateWindowSurface(instance, window, allocator, surface) result(res)
+            implicit none
+            type(c_ptr), intent(in) :: instance
+            type(GLFWwindow), intent(in) :: window
+            type(c_ptr), optional, intent(in) :: allocator
+            type(c_ptr), intent(in) :: surface
+            integer(kind=c_int) :: res
+
+            if (present(allocator)) then
+                res = c_glfwCreateWindowSurface(instance, window%ptr, allocator, surface)
+            else
+                res = c_glfwCreateWindowSurface(instance, window%ptr, c_null_ptr, surface)
+            end if
+        end function glfwCreateWindowSurface
+#endif
+
         function glfwGetRequiredInstanceExtensions() result(names)
             implicit none
             type(string_ptr), dimension(:), allocatable :: names
@@ -3234,7 +3332,7 @@ module glf90w
             type(c_ptr), dimension(path_count), intent(in) :: paths
 
             character(len=:, kind=c_char), dimension(:), target, allocatable :: path_array
-            integer :: max_length
+            integer(kind=c_size_t) :: max_length
             integer :: i
 
             max_length = 0
@@ -3320,21 +3418,8 @@ module glf90w
             cstr(c_length) = c_null_char
         end function f_c_string
 
-        ! Converts a C interoperable string (character array) to a Fortran character string
-        pure function c_str_f_string(cstr) result(fstr)
-            implicit none
-            character(len=1, kind=c_char), dimension(:), intent(in) :: cstr
-            character(len=c_strlen(cstr), kind=c_char)              :: fstr
-
-            integer :: i
-
-            do i = 1,len(fstr)
-                fstr(i:i) = cstr(i)
-            end do
-        end function c_str_f_string
-
         ! Convert a C string (char*) to a Fortran character string
-        function c_ptr_f_string(cptr) result(fstr)
+        function c_f_string(cptr) result(fstr)
             implicit none
             type(c_ptr), intent(in)                    :: cptr
             character(len=:, kind=c_char), allocatable :: fstr
@@ -3347,7 +3432,7 @@ module glf90w
             do i = 1,len(cstr)
                 fstr(i:i) = cstr(i)
             end do
-        end function c_ptr_f_string
+        end function c_f_string
 
         ! TODO test zero-length strings are not a problem ?
         ! Obtain a Fortran pointer to a C string (char*)
