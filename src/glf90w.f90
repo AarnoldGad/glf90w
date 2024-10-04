@@ -1928,10 +1928,7 @@ module glf90w
             implicit none
             character(len=:, kind=c_char), pointer :: str
 
-            type(c_ptr) :: c_str
-
-            c_str = c_glfwGetVersionString()
-            call c_f_strpointer(c_str, str)
+            call c_f_strpointer(c_glfwGetVersionString(), str)
         end function glfwGetVersionString
 
         function glfwGetError(description) result(error_code)
@@ -2212,11 +2209,15 @@ module glf90w
 
         subroutine glfwSetWindowIcon(window, images)
             implicit none
-            type(GLFWwindow),                      intent(in) :: window
-            type(GLFWimage), dimension(:), target, intent(in) :: images
+            type(GLFWwindow),                                intent(in) :: window
+            type(GLFWimage), dimension(:), target, optional, intent(in) :: images
 
             ! Image data is copied by GLFW so okay to c_loc the dummy argument
-            call c_glfwSetWindowIcon(window%ptr, size(images), c_loc(images))
+            if (present(images)) then
+                call c_glfwSetWindowIcon(window%ptr, size(images), c_loc(images))
+            else
+                call c_glfwSetWindowIcon(window%ptr, 0, c_null_ptr)
+            end if
         end subroutine glfwSetWindowIcon
 
         subroutine glfwGetWindowPos(window, x, y)
